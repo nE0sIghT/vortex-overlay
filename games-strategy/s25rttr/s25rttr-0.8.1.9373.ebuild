@@ -3,13 +3,23 @@
 # $Header: /var/cvsroot/gentoo-x86/games-strategy/s25rttr/s25rttr-0.8.1.ebuild,v 1.1 2013/12/23 13:45:08 hasufell Exp $
 
 EAPI=5
-inherit eutils cmake-utils gnome2-utils games
+inherit eutils cmake-utils gnome2-utils games versionator
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/"
-# no upstream source tarball yet
-# https://bugs.launchpad.net/s25rttr/+bug/1069546
-SRC_URI="http://dev.gentoo.org/~hasufell/distfiles/${P}.tar.xz"
+
+if [[ ${PV} == 9999 ]]; then
+    inherit bzr
+    SRC_URI=""
+    EBZR_REPO_URI="lp:s25rttr"
+else
+    # no upstream source tarball yet
+    # https://bugs.launchpad.net/s25rttr/+bug/1069546
+    inherit bzr
+    SRC_URI=""
+    EBZR_REPO_URI="lp:s25rttr"
+    EBZR_REVISION="$(get_version_component_range 4 ${PV})"
+fi
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -17,6 +27,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="debug glfw"
 
 RDEPEND="app-arch/bzip2
+	dev-lang/lua:5.2
 	media-libs/libsamplerate
 	media-libs/libsdl[X,audio,opengl,video]
 	media-libs/libsndfile
@@ -30,7 +41,8 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-cmake.patch \
-		"${FILESDIR}"/${P}-soundconverter.patch
+		"${FILESDIR}"/${P}-soundconverter.patch \
+		"${FILESDIR}"/s25rttr-lua.patch
 }
 
 src_configure() {
