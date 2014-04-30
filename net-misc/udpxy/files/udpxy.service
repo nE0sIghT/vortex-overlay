@@ -1,0 +1,11 @@
+[Unit]
+Description=UDP multicast to TCP (HTTP) relay proxy
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/conf.d/udpxy
+ExecStart=/usr/bin/udpxy -T $UDPXYOPTS
+
+[Install]
+WantedBy=multi-user.target

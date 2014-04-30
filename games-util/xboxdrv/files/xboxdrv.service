@@ -1,0 +1,10 @@
+[Unit]
+Description=Userspace Xbox 360 Controller driver
+
+[Service]
+BusName=org.seul.Xboxdrv
+ExecStart=/usr/bin/xboxdrv -s -D
+KillSignal=SIGINT
+
+[Install]
+WantedBy=default.target

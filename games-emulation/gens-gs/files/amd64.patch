@@ -1,0 +1,44 @@
+diff -ur ./gens-gs-r7/src/cbob/Makefile.am ./gens-gs-r7-amd64/src/cbob/Makefile.am
+--- ./gens-gs-r7/src/cbob/Makefile.am	2009-10-12 01:08:43.000000000 +0400
++++ ./gens-gs-r7-amd64/src/cbob/Makefile.am	2014-03-21 21:35:03.188561520 +0400
+@@ -10,7 +10,7 @@
+ # cross-compiling for Win32.
+ # NOTE: This will only work with gcc.
+ cbob.o: cbob.c
+-	$(build_alias)-gcc -o cbob.o -c ${srcdir}/cbob.c
++	$(CC) -o cbob.o -c ${srcdir}/cbob.c
+ 
+ cbob$(EXEEXT): cbob.o
+-	$(build_alias)-gcc -o cbob$(EXEEXT) cbob.o
++	$(CC) -o cbob$(EXEEXT) cbob.o
+diff -ur ./gens-gs-r7/src/starscream/Makefile.am ./gens-gs-r7-amd64/src/starscream/Makefile.am
+--- ./gens-gs-r7/src/starscream/Makefile.am	2009-11-02 03:11:43.000000000 +0300
++++ ./gens-gs-r7-amd64/src/starscream/Makefile.am	2014-03-21 21:34:36.571017240 +0400
+@@ -17,9 +17,9 @@
+ # cross-compiling for Win32.
+ # NOTE: This will only work with gcc.
+ star_m68k$(EXEEXT):
+-	$(build_alias)-gcc -o star_m68k$(EXEEXT) ${srcdir}/star_m68k.c
++	$(CC) -o star_m68k$(EXEEXT) ${srcdir}/star_m68k.c
+ star_s68k$(EXEEXT):
+-	$(build_alias)-gcc -o star_s68k$(EXEEXT) ${srcdir}/star_s68k.c
++	$(CC) -o star_s68k$(EXEEXT) ${srcdir}/star_s68k.c
+ 
+ main68k.asm: star_m68k$(EXEEXT)
+ 	./star_m68k$(EXEEXT) main68k.asm -hog -name main68k_
+diff -ur ./gens-gs-r7/src/starscream/Makefile.in ./gens-gs-r7-amd64/src/starscream/Makefile.in
+--- ./gens-gs-r7/src/starscream/Makefile.in	2014-03-21 21:34:10.838491057 +0400
++++ ./gens-gs-r7-amd64/src/starscream/Makefile.in	2014-03-21 21:34:36.571017240 +0400
+@@ -642,9 +642,9 @@
+ # cross-compiling for Win32.
+ # NOTE: This will only work with gcc.
+ star_m68k$(EXEEXT):
+-	$(build_alias)-gcc -o star_m68k$(EXEEXT) ${srcdir}/star_m68k.c
++	$(CC) -o star_m68k$(EXEEXT) ${srcdir}/star_m68k.c
+ star_s68k$(EXEEXT):
+-	$(build_alias)-gcc -o star_s68k$(EXEEXT) ${srcdir}/star_s68k.c
++	$(CC) -o star_s68k$(EXEEXT) ${srcdir}/star_s68k.c
+ 
+ main68k.asm: star_m68k$(EXEEXT)
+ 	./star_m68k$(EXEEXT) main68k.asm -hog -name main68k_
+Только в ./gens-gs-r7-amd64/src/starscream: Makefile.in.orig

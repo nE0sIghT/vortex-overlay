@@ -1,0 +1,44 @@
+diff -ur ./s25rttr-9999/src/CMakeLists.txt ./s25rttr-9999.1/src/CMakeLists.txt
+--- ./s25rttr-9999/src/CMakeLists.txt	2014-04-28 22:08:51.651052000 +0400
++++ ./s25rttr-9999.1/src/CMakeLists.txt	2014-04-28 22:11:19.744232224 +0400
+@@ -444,7 +444,7 @@
+ # LUA
+ ################################################################################
+ 
+-SET(LUA_VERSION "52")
++SET(LUA_VERSION "5.2")
+ 
+ IF ( "${COMPILEFOR}" STREQUAL "windows")
+ 	IF ( "${COMPILEARCH}" STREQUAL "i386" )
+@@ -456,9 +456,9 @@
+ 
+ IF ( "${COMPILEFOR}" STREQUAL "linux")
+ 	IF ( "${COMPILEARCH}" STREQUAL "i386" )
+-		SET(LUA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../contrib/lua/lin32")
++		SET(LUA_DIR "/usr")
+ 	ELSE ( "${COMPILEARCH}" STREQUAL "i386" )
+-		SET(LUA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../contrib/lua/lin64")
++		SET(LUA_DIR "/usr")
+ 	ENDIF ( "${COMPILEARCH}" STREQUAL "i386" )
+ ENDIF ( "${COMPILEFOR}" STREQUAL "linux")
+ 
+@@ -466,7 +466,7 @@
+ 	SET(LUA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../contrib/lua/mac")
+ ENDIF ( "${COMPILEFOR}" STREQUAL "apple")
+ 
+-SET(LUA_LIB "${LUA_DIR}/liblua${LUA_VERSION}.a")
++SET(LUA_LIB "${LUA_DIR}/lib/liblua${LUA_VERSION}.so")
+ 
+ MESSAGE(STATUS "Checking LUA library at ${LUA_LIB}")
+ IF ( NOT EXISTS "${LUA_LIB}" )
+@@ -476,8 +476,8 @@
+ ENDIF ( NOT EXISTS "${LUA_LIB}" )
+ MESSAGE(STATUS "Using LUA library from ${LUA_LIB}")
+ 
+-ADD_FLAGS(CMAKE_C_FLAGS -I${LUA_DIR}/include)
+-ADD_FLAGS(CMAKE_CXX_FLAGS -I${LUA_DIR}/include)
++ADD_FLAGS(CMAKE_C_FLAGS -I${LUA_DIR}/include/lua${LUA_VERSION})
++ADD_FLAGS(CMAKE_CXX_FLAGS -I${LUA_DIR}/include/lua${LUA_VERSION})
+ 
+ ################################################################################
+ 

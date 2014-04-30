@@ -1,0 +1,9 @@
+diff -ur ./gens-gs-r7/src/gens/Makefile.unix.inc.am ./gens-gs-r7-r1/src/gens/Makefile.unix.inc.am
+--- ./gens-gs-r7/src/gens/Makefile.unix.inc.am	2009-11-22 20:42:02.000000000 +0300
++++ ./gens-gs-r7-r1/src/gens/Makefile.unix.inc.am	2014-03-22 22:33:10.758229054 +0400
+@@ -139,3 +139,5 @@
+ if GENS_OPENGL
+ gens_LDADD	+= @GL_LIBS@
+ endif
++
++gens_LDADD	+= -ldl -lX11

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<herd>games</herd>
+<maintainer>
+  <email>nikai@nikai.net</email>
+</maintainer>
+<longdescription>Vega Strike is an Open Source 3D Action-Space-Sim that lets you trade, fight, and explore in a vast universe.  The vegastrike branch contains the game source code.</longdescription>
+<use>
+  <flag name='boost'>Enables support for system <pkg>dev-libs/boost</pkg> instead of included one. Recommended.</flag>
+  <flag name='gtk'>Uses <pkg>x11-libs/gtk+</pkg> allowing graphical configuration with vssetup. Recommended.</flag>
+  <flag name='ffmpeg'>Enables support for <pkg>media-video/ffmpeg</pkg>. Recommended.</flag>
+  <flag name='threads'>Enables preliminary support for SMP configuration. Most probably doesn't have any effect at the moment.</flag>
+  <flag name='mesher'>Builds the Vega Strike mesh tool. Presumably used by starship designers for converting 3D models. Optional.</flag>
+  <flag name='server'>Builds the Vega Strike server. Optional.</flag>
+  <flag name='debug'>Enable debugging support.</flag>
+</use>
+</pkgmetadata>

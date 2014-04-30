@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<herd>games</herd>
+<maintainer>
+  <email>nikai@nikai.net</email>
+</maintainer>
+<longdescription>Vega Strike is an Open Source 3D Action-Space-Sim that lets you trade, fight, and explore in a vast universe.  The data branch of Vega Strike contains 3D models, textures and backgrounds, and also documentation and python scripts.  Parts of this branch are generated from original master files in the master branch.  The data branch is required to play the game.</longdescription>
+</pkgmetadata>

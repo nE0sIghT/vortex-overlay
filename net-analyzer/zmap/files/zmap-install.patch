@@ -1,0 +1,32 @@
+diff -ur ./zmap-1.0.3/src/Makefile ./zmap-1.0.3-r1/src/Makefile
+--- ./zmap-1.0.3/src/Makefile	2013-08-20 07:00:16.000000000 +0400
++++ ./zmap-1.0.3-r1/src/Makefile	2013-08-20 11:34:41.662034795 +0400
+@@ -3,11 +3,11 @@
+ LDLIBS+= -lpcap -lgmp -lm
+ TARGETS=zmap
+ VPATH=../lib:output_modules:probe_modules
+-PREFIX=/usr/local
++PREFIX=${DESTDIR}usr
+ 
+-INSTALL=install
+-INSTALLDATA=install -m 644
+-mandir=/usr/share/man/man1/
++INSTALL=/usr/bin/install -c
++INSTALLDATA=${INSTALL} -m 644
++mandir=${DESTDIR}usr/share/man/man1/
+ bindir=$(PREFIX)/sbin
+ 
+ # Hardening and warnings for building with gcc
+@@ -52,9 +52,9 @@
+ 	gengetopt -C --no-help --no-version -i $^ -F $*
+ 
+ install: zmap
+-	$(INSTALL) zmap $(bindir)/zmap
+-	test -d /etc/zmap || (mkdir /etc/zmap && $(INSTALLDATA) ../conf/* /etc/zmap/)
+-	$(INSTALLDATA) ./zmap.1 $(mandir)
++	$(INSTALL) -D zmap $(bindir)/zmap
++	test -d ${DESTDIR}/etc/zmap || (mkdir -p ${DESTDIR}/etc/zmap && $(INSTALLDATA) ../conf/* ${DESTDIR}/etc/zmap/)
++	mkdir -p $(mandir) && $(INSTALLDATA) -D -t $(mandir) ./zmap.1
+ 	echo "\n\n\n\n**************\nSuccess! ZMap is installed. Try running (as root):\nzmap -p 80 -N 10 -B 1M -o -\n**************"
+ 
+ clean:
