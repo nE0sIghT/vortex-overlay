@@ -1,0 +1,18 @@
+diff -ur ./CorsixTH-0.30/CorsixTH/CMakeLists.txt ./CorsixTH-0.30-naming/CorsixTH/CMakeLists.txt
+--- ./CorsixTH-0.30/CorsixTH/CMakeLists.txt	2013-12-01 20:49:04.000000000 +0400
++++ ./CorsixTH-0.30-naming/CorsixTH/CMakeLists.txt	2014-05-06 19:29:03.669405200 +0400
+@@ -223,10 +223,10 @@
+   ENDIF()
+   
+ ELSE()
+-  install(TARGETS CorsixTH RUNTIME DESTINATION CorsixTH)
+-  install(DIRECTORY Lua Levels DESTINATION CorsixTH PATTERN "*.svn" EXCLUDE)
+-  install(DIRECTORY Bitmap DESTINATION CorsixTH
++  install(TARGETS CorsixTH RUNTIME DESTINATION corsix-th)
++  install(DIRECTORY Lua Levels DESTINATION corsix-th PATTERN "*.svn" EXCLUDE)
++  install(DIRECTORY Bitmap DESTINATION corsix-th
+         FILES_MATCHING REGEX ".*\\.(tab|pal|dat|png)$"
+         PATTERN "*.svn" EXCLUDE)
+-  install(FILES CorsixTH.lua CorsixTH.ico DESTINATION CorsixTH )
++  install(FILES CorsixTH.lua CorsixTH.ico DESTINATION corsix-th )
+ ENDIF()
