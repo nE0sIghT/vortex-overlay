@@ -1,1 +1,0 @@
-/usr/portage/app-emulation/emul-linux-x86-baselibs/emul-linux-x86-baselibs-20140406-r1.ebuild
