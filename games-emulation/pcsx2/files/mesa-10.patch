@@ -1,34 +1,13 @@
-From d044147698e3b4e45da77b488ba7834d735bd033 Mon Sep 17 00:00:00 2001
-From: "gregory.hainaut" <gregory.hainaut@96395faa-99c1-11dd-bbfe-3dabce05a288>
-Date: Thu, 13 Mar 2014 17:37:40 +0000
-Subject: [PATCH] linux: fix compilation issue with recent Mesa (gentoo)
-
-git-svn-id: http://pcsx2.googlecode.com/svn/trunk@5928 96395faa-99c1-11dd-bbfe-3dabce05a288
----
- plugins/GSdx/GLLoader.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/plugins/GSdx/GLLoader.h b/plugins/GSdx/GLLoader.h
-index 7df5738..cab8646 100644
---- a/plugins/GSdx/GLLoader.h
-+++ b/plugins/GSdx/GLLoader.h
-@@ -22,6 +22,16 @@
- #pragma once
+diff -ur ./pcsx2-1.2.2/plugins/GSdx/stdafx.h ./pcsx2-1.2.2-r1/plugins/GSdx/stdafx.h
+--- ./pcsx2-1.2.2/plugins/GSdx/stdafx.h	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/plugins/GSdx/stdafx.h	2014-05-19 00:53:09.835978801 +0400
+@@ -195,6 +195,9 @@
+ 	// Note use GL/glcorearb.h on the future
+ 	#include <GL/gl.h>
+ 	#include <GL/glext.h>
++        #ifndef PFNGLBLENDCOLORPROC
++              typedef void (APIENTRYP PFNGLBLENDCOLORPROC) (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
++        #endif
+ #endif
+ 	#include "GLLoader.h"
  
- #ifndef ENABLE_GLES
-+// FIX compilation issue with Mesa 10
-+// Note it might be possible to do better with the right include 
-+// in the rigth order but I don't have time
-+#ifndef APIENTRY
-+#define APIENTRY
-+#endif
-+#ifndef APIENTRYP
-+#define APIENTRYP APIENTRY *
-+#endif
-+
- // Allow compilation with older mesa
- 
- #ifndef GL_ARB_copy_image
--- 
-1.9.3
-
