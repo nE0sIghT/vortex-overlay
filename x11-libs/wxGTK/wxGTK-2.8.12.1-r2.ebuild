@@ -1,53 +1,50 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-3.0.0.0.ebuild,v 1.3 2014/01/27 17:35:05 dirtyepic Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-2.8.12.1-r1.ebuild,v 1.11 2014/03/19 16:14:28 ago Exp $
 
 EAPI="5"
 
-inherit eutils flag-o-matic multilib-minimal
+inherit eutils flag-o-matic versionator multilib-minimal
 
 DESCRIPTION="GTK+ version of wxWidgets, a cross-platform C++ GUI toolkit"
 HOMEPAGE="http://wxwidgets.org/"
 
+BASE_PV="$(get_version_component_range 1-3)"
+BASE_P="${PN}-${BASE_PV}"
+
 # we use the wxPython tarballs because they include the full wxGTK sources and
 # docs, and are released more frequently than wxGTK.
-SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${PV}.tar.bz2
-	doc? ( mirror://sourceforge/wxpython/wxPython-docs-${PV}.tar.bz2 )"
+SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${PV}.tar.bz2"
 
 KEYWORDS="~amd64 ~x86"
-IUSE="+X aqua doc debug gstreamer libnotify opengl sdl tiff webkit"
+IUSE="+X aqua doc debug gnome gstreamer odbc opengl pch sdl tiff"
 
-SLOT="3.0"
+SLOT="2.8"
 
 RDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
+	odbc?   ( dev-db/unixODBC )
 	sdl?    ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	X?  (
-		>=dev-libs/glib-2.22:2[${MULTILIB_USEDEP}]
+		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		media-libs/libpng:0=[${MULTILIB_USEDEP}]
 		sys-libs/zlib[${MULTILIB_USEDEP}]
 		virtual/jpeg[${MULTILIB_USEDEP}]
-		>=x11-libs/gtk+-2.18:2[${MULTILIB_USEDEP}]
-		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
+		x11-libs/gtk+:2[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
+		x11-libs/libXinerama[${MULTILIB_USEDEP}]
 		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
 		x11-libs/pango[X,${MULTILIB_USEDEP}]
+		gnome?  ( gnome-base/libgnomeprintui:2.2 )
 		gstreamer? (
 			media-libs/gstreamer:0.10
 			media-libs/gst-plugins-base:0.10
-			abi_x86_32? (
-				app-emulation/emul-linux-x86-gstplugins
-			)
-		)
-		libnotify? (
-			x11-libs/libnotify
 			amd64? (
-				app-emulation/emul-linux-x86-gtklibs
+			    abi_x86_32? ( app-emulation/emul-linux-x86-gstplugins )
 			)
 		)
 		opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
-		webkit? ( net-libs/webkit-gtk:2[${MULTILIB_USEDEP}] )
 		)
 	aqua? (
 		>=x11-libs/gtk+-2.4[${MULTILIB_USEDEP},aqua=]
@@ -56,48 +53,56 @@ RDEPEND="
 		)"
 
 DEPEND="${RDEPEND}
-	virtual/pkgconfig
-	opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
-	X?  (
-		x11-proto/xproto[${MULTILIB_USEDEP}]
-		x11-proto/xineramaproto[${MULTILIB_USEDEP}]
-		x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
-		)"
+		virtual/pkgconfig
+		opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
+		X?  (
+			x11-proto/xproto[${MULTILIB_USEDEP}]
+			x11-proto/xineramaproto[${MULTILIB_USEDEP}]
+			x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
+			)"
 
-PDEPEND=">=app-admin/eselect-wxwidgets-20131230"
+PDEPEND=">=app-admin/eselect-wxwidgets-0.7"
 
 LICENSE="wxWinLL-3
 		GPL-2
+		odbc?	( LGPL-2 )
 		doc?	( wxWinFDL-3 )"
 
 S="${WORKDIR}/wxPython-src-${PV}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-collision.patch
-	epatch_user
+	epatch "${FILESDIR}"/${PN}-2.8.11-unicode-odbc.patch
+	epatch "${FILESDIR}"/${PN}-2.8.11-collision.patch
+	epatch "${FILESDIR}"/${PN}-2.8.7-mmedia.patch              # Bug #174874
+	epatch "${FILESDIR}"/${PN}-2.8.10.1-odbc-defines.patch     # Bug #310923
 
-#	multilib_copy_sources
+	# x32 https://bugs.gentoo.org/421851
+	sed -i -e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" configure || die
+
+	# prefix https://bugs.gentoo.org/394123
+	sed -i -e "s:/usr:${EPREFIX}/usr:g" \
+		-e '/SEARCH_INCLUDE="\\/,/"/cSEARCH_INCLUDE="'${EPREFIX}'/usr/include"' \
+		configure || die
+
+	epatch_user
 }
 
 multilib_src_configure() {
 	local myconf
 
+	append-flags -fno-strict-aliasing
+
 	# X independent options
-	myconf="
+	myconf="--enable-compat26
+			--enable-shared
+			--enable-unicode
+			--with-regex=builtin
 			--with-zlib=sys
 			--with-expat=sys
-			--enable-compat28
-			$(use_with sdl)"
-
-	# debug in >=2.9
-	# there is no longer separate debug libraries (gtk2ud)
-	# wxDEBUG_LEVEL=1 is the default and we will leave it enabled
-	# wxDEBUG_LEVEL=2 enables assertions that have expensive runtime costs.
-	# apps can disable these features by building w/ -NDEBUG or wxDEBUG_LEVEL_0.
-	# http://docs.wxwidgets.org/3.0/overview_debugging.html
-	# http://groups.google.com/group/wx-dev/browse_thread/thread/c3c7e78d63d7777f/05dee25410052d9c
-	use debug \
-		&& myconf="${myconf} --enable-debug=max"
+			$(use_enable debug)
+			$(use_enable pch precomp-headers)
+			$(use_with sdl)
+			$(use_with tiff libtiff sys)"
 
 	# wxGTK options
 	#   --enable-graphics_ctx - needed for webkit, editra
@@ -105,17 +110,14 @@ multilib_src_configure() {
 	use X && \
 		myconf="${myconf}
 			--enable-graphics_ctx
-			--with-gtkprint
 			--enable-gui
 			--with-libpng=sys
 			--with-libxpm=sys
 			--with-libjpeg=sys
-			--without-gnomevfs
 			$(use_enable gstreamer mediactrl)
-			$(use_enable webkit webview)
-			$(use_with libnotify)
+			$(use_enable opengl)
 			$(use_with opengl)
-			$(use_with tiff libtiff sys)"
+			--without-gnomevfs"
 
 	use aqua && \
 		myconf="${myconf}
@@ -134,7 +136,26 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
+	# No multilib versions for unixODBC & libgnomeprintui
+	if multilib_is_native_abi; then
+		myconf="${myconf}
+			$(use_with odbc odbc sys)"
+		if use X; then
+			myconf="${myconf}
+				$(use_with gnome gnomeprint)"
+		fi
+	fi
+
 	ECONF_SOURCE="${S}" econf ${myconf}
+}
+
+multilib_src_compile() {
+	emake
+
+	if [[ -d contrib/src ]]; then
+		cd contrib/src
+		emake
+	fi
 }
 
 multilib_src_install() {
@@ -142,20 +163,20 @@ multilib_src_install() {
 
 	if multilib_is_native_abi; then
 		cd "${S}"/docs
-		dodoc changes.txt readme.txt
+		dodoc changes.txt readme.txt todo30.txt
 		newdoc base/readme.txt base_readme.txt
 		newdoc gtk/readme.txt gtk_readme.txt
 
 		if use doc; then
-			dohtml -r "${S}"/docs/doxygen/out/html/*
+			dohtml -r "${S}"/docs/html/*
 		fi
 
 		# Stray windows locale file, causes collisions
 		local wxmsw="${ED}usr/share/locale/it/LC_MESSAGES/wxmsw.mo"
 		[[ -e ${wxmsw} ]] && rm "${wxmsw}"
 	else
-		dosym /usr/$(get_libdir)/wx/config/gtk2-unicode-${SLOT} /usr/bin/wx-config-${SLOT}-${ABI}
-	fi 
+		dosym /usr/$(get_libdir)/wx/config/gtk2-unicode-release-${SLOT} /usr/bin/wx-config-${SLOT}-${ABI}
+	fi
 }
 
 pkg_postinst() {
