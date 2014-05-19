@@ -6,7 +6,7 @@ EAPI=5
 
 WX_GTK_VER="2.8"
 
-inherit cmake-utils wxwidgets games multilib
+inherit wxwidgets games multilib cmake-utils
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
@@ -106,6 +106,8 @@ src_prepare() {
 	! use sound && sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
 
 	epatch "${FILESDIR}/cg-multilib.patch"
+	# Workaround broken glext.h
+	# https://bugs.gentoo.org/show_bug.cgi?id=510730
 	epatch "${FILESDIR}/mesa-10.patch"
 
 	einfo "Cleaning up locales..."
