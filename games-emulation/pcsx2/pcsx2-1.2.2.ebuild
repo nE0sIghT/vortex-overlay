@@ -6,7 +6,7 @@ EAPI=5
 
 WX_GTK_VER="2.8"
 
-inherit wxwidgets games multilib cmake-utils
+inherit wxwidgets cmake-utils games multilib
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
@@ -30,12 +30,6 @@ LANGS="ar cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_M
 for lang in ${LANGS}; do
         IUSE+=" linguas_${lang}"
 done
-
-if use debug; then
-	CMAKE_BUILD_TYPE="Debug"
-else
-	CMAKE_BUILD_TYPE="Release"
-fi
 
 RDEPEND="
 	!amd64? (
@@ -96,19 +90,33 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	>=dev-cpp/sparsehash-1.5
 "
-src_prepare() {
-	! use iso && sed -i -e "s:CDVDiso TRUE:CDVDiso FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
-	! use dvd && sed -i -e "s:CDVDlinuz TRUE:CDVDlinuz FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
-	! use egl && sed -i -e "s:GSdx TRUE:GSdx FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
-	( ! use glew || ! use cg ) && sed -i -e "s:zerogs TRUE:zerogs FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
-	( ! use glew ) && sed -i -e "s:zzogl TRUE:zzogl FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
-	! use joystick && sed -i -e "s:onepad TRUE:onepad FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
-	! use sound && sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" -i cmake/SelectPcsx2Plugins.cmake
 
-	epatch "${FILESDIR}/cg-multilib.patch"
-	# Workaround broken glext.h
-	# https://bugs.gentoo.org/show_bug.cgi?id=510730
-	epatch "${FILESDIR}/mesa-10.patch"
+PATCHES=(
+	# Fix Cg find for Gentoo amd64
+	"${FILESDIR}"/cg-multilib.patch
+	# Workaround broken glext.h, bug #510730
+	"${FILESDIR}"/mesa-10.patch
+)
+
+if use debug; then
+	CMAKE_BUILD_TYPE="Debug"
+else
+	CMAKE_BUILD_TYPE="Release"
+fi
+
+src_prepare() {
+	cmake-utils_src_prepare
+
+	! use iso && sed -i -e "s:CDVDiso TRUE:CDVDiso FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	! use dvd && sed -i -e "s:CDVDlinuz TRUE:CDVDlinuz FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	! use egl && sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	( ! use glew || ! use cg ) && sed -i -e "s:zerogs TRUE:zerogs FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	( ! use glew ) && sed -i -e "s:zzogl TRUE:zzogl FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	! use joystick && sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	! use sound && sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake
+
+	# Remove default CFLAGS
+	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake
 
 	einfo "Cleaning up locales..."
 	for lang in ${LANGS}; do
@@ -118,6 +126,8 @@ src_prepare() {
 		}
 		rm -Rf "${S}"/locales/"${lang}" || die
 	done
+
+	epatch_user
 }
 
 src_configure() {
@@ -135,6 +145,10 @@ src_configure() {
 	"
 
 	cmake-utils_src_configure
+}
+
+src_compile() {
+	cmake-utils_src_compile
 }
 
 src_install() {
