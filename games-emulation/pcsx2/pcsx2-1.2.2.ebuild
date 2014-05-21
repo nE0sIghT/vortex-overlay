@@ -6,7 +6,7 @@ EAPI=5
 
 WX_GTK_VER="2.8"
 
-inherit wxwidgets cmake-utils games multilib
+inherit wxwidgets cmake-utils multilib games
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
@@ -14,9 +14,9 @@ SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~x86 ~amd64"
+KEYWORDS="~amd64 ~x86"
 
-IUSE="abi_x86_32 cg debug dvd egl glew glsl iso joystick sdl sound video"
+IUSE="abi_x86_32 cg debug egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
     abi_x86_32
     glew? ( || ( cg glsl ) )
@@ -32,59 +32,33 @@ for lang in ${LANGS}; do
 done
 
 RDEPEND="
-	!amd64? (
-		app-arch/bzip2
-		dev-libs/libaio
-		virtual/jpeg:62
-		x11-libs/gtk+:2
-		x11-libs/libICE
-		x11-libs/libX11
-		x11-libs/libXext
-		x11-libs/wxGTK:2.8
-		>=sys-libs/zlib-1.2.4
+	app-arch/bzip2[abi_x86_32]
+	dev-libs/libaio[abi_x86_32]
+	virtual/jpeg:62[abi_x86_32]
+	x11-libs/gtk+:2[abi_x86_32]
+	x11-libs/libICE[abi_x86_32]
+	x11-libs/libX11[abi_x86_32]
+	x11-libs/libXext[abi_x86_32]
+	x11-libs/wxGTK:2.8[abi_x86_32]
+	>=sys-libs/zlib-1.2.4[abi_x86_32]
 
-		video? (
-			virtual/opengl
+	video? (
+		virtual/opengl[abi_x86_32]
 
-			cg? ( media-gfx/nvidia-cg-toolkit )
-			egl? ( media-libs/mesa[egl] )
-			glew? ( media-libs/glew )
+		cg? (
+			x86? ( media-gfx/nvidia-cg-toolkit )
+			amd64? ( media-gfx/nvidia-cg-toolkit[multilib] )
 		)
-
-		sdl? ( media-libs/libsdl[joystick?,sound?] )
-
-		sound? (
-			media-libs/alsa-lib
-			media-libs/libsoundtouch
-			media-libs/portaudio
-		)
+		egl? ( media-libs/mesa[abi_x86_32,egl] )
+		glew? ( media-libs/glew[abi_x86_32] )
 	)
-	amd64? (
-		app-arch/bzip2[abi_x86_32]
-		dev-libs/libaio[abi_x86_32]
-		virtual/jpeg:62[abi_x86_32]
-		x11-libs/gtk+:2[abi_x86_32]
-		x11-libs/libICE[abi_x86_32]
-		x11-libs/libX11[abi_x86_32]
-		x11-libs/libXext[abi_x86_32]
-		x11-libs/wxGTK:2.8[abi_x86_32]
-		>=sys-libs/zlib-1.2.4[abi_x86_32]
 
-		video? (
-			virtual/opengl[abi_x86_32]
+	sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
 
-			cg? ( media-gfx/nvidia-cg-toolkit[multilib] )
-			egl? ( media-libs/mesa[abi_x86_32,egl] )
-			glew? ( media-libs/glew[abi_x86_32] )
-		)
-
-		sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
-
-		sound? (
-			media-libs/alsa-lib[abi_x86_32]
-			media-libs/libsoundtouch[abi_x86_32]
-			media-libs/portaudio[abi_x86_32]
-		)
+	sound? (
+		media-libs/alsa-lib[abi_x86_32]
+		media-libs/libsoundtouch[abi_x86_32]
+		media-libs/portaudio[abi_x86_32]
 	)
 "
 DEPEND="${RDEPEND}
@@ -98,25 +72,17 @@ PATCHES=(
 	"${FILESDIR}"/mesa-10.patch
 )
 
-if use debug; then
-	CMAKE_BUILD_TYPE="Debug"
-else
-	CMAKE_BUILD_TYPE="Release"
-fi
-
 src_prepare() {
 	cmake-utils_src_prepare
 
-	! use iso && sed -i -e "s:CDVDiso TRUE:CDVDiso FALSE:g" cmake/SelectPcsx2Plugins.cmake
-	! use dvd && sed -i -e "s:CDVDlinuz TRUE:CDVDlinuz FALSE:g" cmake/SelectPcsx2Plugins.cmake
-	! use egl && sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake
-	( ! use glew || ! use cg ) && sed -i -e "s:zerogs TRUE:zerogs FALSE:g" cmake/SelectPcsx2Plugins.cmake
-	( ! use glew ) && sed -i -e "s:zzogl TRUE:zzogl FALSE:g" cmake/SelectPcsx2Plugins.cmake
-	! use joystick && sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake
-	! use sound && sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake
+	! use egl && ( sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
+	( ! use glew || ! use cg ) && ( sed -i -e "s:zerogs TRUE:zerogs FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
+	( ! use glew ) && ( sed -i -e "s:zzogl TRUE:zzogl FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
+	! use joystick && ( sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
+	! use sound && ( sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
 
 	# Remove default CFLAGS
-	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake
+	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
 
 	einfo "Cleaning up locales..."
 	for lang in ${LANGS}; do
@@ -133,16 +99,23 @@ src_prepare() {
 src_configure() {
 	use amd64 && local ABI=x86
 
-	mycmakeargs="
+	if use debug; then
+		CMAKE_BUILD_TYPE="Debug"
+	else
+		CMAKE_BUILD_TYPE="Release"
+	fi
+
+	local mycmakeargs=(
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
-		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
-		-DPLUGIN_DIR_COMPILATION=$(games_get_libdir)/${PN}
 		-DCMAKE_INSTALL_PREFIX=/usr
 		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/${PN}
+		-DGAMEINDEX_DIR=${GAMES_DATADIR}/${PN}
+		-DGLSL_SHADER_DIR=${GAMES_DATADIR}/${PN}
+		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
 		$(cmake-utils_use egl EGL_API)
 		$(cmake-utils_use glsl GLSL_API)
-	"
+	)
 
 	cmake-utils_src_configure
 }
@@ -155,7 +128,7 @@ src_install() {
 	cmake-utils_src_install DESTDIR=${D}
 
 	# move binary files to correct directory
-	mv ${D}/usr/bin ${D}/usr/games/bin || die
+	mv ${D}/usr/bin ${D}/${GAMES_BINDIR} || die
 
 	prepgamesdirs
 }
