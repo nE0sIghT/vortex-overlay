@@ -16,9 +16,8 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="abi_x86_32 cg debug egl glew glsl joystick sdl sound video"
+IUSE="cg egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
-    abi_x86_32
     glew? ( || ( cg glsl ) )
     joystick? ( sdl )
     sound? ( sdl )
@@ -75,11 +74,21 @@ PATCHES=(
 src_prepare() {
 	cmake-utils_src_prepare
 
-	! use egl && ( sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
-	( ! use glew || ! use cg ) && ( sed -i -e "s:zerogs TRUE:zerogs FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
-	( ! use glew ) && ( sed -i -e "s:zzogl TRUE:zzogl FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
-	! use joystick && ( sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
-	! use sound && ( sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake || die )
+	if ! use egl; then
+		sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
+	fi
+	if ! use glew || ! use cg; then
+		sed -i -e "s:zerogs TRUE:zerogs FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
+	fi
+	if ! use glew; then
+		sed -i -e "s:zzogl TRUE:zzogl FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
+	fi
+	if ! use joystick; then
+		sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
+	fi
+	if ! use sound; then
+		sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
+	fi
 
 	# Remove default CFLAGS
 	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
@@ -97,13 +106,11 @@ src_prepare() {
 }
 
 src_configure() {
-	use amd64 && local ABI=x86
+	multilib_toolchain_setup x86
 
-	if use debug; then
-		CMAKE_BUILD_TYPE="Debug"
-	else
-		CMAKE_BUILD_TYPE="Release"
-	fi
+	# pcsx2 build scripts will force CMAKE_BUILD_TYPE=Devel
+	# if it something other than "Devel|Debug|Release"
+	local CMAKE_BUILD_TYPE="Release"
 
 	local mycmakeargs=(
 		-DPACKAGE_MODE=TRUE
@@ -125,7 +132,7 @@ src_compile() {
 }
 
 src_install() {
-	cmake-utils_src_install DESTDIR=${D}
+	cmake-utils_src_install DESTDIR="${D}"
 
 	# move binary files to correct directory
 	mv ${D}/usr/bin ${D}/${GAMES_BINDIR} || die
