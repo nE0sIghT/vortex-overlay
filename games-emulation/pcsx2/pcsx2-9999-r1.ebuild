@@ -4,17 +4,20 @@
 
 EAPI=5
 
-WX_GTK_VER="2.8"
-
 inherit wxwidgets cmake-utils multilib games
+if [[ ${PV} == "9999" ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
+else
+	KEYWORDS="~amd64 ~x86"
+	SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+fi
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
-SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
 
 IUSE="cg egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
@@ -38,7 +41,7 @@ RDEPEND="
 	x11-libs/libICE[abi_x86_32]
 	x11-libs/libX11[abi_x86_32]
 	x11-libs/libXext[abi_x86_32]
-	x11-libs/wxGTK:2.8[abi_x86_32]
+	x11-libs/wxGTK:2.8[abi_x86_32,X]
 	>=sys-libs/zlib-1.2.4[abi_x86_32]
 
 	video? (
@@ -65,11 +68,13 @@ DEPEND="${RDEPEND}
 "
 
 PATCHES=(
-	# Fix Cg find for Gentoo amd64
-	"${FILESDIR}"/cg-multilib.patch
 	# Workaround broken glext.h, bug #510730
 	"${FILESDIR}"/mesa-10.patch
 )
+if [[ ${PV} == "1.2.2" ]]; then
+	# Fix Cg find for Gentoo amd64
+	PATCHES+=("${FILESDIR}"/cg-multilib.patch)
+fi
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -107,10 +112,10 @@ src_prepare() {
 
 src_configure() {
 	multilib_toolchain_setup x86
-
 	# pcsx2 build scripts will force CMAKE_BUILD_TYPE=Devel
 	# if it something other than "Devel|Debug|Release"
 	local CMAKE_BUILD_TYPE="Release"
+	WX_GTK_VER="2.8" need-wxwidgets unicode
 
 	local mycmakeargs=(
 		-DPACKAGE_MODE=TRUE
