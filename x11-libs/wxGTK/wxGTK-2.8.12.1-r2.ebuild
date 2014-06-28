@@ -23,7 +23,7 @@ SLOT="2.8"
 
 RDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
-	odbc?   ( dev-db/unixODBC )
+	odbc?   ( dev-db/unixODBC[${MULTILIB_USEDEP}] )
 	sdl?    ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	X?  (
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -35,13 +35,11 @@ RDEPEND="
 		x11-libs/libXinerama[${MULTILIB_USEDEP}]
 		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
 		x11-libs/pango[X,${MULTILIB_USEDEP}]
-		gnome?  ( gnome-base/libgnomeprintui:2.2 )
+		gnome?  ( gnome-base/libgnomeprintui:2.2[${MULTILIB_USEDEP}] )
 		gstreamer? (
-			media-libs/gstreamer:0.10
-			media-libs/gst-plugins-base:0.10
-			amd64? (
-			    abi_x86_32? ( app-emulation/emul-linux-x86-gstplugins )
-			)
+			gnome-base/gconf:2[${MULTILIB_USEDEP}]
+			media-libs/gstreamer:0.10[${MULTILIB_USEDEP}]
+			media-libs/gst-plugins-base:0.10[${MULTILIB_USEDEP}]
 		)
 		opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
@@ -53,7 +51,7 @@ RDEPEND="
 		)"
 
 DEPEND="${RDEPEND}
-		virtual/pkgconfig
+		virtual/pkgconfig[${MULTILIB_USEDEP}]
 		opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
 		X?  (
 			x11-proto/xproto[${MULTILIB_USEDEP}]
@@ -101,6 +99,7 @@ multilib_src_configure() {
 			--with-expat=sys
 			$(use_enable debug)
 			$(use_enable pch precomp-headers)
+			$(use_with odbc odbc sys)
 			$(use_with sdl)
 			$(use_with tiff libtiff sys)"
 
@@ -117,6 +116,7 @@ multilib_src_configure() {
 			$(use_enable gstreamer mediactrl)
 			$(use_enable opengl)
 			$(use_with opengl)
+			$(use_with gnome gnomeprint)
 			--without-gnomevfs"
 
 	use aqua && \
@@ -136,16 +136,6 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
-	# No multilib versions for unixODBC & libgnomeprintui
-	if multilib_is_native_abi; then
-		myconf="${myconf}
-			$(use_with odbc odbc sys)"
-		if use X; then
-			myconf="${myconf}
-				$(use_with gnome gnomeprint)"
-		fi
-	fi
-
 	ECONF_SOURCE="${S}" econf ${myconf}
 }
 
@@ -161,21 +151,26 @@ multilib_src_compile() {
 multilib_src_install() {
 	default
 
+	if [[ -d contrib/src ]]; then
+		cd contrib/src
+		emake DESTDIR="${D}" install
+	fi
+
 	if multilib_is_native_abi; then
-		cd "${S}"/docs
-		dodoc changes.txt readme.txt todo30.txt
-		newdoc base/readme.txt base_readme.txt
-		newdoc gtk/readme.txt gtk_readme.txt
-
-		if use doc; then
-			dohtml -r "${S}"/docs/html/*
-		fi
-
 		# Stray windows locale file, causes collisions
 		local wxmsw="${ED}usr/share/locale/it/LC_MESSAGES/wxmsw.mo"
 		[[ -e ${wxmsw} ]] && rm "${wxmsw}"
-	else
-		dosym /usr/$(get_libdir)/wx/config/gtk2-unicode-release-${SLOT} /usr/bin/wx-config-${SLOT}-${ABI}
+	fi
+}
+
+multilib_src_install_all() {
+	cd "${S}"/docs
+	dodoc changes.txt readme.txt todo30.txt
+	newdoc base/readme.txt base_readme.txt
+	newdoc gtk/readme.txt gtk_readme.txt
+
+	if use doc; then
+		dohtml -r "${S}"/docs/html/*
 	fi
 }
 
