@@ -1,0 +1,66 @@
+diff --git a/configure.ac b/configure.ac
+index 508d2a1..6a772a7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2,9 +2,10 @@
+ # Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ(2.59)
+-AC_INIT([libguess], [1.1], [bugs+libguess@atheme.org])
++AC_INIT([libguess], [1.2], [bugs+libguess@atheme.org])
+ AC_CONFIG_SRCDIR([src/libguess/guess.c])
+ AC_CONFIG_HEADER([src/libguess/autoconf.h])
++AC_CONFIG_MACRO_DIR([m4])
+ 
+ AC_CANONICAL_HOST
+ AC_CANONICAL_TARGET
+@@ -40,7 +41,7 @@ AC_CHECK_FUNCS([memset setlocale strcasecmp strchr strdup strerror strtol strtod
+ AC_CHECK_FUNCS([printf sprintf snprintf vsnprintf gettimeofday strndup strlcpy strlcat])
+ AC_FUNC_STAT
+ 
+-PKG_CHECK_MODULES([MOWGLI], [libmowgli >= 0.9.50], [], [AC_MSG_ERROR([Install Mowgli from http://atheme.org/project/mowgli.])])
++PKG_CHECK_MODULES([MOWGLI], [libmowgli-2 >= 2.0.0], [], [AC_MSG_ERROR([Install Mowgli from http://atheme.org/project/mowgli.])])
+ 
+ # Check for optional features.
+ EXAMPLES_BUILD=""
+diff --git a/src/libguess/guess.c b/src/libguess/guess.c
+index 2c55d95..2a3845c 100644
+--- a/src/libguess/guess.c
++++ b/src/libguess/guess.c
+@@ -19,11 +19,9 @@ guess_impl_register(const char *lang, guess_impl_f impl)
+     mowgli_patricia_add(guess_impl_list, lang, impl);
+ }
+ 
+-static void
+-guess_init(void)
++void
++libguess_init(void)
+ {
+-    mowgli_init();
+-
+     /* check if already initialized */
+     if (guess_impl_list != NULL)
+         return;
+@@ -48,7 +46,7 @@ libguess_determine_encoding(const char *inbuf, int buflen, const char *lang)
+ {
+     guess_impl_f impl;
+ 
+-    guess_init();
++    libguess_init();
+ 
+     impl = mowgli_patricia_retrieve(guess_impl_list, lang);
+     if (impl != NULL)
+diff --git a/src/libguess/libguess.h b/src/libguess/libguess.h
+index 0d49477..b5c641f 100644
+--- a/src/libguess/libguess.h
++++ b/src/libguess/libguess.h
+@@ -82,4 +82,9 @@ typedef void (*libguess_result_f)(const char *encodingname, const char *res);
+ 
+ const char *libguess_determine_encoding(const char *buf, int buflen, const char *langset);
+ 
++/* In a multi-threaded application, libguess must be initialized before use in
++ * order to prevent race conditions.  In a single-threaded application, calling
++ * libguess_init() explicitly is not necessary. */
++void libguess_init(void);
++
+ #endif
