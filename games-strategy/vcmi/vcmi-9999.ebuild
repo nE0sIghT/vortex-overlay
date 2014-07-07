@@ -81,11 +81,11 @@ src_install() {
 	dodir /etc/ld.so.conf.d/
 	echo "$(games_get_libdir)/${PN}" > ${ED}/etc/ld.so.conf.d/10${PN}.conf || die
 
-	einfo "In order to play VCMI you must install:"
-	einfo "- Heroes III: Shadow of Death or Complete edition;"
-	einfo "- Unnoficial WoG addon;"
-	einfo "- VCMI data files."
-	einfo "Use vcmibuilder tool for automated install of data files;"
-	einfo "Additional information can be found in VCMI wiki:"
-	einfo "http://wiki.vcmi.eu/index.php?title=Installation_on_Linux#Installing_Heroes_III_data_files"
+	elog "In order to play VCMI you must install:"
+	elog "- Heroes III: Shadow of Death or Complete edition;"
+	elog "- Unnoficial WoG addon;"
+	elog "- VCMI data files."
+	elog "Use vcmibuilder tool for automated install of data files;"
+	elog "Additional information can be found in VCMI wiki:"
+	elog "http://wiki.vcmi.eu/index.php?title=Installation_on_Linux#Installing_Heroes_III_data_files"
 }
