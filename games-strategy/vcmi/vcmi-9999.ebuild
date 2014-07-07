@@ -21,11 +21,6 @@ SLOT="0"
 
 IUSE="editor erm +launcher"
 
-#LANGS="ar cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
-#for lang in ${LANGS}; do
-#        IUSE+=" linguas_${lang}"
-#done
-
 RDEPEND="
 	>=dev-libs/boost-1.48
 	media-libs/libsdl2
