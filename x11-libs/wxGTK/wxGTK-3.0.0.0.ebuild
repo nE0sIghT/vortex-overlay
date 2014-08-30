@@ -33,11 +33,8 @@ RDEPEND="
 		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
 		x11-libs/pango[X,${MULTILIB_USEDEP}]
 		gstreamer? (
-			media-libs/gstreamer:0.10
-			media-libs/gst-plugins-base:0.10
-			abi_x86_32? (
-				app-emulation/emul-linux-x86-gstplugins
-			)
+			media-libs/gstreamer:0.10[${MULTILIB_USEDEP}]
+			media-libs/gst-plugins-base:0.10[${MULTILIB_USEDEP}]
 		)
 		libnotify? (
 			x11-libs/libnotify
@@ -56,7 +53,7 @@ RDEPEND="
 		)"
 
 DEPEND="${RDEPEND}
-	virtual/pkgconfig
+	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
 	X?  (
 		x11-proto/xproto[${MULTILIB_USEDEP}]
@@ -75,8 +72,6 @@ S="${WORKDIR}/wxPython-src-${PV}"
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-collision.patch
 	epatch_user
-
-#	multilib_copy_sources
 }
 
 multilib_src_configure() {
@@ -137,25 +132,29 @@ multilib_src_configure() {
 	ECONF_SOURCE="${S}" econf ${myconf}
 }
 
+multilib_src_compile() {
+	default
+}
+
 multilib_src_install() {
 	default
 
 	if multilib_is_native_abi; then
-		cd "${S}"/docs
-		dodoc changes.txt readme.txt
-		newdoc base/readme.txt base_readme.txt
-		newdoc gtk/readme.txt gtk_readme.txt
-
-		if use doc; then
-			dohtml -r "${S}"/docs/doxygen/out/html/*
-		fi
-
 		# Stray windows locale file, causes collisions
 		local wxmsw="${ED}usr/share/locale/it/LC_MESSAGES/wxmsw.mo"
 		[[ -e ${wxmsw} ]] && rm "${wxmsw}"
-	else
-		dosym /usr/$(get_libdir)/wx/config/gtk2-unicode-${SLOT} /usr/bin/wx-config-${SLOT}-${ABI}
 	fi 
+}
+
+multilib_src_install_all() {
+	cd "${S}"/docs
+	dodoc changes.txt readme.txt
+	newdoc base/readme.txt base_readme.txt
+	newdoc gtk/readme.txt gtk_readme.txt
+
+	if use doc; then
+		dohtml -r "${S}"/docs/doxygen/out/html/*
+	fi
 }
 
 pkg_postinst() {
