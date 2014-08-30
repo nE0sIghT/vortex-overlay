@@ -41,8 +41,12 @@ RDEPEND="
 	x11-libs/libICE[abi_x86_32]
 	x11-libs/libX11[abi_x86_32]
 	x11-libs/libXext[abi_x86_32]
-	x11-libs/wxGTK:2.8[abi_x86_32,X]
 	>=sys-libs/zlib-1.2.4[abi_x86_32]
+
+	|| (
+		x11-libs/wxGTK:2.8[abi_x86_32,X]
+		x11-libs/wxGTK:3.0[abi_x86_32,X]
+	)
 
 	video? (
 		virtual/opengl[abi_x86_32]
@@ -72,8 +76,24 @@ PATCHES=(
 	"${FILESDIR}"/mesa-10.patch
 )
 if [[ ${PV} == "1.2.2" ]]; then
-	# Fix Cg find for Gentoo amd64
-	PATCHES+=("${FILESDIR}"/cg-multilib.patch)
+	PATCHES+=(
+		# Fix Cg find for Gentoo amd64
+		"${FILESDIR}"/cg-multilib.patch
+		# Backported wxGTK:3.0 support
+		"${FILESDIR}"/00-wxGTK-3.patch
+		"${FILESDIR}"/01-wxGTK-3.patch
+		"${FILESDIR}"/02-wxGTK-3.patch
+		"${FILESDIR}"/03-wxGTK-3.patch
+		"${FILESDIR}"/04-wxGTK-3.patch
+		"${FILESDIR}"/05-wxGTK-3.patch
+		"${FILESDIR}"/06-wxGTK-3.patch
+		"${FILESDIR}"/07-wxGTK-3.patch
+		"${FILESDIR}"/08-wxGTK-3.patch
+		"${FILESDIR}"/09-wxGTK-3.patch
+		"${FILESDIR}"/10-wxGTK-3.patch
+		"${FILESDIR}"/11-wxGTK-3.patch
+		"${FILESDIR}"/12-wxGTK-3.patch
+	)
 fi
 
 src_prepare() {
@@ -115,7 +135,12 @@ src_configure() {
 	# pcsx2 build scripts will force CMAKE_BUILD_TYPE=Devel
 	# if it something other than "Devel|Debug|Release"
 	local CMAKE_BUILD_TYPE="Release"
-	WX_GTK_VER="2.8" need-wxwidgets unicode
+
+	local WX_GTK_VER="2.8"
+	if has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
+		WX_GTK_VER="3.0"
+	fi
+	need-wxwidgets unicode
 
 	local mycmakeargs=(
 		-DPACKAGE_MODE=TRUE
@@ -128,6 +153,10 @@ src_configure() {
 		$(cmake-utils_use egl EGL_API)
 		$(cmake-utils_use glsl GLSL_API)
 	)
+
+	if [ $WX_GTK_VER == '3.0' ]; then
+		mycmakeargs+=(-DWX28_API=FALSE)
+	fi
 
 	cmake-utils_src_configure
 }

@@ -1,0 +1,64 @@
+commit c73ce3d02df26256c17e6af19958832cc72ba708
+Author: Gregory Hainaut <gregory.hainaut@gmail.com>
+Date:   Sat Jul 12 12:50:29 2014 +0200
+
+    pcsx2: don't use 0&& to remove code
+    
+    It works but compiler is not happy because it is still parsing the full line.
+
+diff --git a/pcsx2/MTGS.cpp b/pcsx2/MTGS.cpp
+index dba3a04..def44a6 100644
+--- a/pcsx2/MTGS.cpp
++++ b/pcsx2/MTGS.cpp
+@@ -34,7 +34,7 @@ using namespace Threading;
+ #if 0 //PCSX2_DEBUG
+ #	define MTGS_LOG Console.WriteLn
+ #else
+-#	define MTGS_LOG 0&&
++#	define MTGS_LOG(...) do {} while (0)
+ #endif
+ 
+ // forces the compiler to treat a non-volatile value as volatile.
+diff --git a/pcsx2/SamplProf.h b/pcsx2/SamplProf.h
+index 7fa918d..e0adb8d 100644
+--- a/pcsx2/SamplProf.h
++++ b/pcsx2/SamplProf.h
+@@ -42,9 +42,9 @@ void ProfilerTerminateSource( const wxString& Name );
+ 
+ #define ProfilerInit() (void)0
+ #define ProfilerTerm() (void)0
+-#define ProfilerSetEnabled 0&&
+-#define ProfilerRegisterSource 0&&
+-#define ProfilerTerminateSource 0&&
++#define ProfilerSetEnabled(...) (void)0
++#define ProfilerRegisterSource(...) (void)0
++#define ProfilerTerminateSource(...) (void)0
+ 
+ #endif
+ 
+diff --git a/pcsx2/x86/microVU_Macro.inl b/pcsx2/x86/microVU_Macro.inl
+index 225c98b..021f894 100644
+--- a/pcsx2/x86/microVU_Macro.inl
++++ b/pcsx2/x86/microVU_Macro.inl
+@@ -26,7 +26,7 @@ static VURegs& vu0Regs = vuRegs[0];
+ 
+ using namespace R5900::Dynarec;
+ 
+-#define printCOP2 0&&
++#define printCOP2(...) (void)0
+ //#define printCOP2 DevCon.Status
+ 
+ void setupMacroOp(int mode, const char* opName) {
+diff --git a/pcsx2/x86/sVU_zerorec.cpp b/pcsx2/x86/sVU_zerorec.cpp
+index 56dbc22..db67a53 100644
+--- a/pcsx2/x86/sVU_zerorec.cpp
++++ b/pcsx2/x86/sVU_zerorec.cpp
+@@ -339,7 +339,7 @@ static void SuperVUEliminateDeadCode();
+ static void SuperVUAssignRegs();
+ 
+ //void SuperVUFreeXMMreg(int xmmreg, int xmmtype, int reg);
+-#define SuperVUFreeXMMreg 0&&
++#define SuperVUFreeXMMreg(...) (void)0
+ void SuperVUFreeXMMregs(u32* livevars);
+ 
+ static u32* SuperVUStaticAlloc(u32 size);

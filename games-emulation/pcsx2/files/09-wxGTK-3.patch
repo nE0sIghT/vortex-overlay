@@ -1,0 +1,106 @@
+commit ac41ba1f735b04548b6c91e48a362d5b72c3c339
+Author: Gregory Hainaut <gregory.hainaut@gmail.com>
+Date:   Thu Jul 3 20:10:10 2014 +0200
+
+    wx3.0: rename some deprecated API call
+    
+    Avoid various gcc warning
+    
+    Note: Compatible with recent wx2.8 version
+
+diff --git a/pcsx2/gui/MainFrame.cpp b/pcsx2/gui/MainFrame.cpp
+index b06d4b3..9ba2490 100644
+--- a/pcsx2/gui/MainFrame.cpp
++++ b/pcsx2/gui/MainFrame.cpp
+@@ -596,7 +596,7 @@ void MainEmuFrame::ApplyCoreStatus()
+ 		if( !CoreThread.IsClosing() )
+ 		{
+ 			susres->Enable();
+-			susres->SetText(_("Pause"));
++			susres->SetItemLabel(_("Pause"));
+ 			susres->SetHelp(_("Safely pauses emulation and preserves the PS2 state."));
+ 		}
+ 		else
+@@ -604,12 +604,12 @@ void MainEmuFrame::ApplyCoreStatus()
+ 			susres->Enable(vm);
+ 			if( vm )
+ 			{
+-				susres->SetText(_("Resume"));
++				susres->SetItemLabel(_("Resume"));
+ 				susres->SetHelp(_("Resumes the suspended emulation state."));
+ 			}
+ 			else
+ 			{
+-				susres->SetText(_("Pause/Resume"));
++				susres->SetItemLabel(_("Pause/Resume"));
+ 				susres->SetHelp(_("No emulation state is active; cannot suspend or resume."));
+ 			}
+ 		}
+@@ -619,7 +619,7 @@ void MainEmuFrame::ApplyCoreStatus()
+ 	{
+ 		if( vm )	
+ 		{
+-			restart->SetText(_("Restart"));
++			restart->SetItemLabel(_("Restart"));
+ 			restart->SetHelp(_("Simulates hardware reset of the PS2 virtual machine."));
+ 		}
+ 		else
+@@ -633,12 +633,12 @@ void MainEmuFrame::ApplyCoreStatus()
+ 	{
+ 		if( vm )
+ 		{
+-			cdvd->SetText(_("Reboot CDVD (full)"));
++			cdvd->SetItemLabel(_("Reboot CDVD (full)"));
+ 			cdvd->SetHelp(_("Hard reset of the active VM."));
+ 		}
+ 		else
+ 		{
+-			cdvd->SetText(_("Boot CDVD (full)"));
++			cdvd->SetItemLabel(_("Boot CDVD (full)"));
+ 			cdvd->SetHelp(_("Boot the VM using the current DVD or Iso source media"));
+ 		}	
+ 	}
+@@ -647,12 +647,12 @@ void MainEmuFrame::ApplyCoreStatus()
+ 	{
+ 		if( vm )
+ 		{
+-			cdvd2->SetText(_("Reboot CDVD (fast)"));
++			cdvd2->SetItemLabel(_("Reboot CDVD (fast)"));
+ 			cdvd2->SetHelp(_("Reboot using fast BOOT (skips splash screens)"));
+ 		}
+ 		else
+ 		{
+-			cdvd2->SetText(_("Boot CDVD (fast)"));
++			cdvd2->SetItemLabel(_("Boot CDVD (fast)"));
+ 			cdvd2->SetHelp(_("Use fast boot to skip PS2 startup and splash screens"));
+ 		}
+ 	}
+diff --git a/pcsx2/gui/Panels/BiosSelectorPanel.cpp b/pcsx2/gui/Panels/BiosSelectorPanel.cpp
+index d72404f..2154127 100644
+--- a/pcsx2/gui/Panels/BiosSelectorPanel.cpp
++++ b/pcsx2/gui/Panels/BiosSelectorPanel.cpp
+@@ -54,7 +54,11 @@ Panels::BaseSelectorPanel::~BaseSelectorPanel() throw()
+ void Panels::BaseSelectorPanel::OnShow(wxShowEvent& evt)
+ {
+ 	evt.Skip();
++#if defined (_MSC_VER) && (wxMAJOR_VERSION < 3)
+ 	if( !evt.GetShow() ) return;
++#else
++	if( !evt.IsShown() ) return;
++#endif
+ 	OnShown();
+ }
+ 
+diff --git a/pcsx2/gui/Saveslots.cpp b/pcsx2/gui/Saveslots.cpp
+index 832c91d..9f0051b 100644
+--- a/pcsx2/gui/Saveslots.cpp
++++ b/pcsx2/gui/Saveslots.cpp
+@@ -148,7 +148,7 @@ void Sstates_updateLoadBackupMenuItem( bool isBeforeSave )
+ 	g_loadBackupMenuItem->Enable( wxFileExists( isBeforeSave && g_Conf->EmuOptions.BackupSavestate ? file : file + L".backup" ) );
+ 	wxString label;
+ 	label.Printf(L"%s %d", _("Backup"), slot );
+-	g_loadBackupMenuItem->SetText( label );
++	g_loadBackupMenuItem->SetItemLabel( label );
+ }
+ 
+ void States_SetCurrentSlot( int slot )

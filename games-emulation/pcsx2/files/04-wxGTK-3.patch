@@ -1,0 +1,1473 @@
+diff -ur ./pcsx2-1.2.2/common/include/Utilities/SafeArray.inl ./pcsx2-1.2.2-r1/common/include/Utilities/SafeArray.inl
+--- ./pcsx2-1.2.2/common/include/Utilities/SafeArray.inl	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/common/include/Utilities/SafeArray.inl	2014-08-30 16:02:51.271768316 +0400
+@@ -95,7 +95,7 @@
+ template< typename T >
+ T* SafeArray<T>::_getPtr( uint i ) const
+ {
+-	IndexBoundsAssumeDev( Name.c_str(), i, m_size );
++	IndexBoundsAssumeDev( WX_STR(Name), i, m_size );
+ 	return &m_ptr[i];
+ }
+ 
+@@ -213,7 +213,7 @@
+ template< typename T >
+ T* SafeList<T>::_getPtr( uint i ) const
+ {
+-	IndexBoundsAssumeDev( Name.c_str(), i, m_length );
++	IndexBoundsAssumeDev( WX_STR(Name), i, m_length );
+ 	return &m_ptr[i];
+ }
+ 
+diff -ur ./pcsx2-1.2.2/common/include/Utilities/StringHelpers.h ./pcsx2-1.2.2-r1/common/include/Utilities/StringHelpers.h
+--- ./pcsx2-1.2.2/common/include/Utilities/StringHelpers.h	2014-08-30 16:06:52.593721745 +0400
++++ ./pcsx2-1.2.2-r1/common/include/Utilities/StringHelpers.h	2014-08-30 16:02:51.271768316 +0400
+@@ -21,6 +21,12 @@
+ 
+ #include <wx/tokenzr.h>
+ 
++// Stupid wx3.0 doesn't support c_str for vararg function
++#if wxMAJOR_VERSION >= 3
++	#define WX_STR(str) (static_cast<const char*>(str.c_str()))
++#else
++	#define WX_STR(str) (str.c_str())
++#endif
+ 
+ // --------------------------------------------------------------------------------------
+ //  pxToUTF8
+@@ -155,7 +161,7 @@
+ 
+ 	FastFormatAscii& operator+=(const wxString& s)
+ 	{
+-		Write( "%ls", s.c_str() );
++		Write( "%s", WX_STR(s) );
+ 		return *this;
+ 	}
+ 
+@@ -207,7 +213,7 @@
+ 
+ 	FastFormatUnicode& operator+=(const wxString& s)
+ 	{
+-		Write( L"%s", s.c_str() );
++		Write( L"%s", WX_STR(s) );
+ 		return *this;
+ 	}
+ 
+diff -ur ./pcsx2-1.2.2/common/include/Utilities/Threading.h ./pcsx2-1.2.2-r1/common/include/Utilities/Threading.h
+--- ./pcsx2-1.2.2/common/include/Utilities/Threading.h	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/common/include/Utilities/Threading.h	2014-08-30 16:02:51.271768316 +0400
+@@ -42,13 +42,13 @@
+ 	ConsoleLogSource_Threading();
+ 
+ 	bool Write( const wxString& thrname, const wxChar* msg ) {
+-		return _parent::Write( wxsFormat(L"(thread:%s) ", thrname.c_str()) + msg );
++		return _parent::Write( wxsFormat(L"(thread:%s) ", WX_STR(thrname)) + msg );
+ 	}
+ 	bool Warn( const wxString& thrname, const wxChar* msg )	{
+-		return _parent::Warn( wxsFormat(L"(thread:%s) ", thrname.c_str()) + msg );
++		return _parent::Warn( wxsFormat(L"(thread:%s) ", WX_STR(thrname)) + msg );
+ 	}
+ 	bool Error( const wxString& thrname, const wxChar* msg ) {
+-		return _parent::Error( wxsFormat(L"(thread:%s) ", thrname.c_str()) + msg );
++		return _parent::Error( wxsFormat(L"(thread:%s) ", WX_STR(thrname)) + msg );
+ 	}
+ };
+ 
+diff -ur ./pcsx2-1.2.2/common/src/Utilities/Exceptions.cpp ./pcsx2-1.2.2-r1/common/src/Utilities/Exceptions.cpp
+--- ./pcsx2-1.2.2/common/src/Utilities/Exceptions.cpp	2014-08-30 16:06:52.593721745 +0400
++++ ./pcsx2-1.2.2-r1/common/src/Utilities/Exceptions.cpp	2014-08-30 16:02:51.271768316 +0400
+@@ -26,11 +26,6 @@
+ // for lack of a better place...
+ Fnptr_OutOfMemory pxDoOutOfMemory = NULL;
+ 
+-static wxString GetTranslation( const wxChar* msg )
+-{
+-	return msg ? wxGetTranslation( msg ) : wxEmptyString;
+-}
+-
+ // ------------------------------------------------------------------------
+ // Force DevAssert to *not* inline for devel builds (allows using breakpoints to trap assertions,
+ // and force it to inline for release builds (optimizes it out completely since IsDevBuild is a
+@@ -57,15 +52,15 @@
+ 	message.Write( L"%s(%d) : assertion failed:\n", srcfile, line );
+ 
+ 	if( function != NULL )
+-		message.Write( "    Function:  %s\n", function );
++		message.Write( "    Function:  %S\n", function );
+ 
+-		message.Write(L"    Thread:    %s\n", Threading::pxGetCurrentThreadName().c_str() );
++		message.Write(L"    Thread:    %s\n", WX_STR(Threading::pxGetCurrentThreadName()) );
+ 
+ 	if( condition != NULL )
+-		message.Write(L"    Condition: %s\n", condition);
++		message.Write(L"    Condition: %S\n", condition);
+ 
+ 	if( msg != NULL )
+-		message.Write(L"    Message:   %s\n", msg);
++		message.Write(L"    Message:   %S\n", msg);
+ 
+ 	return message;
+ }
+@@ -137,7 +132,7 @@
+ #if wxMAJOR_VERSION >= 3
+ __fi void pxOnAssert( const DiagnosticOrigin& origin, const wxString& msg)
+ {
+-	pxOnAssert( origin, msg.wx_str() ); // wc_str ???
++	pxOnAssert( origin, WX_STR(msg) ); // wc_str ???
+ }
+ 
+ __fi void pxOnAssert( const DiagnosticOrigin& origin, const FastFormatUnicode& msg)
+@@ -154,7 +149,11 @@
+ 
+ BaseException& BaseException::SetBothMsgs( const wxChar* msg_diag )
+ {
+-	m_message_user = GetTranslation( msg_diag );
++#if wxMAJOR_VERSION >= 3
++	m_message_user = msg_diag ? wxString(wxGetTranslation( msg_diag )) : wxString("");
++#else
++	m_message_user = msg_diag ? wxGetTranslation( msg_diag ) : wxEmptyString;
++#endif
+ 	return SetDiagMsg( msg_diag );
+ }
+ 
+@@ -188,8 +187,8 @@
+ 	IsSilent = false;
+ 
+ 	SetDiagMsg( pxsFmt( L"STL Runtime Error%s: %s",
+-		(prefix.IsEmpty() ? prefix.c_str() : pxsFmt(L" (%s)", prefix.c_str()).c_str()),
+-		fromUTF8( ex.what() ).c_str()
++		(prefix.IsEmpty() ? L"" : pxsFmt(L" (%s)", WX_STR(prefix)).c_str()),
++		WX_STR(fromUTF8( ex.what() ))
+ 	) );
+ }
+ 
+@@ -198,8 +197,8 @@
+ 	IsSilent = false;
+ 
+ 	SetDiagMsg( pxsFmt( L"STL Exception%s: %s",
+-		(prefix.IsEmpty() ? prefix.c_str() : pxsFmt(L" (%s)", prefix.c_str()).c_str()),
+-		fromUTF8( ex.what() ).c_str()
++		(prefix.IsEmpty() ? L"" : pxsFmt(L" (%s)", WX_STR(prefix)).c_str()),
++		WX_STR(fromUTF8( ex.what() ))
+ 	) );
+ }
+ 
+@@ -216,10 +215,10 @@
+ 	FastFormatUnicode retmsg;
+ 	retmsg.Write(L"Out of memory");
+ 	if (!AllocDescription.IsEmpty())
+-		retmsg.Write(L" while allocating '%s'", AllocDescription.c_str());
++		retmsg.Write(L" while allocating '%s'", WX_STR(AllocDescription));
+ 
+ 	if (!m_message_diag.IsEmpty())
+-		retmsg.Write(L":\n%s", m_message_diag.c_str());
++		retmsg.Write(L":\n%s", WX_STR(m_message_diag));
+ 	
+ 	return retmsg;
+ }
+@@ -230,7 +229,7 @@
+ 	retmsg.Write( L"%s", _("Oh noes! Out of memory!") );
+ 
+ 	if (!m_message_user.IsEmpty())
+-		retmsg.Write(L"\n\n%s", m_message_user.c_str());
++		retmsg.Write(L"\n\n%s", WX_STR(m_message_user));
+ 
+ 	return retmsg;
+ }
+@@ -250,10 +249,10 @@
+ 	FastFormatUnicode retmsg;
+ 	retmsg.Write(L"Virtual memory map failed");
+ 	if (!AllocDescription.IsEmpty())
+-		retmsg.Write(L" while reserving '%s'", AllocDescription.c_str());
++		retmsg.Write(L" while reserving '%s'", WX_STR(AllocDescription));
+ 
+ 	if (!m_message_diag.IsEmpty())
+-		retmsg.Write(L":\n%s", m_message_diag.c_str());
++		retmsg.Write(L":\n%s", WX_STR(m_message_diag));
+ 		
+ 	return retmsg;
+ }
+@@ -267,7 +266,7 @@
+ 	);
+ 
+ 	if (!m_message_diag.IsEmpty())
+-		retmsg.Write(L"\n\n%s", m_message_diag.c_str());
++		retmsg.Write(L"\n\n%s", WX_STR(m_message_diag));
+ 
+ 	return retmsg;
+ }
+@@ -305,24 +304,24 @@
+ {
+ 	dest.Write( L"Path: " );
+ 	if (!StreamName.IsEmpty())
+-		dest.Write( L"%s", StreamName.c_str() );
++		dest.Write( L"%s", WX_STR(StreamName) );
+ 	else
+ 		dest.Write( L"[Unnamed or unknown]" );
+ 
+ 	if (!m_message_diag.IsEmpty())
+-		dest.Write(L"\n%s", m_message_diag.c_str());
++		dest.Write(L"\n%s", WX_STR(m_message_diag));
+ }
+ 
+ void Exception::BadStream::_formatUserMsg( FastFormatUnicode& dest ) const
+ {
+ 	dest.Write( _("Path: ") );
+ 	if (!StreamName.IsEmpty())
+-		dest.Write( L"%s", StreamName.c_str() );
++		dest.Write( L"%s", WX_STR(StreamName) );
+ 	else
+ 		dest.Write( _("[Unnamed or unknown]") );
+ 
+ 	if (!m_message_user.IsEmpty())
+-		dest.Write(L"\n%s", m_message_user.c_str());
++		dest.Write(L"\n%s", WX_STR(m_message_user));
+ }
+ 
+ // --------------------------------------------------------------------------------------
+diff -ur ./pcsx2-1.2.2/common/src/Utilities/FastFormatString.cpp ./pcsx2-1.2.2-r1/common/src/Utilities/FastFormatString.cpp
+--- ./pcsx2-1.2.2/common/src/Utilities/FastFormatString.cpp	2014-08-30 16:06:52.593721745 +0400
++++ ./pcsx2-1.2.2-r1/common/src/Utilities/FastFormatString.cpp	2014-08-30 16:02:53.218477630 +0400
+@@ -331,7 +331,7 @@
+ 
+ FastFormatUnicode& FastFormatUnicode::operator+=(const char* psz )
+ {
+-	Write( L"%s", fromUTF8(psz).c_str() );
++	Write( L"%s", WX_STR(fromUTF8(psz)) );
+ 	return *this;
+ }
+ 
+diff -ur ./pcsx2-1.2.2/common/src/Utilities/IniInterface.cpp ./pcsx2-1.2.2-r1/common/src/Utilities/IniInterface.cpp
+--- ./pcsx2-1.2.2/common/src/Utilities/IniInterface.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/common/src/Utilities/IniInterface.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -246,7 +246,7 @@
+ 	if( enumArray[i] == NULL )
+ 	{
+ 		Console.Warning( L"(LoadSettings) Warning: Unrecognized value '%s' on key '%s'\n\tUsing the default setting of '%s'.",
+-			retval.c_str(), var.c_str(), enumArray[defvalue]
++			WX_STR(retval), WX_STR(var), enumArray[defvalue]
+ 		);
+ 		value = defvalue;
+ 	}
+@@ -377,7 +377,7 @@
+ 
+ 	if( value >= cnt )
+ 	{
+-		Console.Warning(  L"(SaveSettings) An illegal enumerated index was detected when saving '%s'", var.c_str() );
++		Console.Warning(  L"(SaveSettings) An illegal enumerated index was detected when saving '%s'", WX_STR(var) );
+ 		Console.Indent().Warning(
+ 			L"Illegal Value: %d\n"
+ 			L"Using Default: %d (%s)\n",
+diff -ur ./pcsx2-1.2.2/common/src/Utilities/Linux/LnxHostSys.cpp ./pcsx2-1.2.2-r1/common/src/Utilities/Linux/LnxHostSys.cpp
+--- ./pcsx2-1.2.2/common/src/Utilities/Linux/LnxHostSys.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/common/src/Utilities/Linux/LnxHostSys.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -118,13 +118,13 @@
+ 	{
+ 		case EINVAL:
+ 			pxFailDev(pxsFmt(L"mprotect returned EINVAL @ 0x%08X -> 0x%08X  (mode=%s)",
+-				baseaddr, (uptr)baseaddr+size, mode.ToString().c_str())
++				baseaddr, (uptr)baseaddr+size, WX_STR(mode.ToString()))
+ 			);
+ 		break;
+ 
+ 		case EACCES:
+ 			pxFailDev(pxsFmt(L"mprotect returned EACCES @ 0x%08X -> 0x%08X  (mode=%s)",
+-				baseaddr, (uptr)baseaddr+size, mode.ToString().c_str())
++				baseaddr, (uptr)baseaddr+size, WX_STR(mode.ToString()))
+ 			);
+ 		break;
+ 
+@@ -218,7 +218,7 @@
+ 	{
+ 		throw Exception::OutOfMemory( L"MemProtect" )
+ 			.SetDiagMsg(pxsFmt( L"mprotect failed @ 0x%08X -> 0x%08X  (mode=%s)",
+-				baseaddr, (uptr)baseaddr+size, mode.ToString().c_str()
++				baseaddr, (uptr)baseaddr+size, WX_STR(mode.ToString())
+ 			)
+ 		);
+ 	}
+diff -ur ./pcsx2-1.2.2/common/src/Utilities/ThreadTools.cpp ./pcsx2-1.2.2-r1/common/src/Utilities/ThreadTools.cpp
+--- ./pcsx2-1.2.2/common/src/Utilities/ThreadTools.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/common/src/Utilities/ThreadTools.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -210,7 +210,7 @@
+ 	if( IsSelf() ) return true;
+ 
+ 	if( IsDevBuild )
+-		pxOnAssert( origin, pxsFmt( L"Thread affinity violation: Call allowed from '%s' thread only.", GetName().c_str() ) );
++		pxOnAssert( origin, pxsFmt( L"Thread affinity violation: Call allowed from '%s' thread only.", WX_STR(GetName()) ) );
+ 
+ 	return false;
+ }
+@@ -220,7 +220,7 @@
+ 	if( !IsSelf() ) return true;
+ 
+ 	if( IsDevBuild )
+-		pxOnAssert( origin, pxsFmt( L"Thread affinity violation: Call is *not* allowed from '%s' thread.", GetName().c_str() ) );
++		pxOnAssert( origin, pxsFmt( L"Thread affinity violation: Call is *not* allowed from '%s' thread.", WX_STR(GetName()) ) );
+ 
+ 	return false;
+ }
+@@ -436,7 +436,7 @@
+ 	{
+ 		throw Exception::CancelEvent( pxsFmt(
+ 			L"Blocking thread %s was terminated while another thread was waiting on a %s.",
+-			GetName().c_str(), name )
++			WX_STR(GetName()), name )
+ 		);
+ 	}
+ 
+@@ -550,14 +550,14 @@
+ 	//
+ 	catch( std::runtime_error& ex )
+ 	{
+-		m_except = new Exception::RuntimeError( ex, GetName().c_str() );
++		m_except = new Exception::RuntimeError( ex, WX_STR(GetName()) );
+ 	}
+ 
+ 	// ----------------------------------------------------------------------------
+ 	catch( Exception::RuntimeError& ex )
+ 	{
+ 		BaseException* woot = ex.Clone();
+-		woot->DiagMsg() += pxsFmt( L"(thread:%s)", GetName().c_str() );
++		woot->DiagMsg() += pxsFmt( L"(thread:%s)", WX_STR(GetName()) );
+ 		m_except = woot;
+ 	}
+ #ifndef PCSX2_DEVBUILD
+@@ -568,13 +568,13 @@
+ 	/*catch( std::logic_error& ex )
+ 	{
+ 		throw BaseException( pxsFmt( L"STL Logic Error (thread:%s): %s",
+-			GetName().c_str(), fromUTF8( ex.what() ).c_str() )
++			WX_STR(GetName()), WX_STR(fromUTF8( ex.what() )) )
+ 		);
+ 	}
+ 	catch( std::exception& ex )
+ 	{
+ 		throw BaseException( pxsFmt( L"STL exception (thread:%s): %s",
+-			GetName().c_str(), fromUTF8( ex.what() ).c_str() )
++			WX_STR(GetName()), WX_STR(fromUTF8( ex.what() )) )
+ 		);
+ 	}*/
+ 	// ----------------------------------------------------------------------------
+@@ -583,7 +583,7 @@
+ 	catch( BaseException& ex )
+ 	{
+ 		BaseException* woot = ex.Clone();
+-		woot->DiagMsg() += pxsFmt( L"(thread:%s)", GetName().c_str() );
++		woot->DiagMsg() += pxsFmt( L"(thread:%s)", WX_STR(GetName()) );
+ 		m_except = woot;
+ 	}
+ #endif
+@@ -688,7 +688,7 @@
+ 
+ void Threading::pxThread::_DoSetThreadName( const wxString& name )
+ {
+-	_DoSetThreadName( name.ToUTF8() );
++	_DoSetThreadName( static_cast<const char*>(name.ToUTF8()) );
+ }
+ 
+ // --------------------------------------------------------------------------------------
+@@ -859,12 +859,14 @@
+ 
+ wxString Exception::BaseThreadError::FormatDiagnosticMessage() const
+ {
+-    return pxsFmt( m_message_diag, (m_thread==NULL) ? L"Null Thread Object" : m_thread->GetName().c_str());
++	wxString null_str(L"Null Thread Object");
++    return pxsFmt( m_message_diag, (m_thread==NULL) ? WX_STR(null_str) : WX_STR(m_thread->GetName()));
+ }
+ 
+ wxString Exception::BaseThreadError::FormatDisplayMessage() const
+ {
+-    return pxsFmt( m_message_user, (m_thread==NULL) ? L"Null Thread Object" : m_thread->GetName().c_str());
++	wxString null_str(L"Null Thread Object");
++    return pxsFmt( m_message_user, (m_thread==NULL) ? WX_STR(null_str) : WX_STR(m_thread->GetName()));
+ }
+ 
+ pxThread& Exception::BaseThreadError::Thread()
+diff -ur ./pcsx2-1.2.2/common/src/Utilities/VirtualMemory.cpp ./pcsx2-1.2.2-r1/common/src/Utilities/VirtualMemory.cpp
+--- ./pcsx2-1.2.2/common/src/Utilities/VirtualMemory.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/common/src/Utilities/VirtualMemory.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -130,7 +130,7 @@
+ 	if (!m_baseptr || (upper_bounds != 0 && (((uptr)m_baseptr + reserved_bytes) > upper_bounds)))
+ 	{
+ 		DevCon.Warning( L"%s: host memory @ %s -> %s is unavailable; attempting to map elsewhere...",
+-			m_name.c_str(), pxsPtr(base), pxsPtr(base + size) );
++			WX_STR(m_name), pxsPtr(base), pxsPtr(base + size) );
+ 
+ 		SafeSysMunmap(m_baseptr, reserved_bytes);
+ 
+@@ -157,7 +157,7 @@
+ 	else
+ 		mbkb.Write( "[%ukb]", reserved_bytes / 1024 );
+ 
+-	DevCon.WriteLn( Color_Gray, L"%-32s @ %s -> %s %s", m_name.c_str(),
++	DevCon.WriteLn( Color_Gray, L"%-32s @ %s -> %s %s", WX_STR(m_name),
+ 		pxsPtr(m_baseptr), pxsPtr((uptr)m_baseptr+reserved_bytes), mbkb.c_str());
+ 
+ 	return m_baseptr;
+@@ -224,7 +224,7 @@
+ 		uint toReservePages = newPages - m_pages_reserved;
+ 		uint toReserveBytes = toReservePages * __pagesize;
+ 
+-		DevCon.WriteLn( L"%-32s is being expanded by %u pages.", m_name.c_str(), toReservePages);
++		DevCon.WriteLn( L"%-32s is being expanded by %u pages.", WX_STR(m_name), toReservePages);
+ 
+ 		m_baseptr = (void*)HostSys::MmapReserve((uptr)GetPtrEnd(), toReserveBytes);
+ 
+@@ -234,7 +234,7 @@
+ 			Console.Indent().Warning("(attempted to map memory @ %08p -> %08p)", m_baseptr, (uptr)m_baseptr+toReserveBytes);
+ 		}
+ 
+-		DevCon.WriteLn( Color_Gray, L"%-32s @ %08p -> %08p [%umb]", m_name.c_str(),
++		DevCon.WriteLn( Color_Gray, L"%-32s @ %08p -> %08p [%umb]", WX_STR(m_name),
+ 			m_baseptr, (uptr)m_baseptr+toReserveBytes, toReserveBytes / _1mb);
+ 	}
+ 	else if (newPages < m_pages_reserved)
+@@ -244,11 +244,11 @@
+ 		uint toRemovePages = m_pages_reserved - newPages;
+ 		uint toRemoveBytes = toRemovePages * __pagesize;
+ 
+-		DevCon.WriteLn( L"%-32s is being shrunk by %u pages.", m_name.c_str(), toRemovePages);
++		DevCon.WriteLn( L"%-32s is being shrunk by %u pages.", WX_STR(m_name), toRemovePages);
+ 
+ 		HostSys::MmapResetPtr(GetPtrEnd(), toRemoveBytes);
+ 
+-		DevCon.WriteLn( Color_Gray, L"%-32s @ %08p -> %08p [%umb]", m_name.c_str(),
++		DevCon.WriteLn( Color_Gray, L"%-32s @ %08p -> %08p [%umb]", WX_STR(m_name),
+ 			m_baseptr, (uptr)m_baseptr+toRemoveBytes, toRemoveBytes / _1mb);
+ 	}
+ 
+@@ -297,7 +297,7 @@
+ 		pxFailRel( pxsFmt(
+ 			L"Memory Protection Fault @ %s (%s)\n"
+ 			L"Modification of this reserve has been disabled (m_allow_writes == false).",
+-			pxsPtr(info.addr), m_name.c_str())
++			pxsPtr(info.addr), WX_STR(m_name))
+ 		);
+ 		return;
+ 	}
+diff -ur ./pcsx2-1.2.2/pcsx2/CDVD/CDVD.cpp ./pcsx2-1.2.2-r1/pcsx2/CDVD/CDVD.cpp
+--- ./pcsx2-1.2.2/pcsx2/CDVD/CDVD.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/CDVD/CDVD.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -361,7 +361,7 @@
+ 
+ 	ElfCRC = elfptr->getCRC();
+ 	ElfEntry = elfptr->header.e_entry;
+-	Console.WriteLn( Color_StrongBlue, L"ELF (%s) Game CRC = 0x%08X, EntryPoint = 0x%08X", elfpath.c_str(), ElfCRC, ElfEntry);
++	Console.WriteLn( Color_StrongBlue, L"ELF (%s) Game CRC = 0x%08X, EntryPoint = 0x%08X", WX_STR(elfpath), ElfCRC, ElfEntry);
+ 
+ 	// Note: Do not load game database info here.  This code is generic and called from
+ 	// BIOS key encryption as well as eeloadReplaceOSDSYS.  The first is actually still executing
+diff -ur ./pcsx2-1.2.2/pcsx2/CDVD/CDVDaccess.cpp ./pcsx2-1.2.2-r1/pcsx2/CDVD/CDVDaccess.cpp
+--- ./pcsx2-1.2.2/pcsx2/CDVD/CDVDaccess.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/CDVD/CDVDaccess.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -337,7 +337,7 @@
+ 	// Likely Fix: Force new versions of CDVD plugins to expect UTF8 instead.
+ 
+ 	int ret = CDVD->open( !m_SourceFilename[m_CurrentSourceType].IsEmpty() ?
+-		m_SourceFilename[m_CurrentSourceType].ToUTF8() : (char*)NULL
++		static_cast<const char*>(m_SourceFilename[m_CurrentSourceType].ToUTF8()) : (char*)NULL
+ 	);
+ 
+ 	if( ret == -1 ) return false;	// error! (handled by caller)
+diff -ur ./pcsx2-1.2.2/pcsx2/CDVD/CDVDisoReader.cpp ./pcsx2-1.2.2-r1/pcsx2/CDVD/CDVDisoReader.cpp
+--- ./pcsx2-1.2.2/pcsx2/CDVD/CDVDisoReader.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/CDVD/CDVDisoReader.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -166,7 +166,7 @@
+ 	wxFileConfig layerCacheIni( wxEmptyString, wxEmptyString, layerCacheFile, wxEmptyString, wxCONFIG_USE_RELATIVE_PATH );
+ 
+ 	FastFormatUnicode cacheKey;
+-	cacheKey.Write( L"%X", HashTools::Hash( (s8*)iso.GetFilename().c_str(), iso.GetFilename().Length() * sizeof(wxChar) ) );
++	cacheKey.Write( L"%X", HashTools::Hash( (s8*)iso.GetFilename().wx_str(), iso.GetFilename().Length() * sizeof(wxChar) ) );
+ 
+ 	blockresult = layerCacheIni.Read( cacheKey, -1 );
+ 	if( blockresult != -1 )
+diff -ur ./pcsx2-1.2.2/pcsx2/CDVD/InputIsoFile.cpp ./pcsx2-1.2.2-r1/pcsx2/CDVD/InputIsoFile.cpp
+--- ./pcsx2-1.2.2/pcsx2/CDVD/InputIsoFile.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/CDVD/InputIsoFile.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -41,7 +41,7 @@
+ 		msg.Write("isoFile error: Block index is past the end of file! (%u > %u).", lsn, m_blocks);
+ 
+ 		pxAssertDev(false, msg);
+-		Console.Error(msg);
++		Console.Error(msg.c_str());
+ 		return -1;
+ 	}
+ 
+@@ -56,7 +56,7 @@
+ 		msg.Write("isoFile error: Block index is past the end of file! (%u > %u).", lsn, m_blocks);
+ 
+ 		pxAssertDev(false, msg);
+-		Console.Error(msg);
++		Console.Error(msg.c_str());
+ 
+ 		// [TODO] : Throw exception?
+ 		//  Typically an error like this is bad; indicating an invalid dump or corrupted
+@@ -244,7 +244,7 @@
+ 
+ 	m_blocks = m_reader->GetBlockCount();
+ 
+-	Console.WriteLn(Color_StrongBlue, L"isoFile open ok: %s", m_filename.c_str());
++	Console.WriteLn(Color_StrongBlue, L"isoFile open ok: %s", WX_STR(m_filename));
+ 
+ 	ConsoleIndentScope indent;
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/CDVD/OutputIsoFile.cpp ./pcsx2-1.2.2-r1/pcsx2/CDVD/OutputIsoFile.cpp
+--- ./pcsx2-1.2.2/pcsx2/CDVD/OutputIsoFile.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/CDVD/OutputIsoFile.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -25,7 +25,7 @@
+ 	if (stream.IsOk()) return;
+ 
+ 	ScopedExcept ex(Exception::FromErrno(fname, errno));
+-	ex->SetDiagMsg( pxsFmt(L"Unable to open the file for %s: %s", mode.c_str(), ex->DiagMsg().c_str()) );
++	ex->SetDiagMsg( pxsFmt(L"Unable to open the file for %s: %s", WX_STR(mode), WX_STR(ex->DiagMsg())) );
+ 	ex->Rethrow();
+ }
+ 
+@@ -65,7 +65,7 @@
+ 	m_outstream = new wxFileOutputStream( m_filename );
+ 	pxStream_OpenCheck( *m_outstream, m_filename, L"writing" );
+ 
+-	Console.WriteLn("isoFile create ok: %s ", m_filename.c_str());
++	Console.WriteLn("isoFile create ok: %s ", WX_STR(m_filename));
+ }
+ 
+ // Generates format header information for blockdumps.
+@@ -129,7 +129,7 @@
+ 			throw Exception::BadStream(m_filename).SetDiagMsg(pxsFmt(L"An error occurred while writing %u bytes to file", size));
+ 
+ 		ScopedExcept ex(Exception::FromErrno(m_filename, err));
+-		ex->SetDiagMsg( pxsFmt(L"An error occurred while writing %u bytes to file: %s", size, ex->DiagMsg().c_str()) );
++		ex->SetDiagMsg( pxsFmt(L"An error occurred while writing %u bytes to file: %s", size, WX_STR(ex->DiagMsg())) );
+ 		ex->Rethrow();
+ 	}
+ }
+diff -ur ./pcsx2-1.2.2/pcsx2/FiFo.cpp ./pcsx2-1.2.2-r1/pcsx2/FiFo.cpp
+--- ./pcsx2-1.2.2/pcsx2/FiFo.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/FiFo.cpp	2014-08-30 16:02:53.221811037 +0400
+@@ -60,7 +60,7 @@
+ 		}
+ 	}
+ 
+-	VIF_LOG("ReadFIFO/VIF1 -> %ls", out->ToString().c_str());
++	VIF_LOG("ReadFIFO/VIF1 -> %ls", WX_STR(out->ToString()));
+ }
+ 
+ //////////////////////////////////////////////////////////////////////////
+@@ -68,7 +68,7 @@
+ //
+ void __fastcall WriteFIFO_VIF0(const mem128_t *value)
+ {
+-	VIF_LOG("WriteFIFO/VIF0 <- %ls", value->ToString().c_str());
++	VIF_LOG("WriteFIFO/VIF0 <- %ls", WX_STR(value->ToString()));
+ 
+ 	vif0ch.qwc += 1;
+ 	if(vif0.irqoffset.value != 0 && vif0.vifstalled.enabled == true) DevCon.Warning("Offset on VIF0 FIFO start!");
+@@ -88,7 +88,7 @@
+ 
+ void __fastcall WriteFIFO_VIF1(const mem128_t *value)
+ {
+-	VIF_LOG("WriteFIFO/VIF1 <- %ls", value->ToString().c_str());
++	VIF_LOG("WriteFIFO/VIF1 <- %ls", WX_STR(value->ToString()));
+ 
+ 	if (vif1Regs.stat.FDR) {
+ 		DevCon.Warning("writing to fifo when fdr is set!");
+diff -ur ./pcsx2-1.2.2/pcsx2/GameDatabase.h ./pcsx2-1.2.2-r1/pcsx2/GameDatabase.h
+--- ./pcsx2-1.2.2/pcsx2/GameDatabase.h	2014-08-30 16:06:52.590388339 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/GameDatabase.h	2014-08-30 16:02:59.941958259 +0400
+@@ -119,11 +119,11 @@
+ 	}
+ 
+ 	bool sectionExists(const wxChar* key, const wxString& value) const {
+-		return keyExists(wxsFormat(L"[%s%s%s]", key, value.IsEmpty() ? L"" : L" = ", value.c_str()));
++		return keyExists(wxsFormat(L"[%s%s%s]", key, value.IsEmpty() ? L"" : L" = ", WX_STR(value)));
+ 	}
+ 
+ 	wxString getSection(const wxChar* key, const wxString& value) const {
+-		return getString(wxsFormat(L"[%s%s%s]", key, value.IsEmpty() ? L"" : L" = ", value.c_str()));
++		return getString(wxsFormat(L"[%s%s%s]", key, value.IsEmpty() ? L"" : L" = ", WX_STR(value)).wx_str());
+ 	}
+ 
+ 	// Gets an integer representation of the 'value' for the given key
+@@ -142,23 +142,31 @@
+ 	}
+ 
+ 	bool keyExists(const char* key) const {
+-		return keyExists(fromUTF8(key));
++		return keyExists(fromUTF8(key).wx_str());
++	}
++
++	bool keyExists(const wxString& key) const {
++		return keyExists(key.wx_str());
+ 	}
+ 
+ 	wxString getString(const char* key) const {
+-		return getString(fromUTF8(key));
++		return getString(fromUTF8(key).wx_str());
+ 	}
+ 
+ 	int getInt(const char* key) const {
+-		return getInt(fromUTF8(key));
++		return getInt(fromUTF8(key).wx_str());
+ 	}
+ 
+ 	u8 getU8(const char* key) const {
+-		return getU8(fromUTF8(key));
++		return getU8(fromUTF8(key).wx_str());
+ 	}
+ 
+ 	bool getBool(const char* key) const {
+-		return getBool(fromUTF8(key));
++		return getBool(fromUTF8(key).wx_str());
++	}
++
++	bool getBool(const wxString& key) const {
++		return getBool(key.wx_str());
+ 	}
+ };
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/IPU/IPU_Fifo.cpp ./pcsx2-1.2.2-r1/pcsx2/IPU/IPU_Fifo.cpp
+--- ./pcsx2-1.2.2/pcsx2/IPU/IPU_Fifo.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/IPU/IPU_Fifo.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -160,7 +160,7 @@
+ 
+ void __fastcall WriteFIFO_IPUin(const mem128_t* value)
+ {
+-	IPU_LOG( "WriteFIFO/IPUin <- %ls", value->ToString().c_str() );
++	IPU_LOG( "WriteFIFO/IPUin <- %ls", WX_STR(value->ToString()) );
+ 
+ 	//committing every 16 bytes
+ 	if( ipu_fifo.in.write((u32*)value, 1) == 0 )
+diff -ur ./pcsx2-1.2.2/pcsx2/MultipartFileReader.cpp ./pcsx2-1.2.2-r1/pcsx2/MultipartFileReader.cpp
+--- ./pcsx2-1.2.2/pcsx2/MultipartFileReader.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/MultipartFileReader.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -76,7 +76,7 @@
+ 	if (!pxFileExists_WithExt(nameparts, extbuf))
+ 		return;
+ 
+-	DevCon.WriteLn( Color_Blue, "isoFile: multi-part %s detected...", curext.Upper().c_str() );
++	DevCon.WriteLn( Color_Blue, "isoFile: multi-part %s detected...", WX_STR(curext.Upper()) );
+ 	ConsoleIndentScope indent;
+ 	
+ 	int bsize = m_parts[0].reader->GetBlockSize();
+@@ -109,7 +109,7 @@
+ 
+ 		DevCon.WriteLn( Color_Blue, L"\tblocks %u - %u in: %s",
+ 			thispart->start, thispart->end,
+-			nameparts.GetFullPath().c_str()
++			WX_STR(nameparts.GetFullPath())
+ 		);
+ 
+ 		++m_numparts;
+diff -ur ./pcsx2-1.2.2/pcsx2/Patch.cpp ./pcsx2-1.2.2-r1/pcsx2/Patch.cpp
+--- ./pcsx2-1.2.2/pcsx2/Patch.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/Patch.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -183,7 +183,7 @@
+ static int LoadCheatsFiles(const wxDirName& folderName, wxString& fileSpec, const wxString& friendlyName)
+ {
+ 	if (!folderName.Exists()) {
+-		Console.WriteLn(Color_Red, L"The %s folder ('%s') is inaccessible. Skipping...", friendlyName.c_str(), folderName.ToString().c_str());
++		Console.WriteLn(Color_Red, L"The %s folder ('%s') is inaccessible. Skipping...", WX_STR(friendlyName), WX_STR(folderName.ToString()));
+ 		return 0;
+ 	}
+ 	wxDir dir(folderName.ToString());
+@@ -194,13 +194,13 @@
+ 	bool found = dir.GetFirst(&buffer, L"*", wxDIR_FILES);
+ 	while (found) {
+ 		if (buffer.Upper().Matches(fileSpec.Upper())) {
+-			Console.WriteLn(Color_Gray, L"Found %s file: '%s'", friendlyName.c_str(), buffer.c_str());
++			Console.WriteLn(Color_Gray, L"Found %s file: '%s'", WX_STR(friendlyName), WX_STR(buffer));
+ 			int before = cheatnumber;
+ 			f.Open(Path::Combine(dir.GetName(), buffer));
+ 			inifile_process(f);
+ 			f.Close();
+ 			int loaded = cheatnumber - before;
+-			Console.WriteLn((loaded ? Color_Green : Color_Gray), L"Loaded %d %s from '%s'", loaded, friendlyName.c_str(), buffer.c_str());
++			Console.WriteLn((loaded ? Color_Green : Color_Gray), L"Loaded %d %s from '%s'", loaded, WX_STR(friendlyName), WX_STR(buffer));
+ 		}
+ 		found = dir.GetNext(&buffer);
+ 	}
+@@ -226,7 +226,7 @@
+     name.MakeUpper();
+     if (name.Find(gameCRC) == 0 && name.Find(L".PNACH") == name.Length()-6) {
+       Console.WriteLn(Color_Gray, L"Loading patch '%s' from archive '%s'",
+-                      entry->GetName().c_str(), cheatsArchiveFilename.c_str());
++                      WX_STR(entry->GetName()), WX_STR(cheatsArchiveFilename));
+       wxTextInputStream pnach(zip);
+       while (!zip.Eof()) {
+         inifile_processString(pnach.ReadLine());
+@@ -248,7 +248,7 @@
+ 	wxString filespec = name + L"*.pnach";
+ 	loaded += LoadCheatsFiles(folderName, filespec, friendlyName);
+ 
+-	Console.WriteLn((loaded ? Color_Green : Color_Gray), L"Overall %d %s loaded", loaded, friendlyName.c_str());
++	Console.WriteLn((loaded ? Color_Green : Color_Gray), L"Overall %d %s loaded", loaded, WX_STR(friendlyName));
+ 	return loaded;
+ }
+ 
+@@ -320,10 +320,10 @@
+ 			iPatch.data			= StrToU64(pieces.WriteValue(), 16);
+ 
+ 			if (iPatch.cpu  == 0)
+-				throw wxsFormat(L"Unrecognized CPU Target: '%s'", pieces.CpuType().c_str());
++				throw wxsFormat(L"Unrecognized CPU Target: '%s'", WX_STR(pieces.CpuType()));
+ 
+ 			if (iPatch.type == 0)
+-				throw wxsFormat(L"Unrecognized Operand Size: '%s'", pieces.OperandSize().c_str());
++				throw wxsFormat(L"Unrecognized Operand Size: '%s'", WX_STR(pieces.OperandSize()));
+ 
+ 			iPatch.enabled = 1; // omg success!!
+ 
+@@ -332,7 +332,7 @@
+ 		}
+ 		catch( wxString& exmsg )
+ 		{
+-			Console.Error(L"(Patch) Error Parsing: %s=%s", cmd.c_str(), param.c_str());
++			Console.Error(L"(Patch) Error Parsing: %s=%s", WX_STR(cmd), WX_STR(param));
+ 			Console.Indent().Error( exmsg );
+ 		}
+ 	}
+diff -ur ./pcsx2-1.2.2/pcsx2/PluginManager.cpp ./pcsx2-1.2.2-r1/pcsx2/PluginManager.cpp
+--- ./pcsx2-1.2.2/pcsx2/PluginManager.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/PluginManager.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -736,24 +736,24 @@
+ 
+ wxString Exception::PluginLoadError::FormatDiagnosticMessage() const
+ {
+-	return pxsFmt( m_message_diag, tbl_PluginInfo[PluginId].GetShortname().c_str() ) +
++	return pxsFmt( m_message_diag, WX_STR(tbl_PluginInfo[PluginId].GetShortname()) ) +
+ 		L"\n\n" + StreamName;
+ }
+ 
+ wxString Exception::PluginLoadError::FormatDisplayMessage() const
+ {
+-	return pxsFmt( m_message_user, tbl_PluginInfo[PluginId].GetShortname().c_str() ) +
++	return pxsFmt( m_message_user, WX_STR(tbl_PluginInfo[PluginId].GetShortname()) ) +
+ 		L"\n\n" + StreamName;
+ }
+ 
+ wxString Exception::PluginError::FormatDiagnosticMessage() const
+ {
+-	return pxsFmt( m_message_diag, tbl_PluginInfo[PluginId].GetShortname().c_str() );
++	return pxsFmt( m_message_diag, WX_STR(tbl_PluginInfo[PluginId].GetShortname()) );
+ }
+ 
+ wxString Exception::PluginError::FormatDisplayMessage() const
+ {
+-	return pxsFmt( m_message_user, tbl_PluginInfo[PluginId].GetShortname().c_str() );
++	return pxsFmt( m_message_user, WX_STR(tbl_PluginInfo[PluginId].GetShortname()) );
+ }
+ 
+ wxString Exception::FreezePluginFailure::FormatDiagnosticMessage() const
+@@ -899,7 +899,7 @@
+ 		if( *target == NULL )
+ 		{
+ 			throw Exception::PluginLoadError( pid ).SetStreamName(Filename)
+-				.SetDiagMsg(wxsFormat( L"\nMethod binding failure on: %s\n", current->GetMethodName( pid ).c_str() ))
++				.SetDiagMsg(wxsFormat( L"\nMethod binding failure on: %s\n", WX_STR(current->GetMethodName( pid )) ))
+ 				.SetUserMsg(_("Configured plugin is not a PCSX2 plugin, or is for an older unsupported version of PCSX2."));
+ 		}
+ 
+@@ -925,7 +925,7 @@
+ 		if( *(current->Dest) == NULL )
+ 		{
+ 			throw Exception::PluginLoadError( pid ).SetStreamName(Filename)
+-				.SetDiagMsg(wxsFormat( L"\n%s plugin init error; Method binding failed: %s\n", current->GetMethodName().c_str() ))
++				.SetDiagMsg(wxsFormat( L"\n%s plugin init error; Method binding failed: %s\n", WX_STR(current->GetMethodName()) ))
+ 				.SetUserMsg(_( "Configured %s plugin is not a valid PCSX2 plugin, or is for an older unsupported version of PCSX2."));
+ 		}
+ 
+@@ -970,7 +970,7 @@
+ {
+ 	ScopedLock lock( m_mtx_PluginStatus );
+ 	pxAssert( (uint)pid < PluginId_Count );
+-	Console.Indent().WriteLn( L"Binding %4s: %s ", tbl_PluginInfo[pid].GetShortname().c_str(), srcfile.c_str() );
++	Console.Indent().WriteLn( L"Binding %4s: %s ", WX_STR(tbl_PluginInfo[pid].GetShortname()), WX_STR(srcfile) );
+ 	m_info[pid] = new PluginStatus_t( pid, srcfile );
+ }
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/SaveState.cpp ./pcsx2-1.2.2-r1/pcsx2/SaveState.cpp
+--- ./pcsx2-1.2.2/pcsx2/SaveState.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/SaveState.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -56,7 +56,7 @@
+ 	if (serialName.IsEmpty()) serialName = L"BIOS";
+ 
+ 	return (g_Conf->Folders.Savestates +
+-		pxsFmt( L"%s (%08X).%02d.p2s", serialName.c_str(), ElfCRC, slot )).GetFullPath();
++		pxsFmt( L"%s (%08X).%02d.p2s", WX_STR(serialName), ElfCRC, slot )).GetFullPath();
+ 
+ 	//return (g_Conf->Folders.Savestates +
+ 	//	pxsFmt( L"%08X.%03d", ElfCRC, slot )).GetFullPath();
+@@ -137,7 +137,7 @@
+ 		Console.Indent(2).Error(
+ 			"Current BIOS:   %ls (crc=0x%08x)\n"
+ 			"Savestate BIOS: %s (crc=0x%08x)\n",
+-			BiosDescription.c_str(), BiosChecksum,
++			BiosDescription.wx_str(), BiosChecksum,
+ 			biosdesc, bioscheck
+ 		);
+ 	}
+diff -ur ./pcsx2-1.2.2/pcsx2/Sio.cpp ./pcsx2-1.2.2-r1/pcsx2/Sio.cpp
+--- ./pcsx2-1.2.2/pcsx2/Sio.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/Sio.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -48,7 +48,7 @@
+ wxString GetTimeMsStr(){
+ 	wxDateTime unow=wxDateTime::UNow();
+ 	wxString res;
+-	res.Printf(L"%s.%03d", unow.Format(L"%H:%M:%S").c_str(), (int)unow.GetMillisecond() );
++	res.Printf(L"%s.%03d", WX_STR(unow.Format(L"%H:%M:%S")), (int)unow.GetMillisecond() );
+ 	return res;
+ }
+ 
+@@ -547,7 +547,7 @@
+ 	if(mcd->ForceEjection_Timeout)
+ 	{
+ 		if(mcd->ForceEjection_Timeout == FORCED_MCD_EJECTION_MAX_TRIES && mcd->IsPresent())
+-			Console.WriteLn( Color_Green,  L"[%s] Auto-ejecting memcard [port:%d, slot:%d]", GetTimeMsStr().c_str(), sio.GetPort(), sio.GetSlot());
++			Console.WriteLn( Color_Green,  L"[%s] Auto-ejecting memcard [port:%d, slot:%d]", WX_STR(GetTimeMsStr()), sio.GetPort(), sio.GetSlot());
+ 
+ 		mcd->ForceEjection_Timeout--;
+ 		forceEject = true;
+@@ -563,13 +563,13 @@
+ 			wxTimeSpan delta = wxDateTime::UNow().Subtract(mcd->ForceEjection_Timestamp);
+ 			if(delta.GetMilliseconds() >= FORCED_MCD_EJECTION_MAX_MS_AFTER_MIN_TRIES)
+ 			{
+-				DevCon.Warning( L"[%s] Auto-eject: Timeout reached after mcd was accessed %d times [port:%d, slot:%d]", GetTimeMsStr().c_str(), numTimesAccessed, sio.GetPort(), sio.GetSlot());
++				DevCon.Warning( L"[%s] Auto-eject: Timeout reached after mcd was accessed %d times [port:%d, slot:%d]", WX_STR(GetTimeMsStr()), numTimesAccessed, sio.GetPort(), sio.GetSlot());
+ 				mcd->ForceEjection_Timeout = 0;	//Done. on next sio access the card will be seen as inserted.
+ 			}
+ 		}
+ 
+ 		if(mcd->ForceEjection_Timeout == 0 && mcd->IsPresent())
+-			Console.WriteLn( Color_Green,  L"[%s] Re-inserting auto-ejected memcard [port:%d, slot:%d]", GetTimeMsStr().c_str(), sio.GetPort(), sio.GetSlot());
++			Console.WriteLn( Color_Green,  L"[%s] Re-inserting auto-ejected memcard [port:%d, slot:%d]", WX_STR(GetTimeMsStr()), sio.GetPort(), sio.GetSlot());
+ 	}
+ 			
+ 	if(!forceEject && mcd->IsPresent())
+diff -ur ./pcsx2-1.2.2/pcsx2/System.cpp ./pcsx2-1.2.2-r1/pcsx2/System.cpp
+--- ./pcsx2-1.2.2/pcsx2/System.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/System.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -214,7 +214,7 @@
+ 		L"Operating System =  %s\n"
+ 		L"Physical RAM     =  %u MB",
+ 
+-		GetOSVersionString().c_str(),
++		WX_STR(GetOSVersionString()),
+ 		(u32)(GetPhysicalMemory() / _1mb)
+ 	);
+ 
+@@ -227,11 +227,11 @@
+ 		L"x86PType         =  %s\n"
+ 		L"x86Flags         =  %08x %08x\n"
+ 		L"x86EFlags        =  %08x",
+-			fromUTF8( x86caps.FamilyName ).Trim().Trim(false).c_str(),
+-			fromUTF8( x86caps.VendorName ).c_str(), x86caps.StepID,
++			WX_STR(fromUTF8( x86caps.FamilyName ).Trim().Trim(false)),
++			WX_STR(fromUTF8( x86caps.VendorName )), x86caps.StepID,
+ 			speed / 1000, speed % 1000,
+ 			x86caps.LogicalCores, (x86caps.LogicalCores==1) ? L"" : L"s",
+-			x86caps.GetTypeName().c_str(),
++			WX_STR(x86caps.GetTypeName()),
+ 			x86caps.Flags, x86caps.Flags2,
+ 			x86caps.EFlags
+ 	);
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppAssert.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppAssert.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppAssert.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppAssert.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -66,12 +66,12 @@
+ 			return;
+ 		}*/
+ 
+-		m_stackTrace.Write(pxsFmt( L"[%02d]", frame.GetLevel()-m_skipped));
++		m_stackTrace.Write(pxsFmt( L"[%02d]", frame.GetLevel()-m_skipped).c_str());
+ 		
+ 		if (!frame.GetName().IsEmpty())
+-			m_stackTrace.Write(pxsFmt( L" %-44s", frame.GetName().c_str() ));
++			m_stackTrace.Write(pxsFmt( L" %-44s", WX_STR(frame.GetName()) ).c_str());
+ 		else
+-			m_stackTrace.Write(pxsFmt( L" 0x%-42p", frame.GetAddress() ));
++			m_stackTrace.Write(pxsFmt( L" 0x%-42p", frame.GetAddress() ).c_str());
+ 
+ 		if( frame.HasSourceLocation() )
+ 		{
+@@ -81,7 +81,7 @@
+ 			for( int i=0; i<2; ++i )
+ 				wxfn.RemoveDir(0);
+ 
+-			m_stackTrace.Write( L" %s:%d", wxfn.GetFullPath().c_str(), frame.GetLine() );
++			m_stackTrace.Write( L" %s:%d", WX_STR(wxfn.GetFullPath()), frame.GetLine() );
+ 		}
+ 		
+ 		m_stackTrace.Write(L"\n");
+@@ -125,10 +125,10 @@
+ 	wxString trace( pxGetStackTrace(origin.function) );
+ 	wxString dbgmsg( origin.ToString( msg ) );
+ 
+-	wxMessageOutputDebug().Printf( L"%s", dbgmsg.c_str() );
++	wxMessageOutputDebug().Printf( L"%s", WX_STR(dbgmsg) );
+ 
+-	Console.Error( L"%s", dbgmsg.c_str() );
+-	Console.WriteLn( L"%s", trace.c_str() );
++	Console.Error( L"%s", WX_STR(dbgmsg) );
++	Console.WriteLn( L"%s", WX_STR(trace) );
+ 
+ 	wxString windowmsg( L"Assertion failed: " );
+ 	if( msg != NULL )
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppConfig.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppConfig.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppConfig.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppConfig.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -1026,7 +1026,7 @@
+ 
+ 	if( (emuLog != NULL) && (emuLogName != newlogname) )
+ 	{
+-		Console.WriteLn( L"\nRelocating Logfile...\n\tFrom: %s\n\tTo  : %s\n", emuLogName.c_str(), newlogname.c_str() );
++		Console.WriteLn( L"\nRelocating Logfile...\n\tFrom: %s\n\tTo  : %s\n", WX_STR(emuLogName), WX_STR(newlogname) );
+ 		wxGetApp().DisableDiskLogging();
+ 
+ 		fclose( emuLog );
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppCorePlugins.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppCorePlugins.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppCorePlugins.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppCorePlugins.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -434,7 +434,11 @@
+ 	wxString pattern( L"*%s*" );
+ #endif
+ 
++#if wxMAJOR_VERSION >= 3
++	wxDir::GetAllFiles( searchpath.ToString(), realdest, pxsFmt( pattern, WX_STR(wxDynamicLibrary::GetDllExt())), wxDIR_FILES );
++#else
+ 	wxDir::GetAllFiles( searchpath.ToString(), realdest, pxsFmt( pattern, wxDynamicLibrary::GetDllExt()), wxDIR_FILES );
++#endif
+ 	
+ 	// SECURITY ISSUE:  (applies primarily to Windows, but is a good idea on any platform)
+ 	//   The search folder order for plugins can vary across operating systems, and in some poorly designed
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppGameDatabase.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppGameDatabase.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppGameDatabase.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppGameDatabase.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -52,7 +52,7 @@
+ };
+ 
+ void DBLoaderHelper::doError(bool doMsg) {
+-	if (doMsg) Console.Error("GameDatabase: Bad file data [%s]", m_dest.c_str());
++	if (doMsg) Console.Error("GameDatabase: Bad file data [%s]", WX_STR(m_dest));
+ 	m_keyPair.Clear();
+ }
+ 
+@@ -172,7 +172,7 @@
+ 	
+ 	if (!wxFileExists(file))
+ 	{
+-		Console.Error(L"(GameDB) Database Not Found! [%s]", file.c_str());
++		Console.Error(L"(GameDB) Database Not Found! [%s]", WX_STR(file));
+ 		return *this;
+ 	}
+ 
+@@ -181,7 +181,7 @@
+ 	if (!reader.IsOk())
+ 	{
+ 		//throw Exception::FileNotFound( file );
+-		Console.Error(L"(GameDB) Could not access file (permission denied?) [%s]", file.c_str());
++		Console.Error(L"(GameDB) Could not access file (permission denied?) [%s]", WX_STR(file));
+ 	}
+ 
+ 	DBLoaderHelper loader( reader, *this );
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppInit.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppInit.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppInit.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppInit.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -251,7 +251,7 @@
+ 
+ 	const PluginInfo* pi = tbl_PluginInfo; do {
+ 		parser.AddOption( wxEmptyString, pi->GetShortname().Lower(),
+-			pxsFmt( _("specify the file to use as the %s plugin"), pi->GetShortname().c_str() )
++			pxsFmt( _("specify the file to use as the %s plugin"), WX_STR(pi->GetShortname()) )
+ 		);
+ 	} while( ++pi, pi->shortname != NULL );
+ 
+@@ -728,12 +728,12 @@
+ 
+ __fi wxString AddAppName( const wxChar* fmt )
+ {
+-	return pxsFmt( fmt, pxGetAppName().c_str() );
++	return pxsFmt( fmt, WX_STR(pxGetAppName()) );
+ }
+ 
+ __fi wxString AddAppName( const char* fmt )
+ {
+-	return pxsFmt( fromUTF8(fmt), pxGetAppName().c_str() );
++	return pxsFmt( fromUTF8(fmt), WX_STR(pxGetAppName()) );
+ }
+ 
+ // ------------------------------------------------------------------------------------------
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppMain.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppMain.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppMain.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppMain.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -297,7 +297,7 @@
+ 
+ 	FastFormatUnicode isoFormatted;
+ 	isoFormatted.Write( L"[%s]", _("IsoFile") );
+-	int pos = out.Find( isoFormatted );
++	int pos = out.Find( isoFormatted.c_str() );
+ 	
+ 	if(pos == wxNOT_FOUND)
+ 	{
+@@ -1064,7 +1064,7 @@
+ void SysStatus( const wxString& text )
+ {
+ 	// mirror output to the console!
+-	Console.WriteLn( text.c_str() );
++	Console.WriteLn( WX_STR(text) );
+ 	sMainFrame.SetStatusText( text );
+ }
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/AppUserMode.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/AppUserMode.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/AppUserMode.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/AppUserMode.cpp	2014-08-30 16:02:59.941958259 +0400
+@@ -123,7 +123,7 @@
+ 		if (Startup.PortableMode)
+ 			Console.WriteLn( L"(UserMode) Portable mode requested via commandline switch!" );
+ 		else
+-			Console.WriteLn( L"(UserMode) Found portable install ini @ %s", FilenameStr.c_str() );
++			Console.WriteLn( L"(UserMode) Found portable install ini @ %s", WX_STR(FilenameStr) );
+ 
+ 		// Just because the portable ini file exists doesn't mean we can actually run in portable
+ 		// mode.  In order to determine our read/write permissions to the PCSX2, we must try to
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/Dialogs/CreateMemoryCardDialog.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/Dialogs/CreateMemoryCardDialog.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/Dialogs/CreateMemoryCardDialog.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/Dialogs/CreateMemoryCardDialog.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -115,7 +115,7 @@
+ 	u8	m_effeffs[528*16];
+ 	memset8<0xff>( m_effeffs );
+ 
+-	Console.WriteLn( L"(FileMcd) Creating new %uMB memory card: '%s'", sizeInMB, mcdFile.c_str() );
++	Console.WriteLn( L"(FileMcd) Creating new %uMB memory card: '%s'", sizeInMB, WX_STR(mcdFile) );
+ 
+ 	wxFFile fp( mcdFile, L"wb" );
+ 	if( !fp.IsOpened() ) return false;
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/Dialogs/FirstTimeWizard.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/Dialogs/FirstTimeWizard.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/Dialogs/FirstTimeWizard.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/Dialogs/FirstTimeWizard.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -71,7 +71,7 @@
+ 
+ 	FastFormatUnicode faqFile;
+ 	faqFile.Write( L"file:///%s/Docs/PCSX2_FAQ.pdf",
+-		InstallFolder.ToString().c_str() );
++		WX_STR(InstallFolder.ToString()) );
+ 
+ 	wxStaticBoxSizer& langSel	= *new wxStaticBoxSizer( wxVERTICAL, this, _("Language selector") );
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/Dialogs/ImportSettingsDialog.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/Dialogs/ImportSettingsDialog.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/Dialogs/ImportSettingsDialog.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/Dialogs/ImportSettingsDialog.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -29,7 +29,7 @@
+ 
+ 		/// (%s is the app name, normally PCSX2 -- omitting one or both %s is allowed)
+ 		pxE( L"Existing %s settings have been found in the configured settings folder.  Would you like to import these settings or overwrite them with %s default values?\n\n(or press Cancel to select a different settings folder)"
+-		), pxGetAppName().c_str(), pxGetAppName().c_str()
++		), WX_STR(pxGetAppName()), WX_STR(pxGetAppName())
+ 	)));
+ 
+ 	wxBoxSizer& s_buttons = *new wxBoxSizer( wxHORIZONTAL );
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/ExecutorThread.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/ExecutorThread.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/ExecutorThread.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/ExecutorThread.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -23,13 +23,13 @@
+ // --------------------------------------------------------------------------------------
+ 
+ bool ConsoleLogSource_Event::Write( const pxEvtQueue* evtHandler, const SysExecEvent* evt, const wxChar* msg ) {
+-	return _parent::Write( pxsFmt(L"(%s:%s) ", evtHandler->GetEventHandlerName().c_str(), evt->GetEventName().c_str()) + msg );
++	return _parent::Write( pxsFmt(L"(%s:%s) ", WX_STR(evtHandler->GetEventHandlerName()), WX_STR(evt->GetEventName())) + msg );
+ }
+ bool ConsoleLogSource_Event::Warn( const pxEvtQueue* evtHandler, const SysExecEvent* evt, const wxChar* msg )	{
+-	return _parent::Write( pxsFmt(L"(%s:%s) ", evtHandler->GetEventHandlerName().c_str(), evt->GetEventName().c_str()) + msg );
++	return _parent::Write( pxsFmt(L"(%s:%s) ", WX_STR(evtHandler->GetEventHandlerName()), WX_STR(evt->GetEventName())) + msg );
+ }
+ bool ConsoleLogSource_Event::Error( const pxEvtQueue* evtHandler, const SysExecEvent* evt, const wxChar* msg ) {
+-	return _parent::Write( pxsFmt(L"(%s:%s) ", evtHandler->GetEventHandlerName().c_str(), evt->GetEventName().c_str()) + msg );
++	return _parent::Write( pxsFmt(L"(%s:%s) ", WX_STR(evtHandler->GetEventHandlerName()), WX_STR(evt->GetEventName())) + msg );
+ }
+ 
+ ConsoleLogSource_Event::ConsoleLogSource_Event()
+@@ -84,7 +84,7 @@
+ {
+ 	if( !ex ) return;
+ 
+-	ex->DiagMsg() += pxsFmt(L"(%s) ", GetEventName().c_str());
++	ex->DiagMsg() += pxsFmt(L"(%s) ", WX_STR(GetEventName()));
+ 	//ex->UserMsg() = prefix + ex->UserMsg();
+ 
+ 	if( m_sync )
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/FrameForGS.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/FrameForGS.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/FrameForGS.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/FrameForGS.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -564,7 +564,7 @@
+ 	const u64& smode2 = *(u64*)PS2GS_BASE(GS_SMODE2);
+ 
+ 	SetTitle( pxsFmt( L"%s | %s (%s) | Limiter: %s | fps: %6.02f%s | State %d",
+-		fromUTF8(gsDest).c_str(),
++		WX_STR(fromUTF8(gsDest)),
+ 		(smode2 & 1) ? L"Interlaced" : L"Progressive",
+ 		(smode2 & 2) ? L"frame" : L"field",
+ 		limiterStr, fps, cpuUsage.c_str(), States_GetCurrentSlot() )
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/GlobalCommands.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/GlobalCommands.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/GlobalCommands.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/GlobalCommands.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -184,7 +184,7 @@
+ 			case AspectRatio_16_9:		art = AspectRatio_Stretch; arts = L"AspectRatio_Stretch";break;
+ 		}
+ 
+-		Console.WriteLn(L"(GSwindow) Aspect ratio: %s.", arts.c_str());
++		Console.WriteLn(L"(GSwindow) Aspect ratio: %s.", WX_STR(arts));
+ 		UpdateImagePosition();
+ 	}
+ 
+@@ -334,7 +334,7 @@
+ 			if( !!part2 )
+ 				name += L"_" + part2;
+ 
+-			gsText.Printf( L"%s.%d.gs", name.c_str(), StatesC );
++			gsText.Printf( L"%s.%d.gs", WX_STR(name), StatesC );
+ 			Text = Path::Combine( g_Conf->Folders.Savestates, gsText );
+ 		}
+ 		else
+@@ -545,7 +545,7 @@
+ 			//ini file contains alternative parsable key combination for current 'searchfor'.
+ 			acode = codeParser;
+ 			Console.WriteLn(Color_StrongGreen, L"Overriding '%s': assigning %s (instead of %s)",
+-				fromUTF8( searchfor ).c_str(), acode.ToString().c_str(), _acode.ToString().c_str());
++				WX_STR(fromUTF8( searchfor )), WX_STR(acode.ToString()), WX_STR(_acode.ToString()));
+ 		}
+ 	}
+ 	// End of overrides section
+@@ -558,7 +558,7 @@
+ 		Console.Warning(
+ 			L"Kbd Accelerator '%s' is mapped multiple times.\n"
+ 			L"\t'Command %s' is being replaced by '%s'",
+-			acode.ToString().c_str(), fromUTF8( result->Id ).c_str(), fromUTF8( searchfor ).c_str()
++			WX_STR(acode.ToString()), WX_STR(fromUTF8( result->Id )), WX_STR(fromUTF8( searchfor ))
+ 		);
+ 	}
+ 
+@@ -567,7 +567,7 @@
+ 	if( result == NULL )
+ 	{
+ 		Console.Warning( L"Kbd Accelerator '%s' is mapped to unknown command '%s'",
+-			acode.ToString().c_str(), fromUTF8( searchfor ).c_str()
++			WX_STR(acode.ToString()), WX_STR(fromUTF8( searchfor ))
+ 		);
+ 	}
+ 	else
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/MainMenuClicks.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/MainMenuClicks.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/MainMenuClicks.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/MainMenuClicks.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -104,7 +104,7 @@
+ 		ScopedCoreThreadPopup suspender;
+ 		if( !Msgbox::OkCancel( pxsFmt(
+ 			pxE( L"This command clears %s settings and allows you to re-run the First-Time Wizard.  You will need to manually restart %s after this operation.\n\nWARNING!!  Click OK to delete *ALL* settings for %s and force-close the app, losing any current emulation progress.  Are you absolutely sure?\n\n(note: settings for plugins are unaffected)"
+-			), pxGetAppName().c_str(), pxGetAppName().c_str(), pxGetAppName().c_str() ),
++			), WX_STR(pxGetAppName()), WX_STR(pxGetAppName()), WX_STR(pxGetAppName()) ),
+ 			_("Reset all settings?") ) )
+ 		{
+ 			suspender.AllowResume();
+@@ -254,10 +254,10 @@
+ 	
+ 	wxArrayString isoFilterTypes;
+ 
+-	isoFilterTypes.Add(pxsFmt(_("All Supported (%s)"), (isoSupportedLabel + L" .dump").c_str()));
++	isoFilterTypes.Add(pxsFmt(_("All Supported (%s)"), WX_STR((isoSupportedLabel + L" .dump"))));
+ 	isoFilterTypes.Add(isoSupportedList + L";*.dump");
+ 
+-	isoFilterTypes.Add(pxsFmt(_("Disc Images (%s)"), isoSupportedLabel.c_str() ));
++	isoFilterTypes.Add(pxsFmt(_("Disc Images (%s)"), WX_STR(isoSupportedLabel) ));
+ 	isoFilterTypes.Add(isoSupportedList);
+ 
+ 	isoFilterTypes.Add(pxsFmt(_("Blockdumps (%s)"), L".dump" ));
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/Panels/MemoryCardListPanel.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/Panels/MemoryCardListPanel.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/Panels/MemoryCardListPanel.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/Panels/MemoryCardListPanel.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -594,7 +594,7 @@
+ 		if( g_Conf->Mcd[slot].Enabled )
+ 		{
+ 			used++;
+-			Console.WriteLn( L"slot[%d]='%s'", slot, g_Conf->Mcd[slot].Filename.GetFullName().c_str() );
++			Console.WriteLn( L"slot[%d]='%s'", slot, WX_STR(g_Conf->Mcd[slot].Filename.GetFullName()) );
+ 		}
+ 	}
+ 	if( !used )
+@@ -619,13 +619,13 @@
+ 			if (isValidNewFilename(m_Cards[slot].Filename.GetFullName(), GetMcdPath(), errMsg, 5))
+ 			{
+ 				if ( !Dialogs::CreateMemoryCardDialog::CreateIt(targetFile, 8) )
+-					Console.Error( L"Automatic createion of MCD '%s' failed. Hope for the best...", targetFile.c_str() );
++					Console.Error( L"Automatic createion of MCD '%s' failed. Hope for the best...", WX_STR(targetFile) );
+ 				else
+-					Console.WriteLn( L"memcard created: '%s'.", targetFile.c_str() );
++					Console.WriteLn( L"memcard created: '%s'.", WX_STR(targetFile) );
+ 			}
+ 			else
+ 			{
+-				Console.Error( L"memcard was enabled but had an invalid file name. Aborting automatic creation. Hope for the best... (%s)", errMsg.c_str() );
++				Console.Error( L"memcard was enabled but had an invalid file name. Aborting automatic creation. Hope for the best... (%s)", WX_STR(errMsg) );
+ 			}
+ 		}
+ 
+@@ -706,9 +706,9 @@
+ 		card.Filename  = dialog.result_createdMcdFilename;
+ 		card.IsPresent = true;
+ 		if ( card.Slot >= 0)
+-			Console.WriteLn(L"setting new card to slot %u: '%s'", card.Slot, card.Filename.GetFullName().c_str());
++			Console.WriteLn(L"setting new card to slot %u: '%s'", card.Slot, WX_STR(card.Filename.GetFullName()));
+ 		else
+-			Console.WriteLn(L"Created a new unassigned card file: '%s'", card.Filename.GetFullName().c_str() );
++			Console.WriteLn(L"Created a new unassigned card file: '%s'", WX_STR(card.Filename.GetFullName()) );
+ 	}
+ 	else
+ 		card.IsEnabled=false;
+@@ -733,7 +733,7 @@
+ 		wxString content;
+ 		content.Printf(
+ 			pxE( L"You are about to delete the formatted memory card '%s'. All data on this card will be lost!  Are you absolutely and quite positively sure?"
+-				), card.Filename.GetFullName().c_str()
++				), WX_STR(card.Filename.GetFullName())
+ 		);
+ 
+ 		result = Msgbox::YesNo( content, _("Delete memory file?") );
+@@ -791,7 +791,7 @@
+ 			if( !isValidNewFilename( newFilename, basepath, errMsg, 5 ) )
+ 			{
+ 				wxString message;
+-				message.Printf(_("Failed: %s"), errMsg.c_str());
++				message.Printf(_("Failed: %s"), WX_STR(errMsg));
+ 				Msgbox::Alert( message, _("Duplicate memory card") );
+ 				continue;
+ 			}
+@@ -811,7 +811,7 @@
+ 		{
+ 			wxString heading;
+ 			heading.Printf( pxE( L"Failed: Destination memory card '%s' is in use." ),
+-				dest.Filename.GetFullName().c_str(), dest.Slot
++				WX_STR(dest.Filename.GetFullName()), dest.Slot
+ 			);
+ 
+ 			wxString content;
+@@ -825,8 +825,8 @@
+ 		// Destination memcard isEnabled state is the same now as the source's
+ 		wxString success;
+ 		success.Printf(_("Memory card '%s' duplicated to '%s'."),
+-			src.Filename.GetFullName().c_str(),
+-			dest.Filename.GetFullName().c_str()
++			WX_STR(src.Filename.GetFullName()),
++			WX_STR(dest.Filename.GetFullName())
+ 			);
+ 		Msgbox::Alert(success, _("Success"));
+ 		dest.IsPresent=true;
+@@ -850,7 +850,7 @@
+ 	while (1){
+ 		wxString title;
+ 		title.Printf(_("Select a new name for the memory card '%s'\n( '.ps2' will be added automatically)"),
+-						card.Filename.GetFullName().c_str()
++						WX_STR(card.Filename.GetFullName())
+ 						);
+ 		newFilename = wxGetTextFromUser(title, _("Rename memory card"));
+ 		if( newFilename==L"" )
+@@ -863,7 +863,7 @@
+ 		if( !isValidNewFilename( newFilename, basepath, errMsg, 5 ) )
+ 		{
+ 			wxString message;
+-			message.Printf(_("Error (%s)"), errMsg.c_str());
++			message.Printf(_("Error (%s)"), WX_STR(errMsg));
+ 			Msgbox::Alert( message, _("Rename memory card") );
+ 			continue;
+ 		}
+@@ -1002,7 +1002,7 @@
+ 			selections.Add(sel);
+ 		}
+ 		wxString title;
+-		title.Printf(_("Select a target port for '%s'"), card.Filename.GetFullName().c_str());
++		title.Printf(_("Select a target port for '%s'"), WX_STR(card.Filename.GetFullName()));
+ 		int res=wxGetSingleChoiceIndex(title, _("Insert card"), selections, this);
+ 		if( res<0 )
+ 			return;
+@@ -1108,10 +1108,10 @@
+ 			currentCardFile.Slot		= -1;
+ 			currentCardFile.IsEnabled	= false;
+ 			m_allFilesystemCards.push_back(currentCardFile);
+-			//DevCon.WriteLn(L"Enumerated file: '%s'", currentCardFile.Filename.GetFullName().c_str() );
++			//DevCon.WriteLn(L"Enumerated file: '%s'", WX_STR(currentCardFile.Filename.GetFullName()) );
+ 		}
+ 		/*else
+-			DevCon.WriteLn(L"MCD folder card file skipped: '%s'", memcardList[i].c_str() );*/
++			DevCon.WriteLn(L"MCD folder card file skipped: '%s'", WX_STR(memcardList[i]) );*/
+ 	}
+ }
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/Panels/PluginSelectorPanel.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/Panels/PluginSelectorPanel.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/Panels/PluginSelectorPanel.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/Panels/PluginSelectorPanel.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -120,7 +120,7 @@
+ 			if ( ((version >> 16)&0xff) == tbl_PluginInfo[pluginTypeIndex].version )
+ 				return true;
+ 
+-			Console.Warning("%s Plugin %s:  Version %x != %x", info.shortname, m_plugpath.c_str(), 0xff&(version >> 16), info.version);
++			Console.Warning("%s Plugin %s:  Version %x != %x", info.shortname, WX_STR(m_plugpath), 0xff&(version >> 16), info.version);
+ 		}
+ 		return false;
+ 	}
+@@ -450,7 +450,7 @@
+ static wxString GetApplyFailedMsg()
+ {
+ 	return pxsFmt( pxE( L"All plugins must have valid selections for %s to run.  If you are unable to make a valid selection due to missing plugins or an incomplete install of %s, then press Cancel to close the Configuration panel."
+-	), pxGetAppName().c_str(), pxGetAppName().c_str() );
++	), WX_STR(pxGetAppName()), WX_STR(pxGetAppName()) );
+ }
+ 
+ void Panels::PluginSelectorPanel::Apply()
+@@ -469,8 +469,8 @@
+ 			wxString plugname( pi->GetShortname() );
+ 
+ 			throw Exception::CannotApplySettings( this )
+-				.SetDiagMsg(pxsFmt( L"PluginSelectorPanel: Invalid or missing selection for the %s plugin.", plugname.c_str()) )
+-				.SetUserMsg(pxsFmt( _("Please select a valid plugin for the %s."), plugname.c_str() ) + L"\n\n" + GetApplyFailedMsg() );
++				.SetDiagMsg(pxsFmt( L"PluginSelectorPanel: Invalid or missing selection for the %s plugin.", WX_STR(plugname)) )
++				.SetUserMsg(pxsFmt( _("Please select a valid plugin for the %s."), WX_STR(plugname) ) + L"\n\n" + GetApplyFailedMsg() );
+ 		}
+ 
+ 		g_Conf->BaseFilenames.Plugins[pid] = GetFilename((int)m_ComponentBoxes->Get(pid).GetClientData(sel));
+@@ -509,7 +509,7 @@
+ 			.SetDiagMsg(ex.FormatDiagnosticMessage())
+ 			.SetUserMsg(pxsFmt(
+ 				_("The selected %s plugin failed to load.\n\nReason: %s\n\n"),
+-				plugname.c_str(), ex.FormatDisplayMessage().c_str()
++				WX_STR(plugname), WX_STR(ex.FormatDisplayMessage())
+ 			) + GetApplyFailedMsg());
+ 	}
+ }
+@@ -737,7 +737,7 @@
+ 			if( result.PassedTest & pi->typemask )
+ 			{
+ 				int sel = m_ComponentBoxes->Get(pid).Append( wxsFormat( L"%s %s [%s]",
+-					result.Name.c_str(), result.Version[pid].c_str(), Path::GetFilenameWithoutExt( (*m_FileList)[evtidx] ).c_str() ),
++					WX_STR(result.Name), WX_STR(result.Version[pid]), WX_STR(Path::GetFilenameWithoutExt( (*m_FileList)[evtidx] )) ),
+ 					(void*)evtidx
+ 				);
+ 
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/Panels/VideoPanel.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/Panels/VideoPanel.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/Panels/VideoPanel.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/Panels/VideoPanel.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -159,7 +159,7 @@
+ 		throw Exception::CannotApplySettings( this )
+ 			.SetDiagMsg(pxsFmt(
+ 				L"Error while parsing either NTSC or PAL framerate settings.\n\tNTSC Input = %s\n\tPAL Input  = %s",
+-				m_text_BaseNtsc->GetValue().c_str(), m_text_BasePal->GetValue().c_str()
++				WX_STR(m_text_BaseNtsc->GetValue()), WX_STR(m_text_BasePal->GetValue())
+ 			) )
+ 			.SetUserMsg(_t("Error while parsing either NTSC or PAL framerate settings.  Settings must be valid floating point numerics."));
+ 	}
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/SysState.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/SysState.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/SysState.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/SysState.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -97,7 +97,7 @@
+ 	if (entrySize < expectedSize)
+ 	{
+ 		Console.WriteLn( Color_Yellow, " '%s' is incomplete (expected 0x%x bytes, loading only 0x%x bytes)",
+-			GetFilename().c_str(), expectedSize, entrySize );
++			WX_STR(GetFilename()), expectedSize, entrySize );
+ 	}
+ 
+ 	uint copylen = std::min(entrySize, expectedSize);
+@@ -564,7 +564,7 @@
+ 			{
+ 				if (entry->GetName().CmpNoCase(SavestateEntries[i]->GetFilename()) == 0)
+ 				{
+-					DevCon.WriteLn( Color_Green, L" ... found '%s'", SavestateEntries[i]->GetFilename().c_str() );
++					DevCon.WriteLn( Color_Green, L" ... found '%s'", WX_STR(SavestateEntries[i]->GetFilename()) );
+ 					foundEntry[i] = entry.DetachPtr();
+ 					break;
+ 				}
+@@ -588,7 +588,7 @@
+ 			if (SavestateEntries[i]->IsRequired())
+ 			{
+ 				throwIt = true;
+-				Console.WriteLn( Color_Red, " ... not found '%s'!", SavestateEntries[i]->GetFilename().c_str() );
++				Console.WriteLn( Color_Red, " ... not found '%s'!", WX_STR(SavestateEntries[i]->GetFilename()) );
+ 			}
+ 		}
+ 
+@@ -665,7 +665,7 @@
+ 	}
+ 
+ 	Console.WriteLn( Color_StrongGreen, "Saving savestate to slot %d...", num );
+-	Console.Indent().WriteLn( Color_StrongGreen, L"filename: %s", file.c_str() );
++	Console.Indent().WriteLn( Color_StrongGreen, L"filename: %s", WX_STR(file) );
+ 
+ 	StateCopy_SaveToFile( file );
+ }
+@@ -680,8 +680,8 @@
+ 		return;
+ 	}
+ 
+-	Console.WriteLn( Color_StrongGreen, L"Loading savestate from slot %d...%s", slot, wxString( isFromBackup?L" (backup)":L"" ).c_str() );
+-	Console.Indent().WriteLn( Color_StrongGreen, L"filename: %s", file.c_str() );
++	Console.WriteLn( Color_StrongGreen, L"Loading savestate from slot %d...%s", slot, WX_STR(wxString( isFromBackup?L" (backup)":L"" )) );
++	Console.Indent().WriteLn( Color_StrongGreen, L"filename: %s", WX_STR(file) );
+ 
+ 	StateCopy_LoadFromFile( file );
+ }
+diff -ur ./pcsx2-1.2.2/pcsx2/gui/i18n.cpp ./pcsx2-1.2.2-r1/pcsx2/gui/i18n.cpp
+--- ./pcsx2-1.2.2/pcsx2/gui/i18n.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/gui/i18n.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -302,7 +302,7 @@
+ 		{
+ 			info = wxLocale::FindLanguageInfo(langCode);
+ 			if (!info)
+-				Console.Warning( "Unrecognized language canonical name '%ls'", langCode.c_str() );
++				Console.Warning( "Unrecognized language canonical name '%ls'", WX_STR(langCode) );
+ 		}
+ 	}
+ 
+@@ -314,7 +314,7 @@
+ 	if( !locale->IsOk() )
+ 	{
+ 		Console.Warning( L"SetLanguage: '%s' [%s] is not supported by the operating system",
+-			i18n_GetBetterLanguageName(info).c_str(), locale->GetCanonicalName().c_str()
++			WX_STR(i18n_GetBetterLanguageName(info)), WX_STR(locale->GetCanonicalName())
+ 		);
+ 		return false;
+ 	}
+@@ -335,7 +335,7 @@
+ 	}
+ 	
+ 	Console.WriteLn( L"Loading language translation databases for '%s' [%s]",
+-		i18n_GetBetterLanguageName(info).c_str(), locale->GetCanonicalName().c_str()
++		WX_STR(i18n_GetBetterLanguageName(info)), WX_STR(locale->GetCanonicalName())
+ 	);
+ 
+ 	static const wxChar* dictFiles[] =
+diff -ur ./pcsx2-1.2.2/pcsx2/ps2/BiosTools.cpp ./pcsx2-1.2.2-r1/pcsx2/ps2/BiosTools.cpp
+--- ./pcsx2-1.2.2/pcsx2/ps2/BiosTools.cpp	2014-02-10 22:57:09.000000000 +0400
++++ ./pcsx2-1.2.2-r1/pcsx2/ps2/BiosTools.cpp	2014-08-30 16:03:02.222008209 +0400
+@@ -188,7 +188,7 @@
+ 
+ 	// Try first a basic extension concatenation (normally results in something like name.bin.rom1)
+ 	const wxString Bios( g_Conf->FullpathToBios() );
+-	Bios1.Printf( L"%s.%s", Bios.c_str(), ext);
++	Bios1.Printf( L"%s.%s", WX_STR(Bios), ext);
+ 
+ 	try
+ 	{
+@@ -216,7 +216,7 @@
+ 		// still work fine.
+ 
+ 		Console.Warning(L"BIOS Warning: %s could not be read (permission denied?)", ext);
+-		Console.Indent().WriteLn(L"Details: %s", ex.FormatDiagnosticMessage().c_str());
++		Console.Indent().WriteLn(L"Details: %s", WX_STR(ex.FormatDiagnosticMessage()));
+ 		Console.Indent().WriteLn(L"File size: %llu", filesize);
+ 	}
+ }
+@@ -263,7 +263,7 @@
+ 		LoadBiosVersion( memfp, BiosVersion, BiosDescription, biosZone );
+ 		
+ 		Console.SetTitle( pxsFmt( L"Running BIOS (%s v%u.%u)",
+-			biosZone.c_str(), BiosVersion >> 8, BiosVersion & 0xff
++			WX_STR(biosZone), BiosVersion >> 8, BiosVersion & 0xff
+ 		));
+ 
+ 		//injectIRX("host.irx");	//not fully tested; still buggy

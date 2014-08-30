@@ -1,0 +1,27 @@
+commit 3c9367825c0383cd2566f5db36cae553e640b02f
+Author: Gregory Hainaut <gregory.hainaut@gmail.com>
+Date:   Sat Aug 2 13:32:48 2014 +0200
+
+    wx3.0: partially revert 1fda2a611c55ab1cae10df548cbd98ffada327d8
+    
+    I wrongly removed code that set the language directory on Windows.
+    Linux uses another way (don't know which one)
+    
+    close issue #189
+
+diff --git a/pcsx2/gui/AppMain.cpp b/pcsx2/gui/AppMain.cpp
+index f4ee475..8469af7 100644
+--- a/pcsx2/gui/AppMain.cpp
++++ b/pcsx2/gui/AppMain.cpp
+@@ -348,6 +348,11 @@ wxMessageOutput* Pcsx2AppTraits::CreateMessageOutput()
+ class Pcsx2StandardPaths : public wxStandardPaths
+ {
+ public:
++	wxString GetResourcesDir() const
++	{
++		return Path::Combine( GetDataDir(), L"Langs" );
++	}
++
+ #ifdef __LINUX__
+ 	wxString GetUserLocalDataDir() const
+ 	{

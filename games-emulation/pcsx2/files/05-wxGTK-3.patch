@@ -1,0 +1,244 @@
+commit 1fda2a611c55ab1cae10df548cbd98ffada327d8
+Author: Gregory Hainaut <gregory.hainaut@gmail.com>
+Date:   Sun Jun 29 09:09:07 2014 +0200
+
+    wx3.0: various interface update
+    
+    v3: partially revert previous version
+    
+    * Keep old behavior for translation on wx2.8
+    * Revert wxDataObjectSimple parameter change
+    + feature is MSW only
+    + devs are welcome to improve it
+    * restore standard path, only update the reference type
+
+diff --git a/pcsx2/CDVD/CDVD.cpp b/pcsx2/CDVD/CDVD.cpp
+index c5b6670..d1a2737 100644
+--- a/pcsx2/CDVD/CDVD.cpp
++++ b/pcsx2/CDVD/CDVD.cpp
+@@ -438,10 +438,17 @@ void cdvdReadKey(u8, u16, u32 arg2, u8* key)
+ 
+ 		// combine the lower 7 bits of each char
+ 		// to make the 4 letters fit into a single u32
++#if wxMAJOR_VERSION >= 3
++		letters =	(s32)((DiscSerial[3].GetValue()&0x7F)<< 0) |
++					(s32)((DiscSerial[2].GetValue()&0x7F)<< 7) |
++					(s32)((DiscSerial[1].GetValue()&0x7F)<<14) |
++					(s32)((DiscSerial[0].GetValue()&0x7F)<<21);
++#else
+ 		letters =	(s32)((DiscSerial[3]&0x7F)<< 0) |
+ 					(s32)((DiscSerial[2]&0x7F)<< 7) |
+ 					(s32)((DiscSerial[1]&0x7F)<<14) |
+ 					(s32)((DiscSerial[0]&0x7F)<<21);
++#endif
+ 	}
+ 
+ 	// calculate magic numbers
+diff --git a/pcsx2/gui/App.h b/pcsx2/gui/App.h
+index 2937e71..c552fce 100644
+--- a/pcsx2/gui/App.h
++++ b/pcsx2/gui/App.h
+@@ -379,7 +379,11 @@ public:
+ 	wxMessageOutput* CreateMessageOutput();
+ 
+ #ifdef wxUSE_STDPATHS
++#if wxMAJOR_VERSION < 3
+ 	wxStandardPathsBase& GetStandardPaths();
++#else
++	wxStandardPaths& GetStandardPaths();
++#endif
+ #endif
+ };
+ 
+diff --git a/pcsx2/gui/AppConfig.cpp b/pcsx2/gui/AppConfig.cpp
+index 52092f0..e62e904 100644
+--- a/pcsx2/gui/AppConfig.cpp
++++ b/pcsx2/gui/AppConfig.cpp
+@@ -1138,6 +1138,11 @@ protected:
+ 
+ 	virtual bool DoWriteString(const wxString& , const wxString& )  { return false; }
+ 	virtual bool DoWriteLong(const wxString& , long )  { return false; }
++
++#if wxUSE_BASE64
++	virtual bool DoReadBinary(const wxString& key, wxMemoryBuffer* buf) const { return false; }
++	virtual bool DoWriteBinary(const wxString& key, const wxMemoryBuffer& buf) { return false; }
++#endif
+ };
+ 
+ static pxDudConfig _dud_config;
+diff --git a/pcsx2/gui/AppMain.cpp b/pcsx2/gui/AppMain.cpp
+index ddfd837..f4ee475 100644
+--- a/pcsx2/gui/AppMain.cpp
++++ b/pcsx2/gui/AppMain.cpp
+@@ -39,8 +39,6 @@
+ #endif
+ 
+ #ifdef __WXGTK__
+-// Need to tranform the GSPanel to a X11 window/display for the GS plugins
+-#include <wx/gtk/win_gtk.h> // GTK_PIZZA interface
+ #include <gdk/gdkx.h>
+ #include <gtk/gtk.h>
+ #endif
+@@ -350,11 +348,6 @@ wxMessageOutput* Pcsx2AppTraits::CreateMessageOutput()
+ class Pcsx2StandardPaths : public wxStandardPaths
+ {
+ public:
+-	wxString GetResourcesDir() const
+-	{
+-		return Path::Combine( GetDataDir(), L"Langs" );
+-	}
+-
+ #ifdef __LINUX__
+ 	wxString GetUserLocalDataDir() const
+ 	{
+@@ -384,9 +377,14 @@ public:
+ 		return cache_dir;
+ 	}
+ #endif
++
+ };
+ 
++#if wxMAJOR_VERSION < 3
+ wxStandardPathsBase& Pcsx2AppTraits::GetStandardPaths()
++#else
++wxStandardPaths& Pcsx2AppTraits::GetStandardPaths()
++#endif
+ {
+ 	static Pcsx2StandardPaths stdPaths;
+ 	return stdPaths;
+@@ -936,12 +934,13 @@ void Pcsx2App::OpenGsPanel()
+ 	// Unfortunately there is a race condition between gui and gs threads when you called the
+ 	// GDK_WINDOW_* macro. To be safe I think it is best to do here. It only cost a slight
+ 	// extension (fully compatible) of the plugins API. -- Gregory
+-	GtkWidget *child_window = gtk_bin_get_child(GTK_BIN(gsFrame->GetViewport()->GetHandle()));
++	GtkWidget *child_window = (GtkWidget*)GTK_BIN(gsFrame->GetViewport()->GetHandle());
+ 
+ 	gtk_widget_realize(child_window); // create the widget to allow to use GDK_WINDOW_* macro
+ 	gtk_widget_set_double_buffered(child_window, false); // Disable the widget double buffer, you will use the opengl one
+ 
+-	GdkWindow* draw_window = GTK_PIZZA(child_window)->bin_window;
++	GdkWindow* draw_window = gtk_widget_get_window(child_window);
++
+ 	Window Xwindow = GDK_WINDOW_XWINDOW(draw_window);
+ 	Display* XDisplay = GDK_WINDOW_XDISPLAY(draw_window);
+ 
+diff --git a/pcsx2/gui/Dialogs/BaseConfigurationDialog.cpp b/pcsx2/gui/Dialogs/BaseConfigurationDialog.cpp
+index 2cf454b..977ea86 100644
+--- a/pcsx2/gui/Dialogs/BaseConfigurationDialog.cpp
++++ b/pcsx2/gui/Dialogs/BaseConfigurationDialog.cpp
+@@ -28,6 +28,7 @@
+ #include <wx/artprov.h>
+ #include <wx/filepicker.h>
+ #include <wx/listbook.h>
++#include <wx/spinctrl.h>
+ 
+ DEFINE_EVENT_TYPE( pxEvt_ApplySettings )
+ DEFINE_EVENT_TYPE( pxEvt_SetSettingsPage )
+@@ -306,7 +307,7 @@ void Dialogs::BaseConfigurationDialog::OnScreenshot_Click( wxCommandEvent& evt )
+ 	filenameDefault.Replace( L"/", L"-" );
+ 
+ 	wxString filename( wxFileSelector( _("Save dialog screenshots to..."), g_Conf->Folders.Snapshots.ToString(),
+-		filenameDefault, L"png", NULL, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this ) );
++		filenameDefault, L"png", wxEmptyString, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this ) );
+ 
+ 	if( !filename.IsEmpty() )
+ 	{
+diff --git a/pcsx2/gui/Panels/GameDatabasePanel.cpp b/pcsx2/gui/Panels/GameDatabasePanel.cpp
+index d9c3d0d..e022c96 100644
+--- a/pcsx2/gui/Panels/GameDatabasePanel.cpp
++++ b/pcsx2/gui/Panels/GameDatabasePanel.cpp
+@@ -346,7 +346,7 @@ Panels::GameDatabasePanel::GameDatabasePanel( wxWindow* parent )
+ 
+ 	*this	+= new GameDatabaseListView( this ) | StdExpand();
+ 
+-	wxFlexGridSizer& sizer1(*new wxFlexGridSizer(5, StdPadding));
++	wxFlexGridSizer& sizer1(*new wxFlexGridSizer(5, StdPadding, 0));
+ 	sizer1.AddGrowableCol(0);
+ 
+ 	blankLine();
+diff --git a/pcsx2/gui/Panels/LogOptionsPanels.cpp b/pcsx2/gui/Panels/LogOptionsPanels.cpp
+index 53141d8..0405f2b 100644
+--- a/pcsx2/gui/Panels/LogOptionsPanels.cpp
++++ b/pcsx2/gui/Panels/LogOptionsPanels.cpp
+@@ -35,7 +35,7 @@ Panels::eeLogOptionsPanel::eeLogOptionsPanel( LogOptionsPanel* parent )
+ 	m_hwPanel		= new CheckedStaticBox( this, wxVERTICAL, L"Registers" );
+ 	m_evtPanel		= new CheckedStaticBox( this, wxVERTICAL, L"Events" );
+ 
+-	wxFlexGridSizer& eeTable( *new wxFlexGridSizer( 2, 5 ) );
++	wxFlexGridSizer& eeTable( *new wxFlexGridSizer( 2, 5, 0 ) );
+ 
+ 	eeTable.AddGrowableCol(0);
+ 	eeTable.AddGrowableCol(1);
+@@ -62,7 +62,7 @@ Panels::iopLogOptionsPanel::iopLogOptionsPanel( LogOptionsPanel* parent )
+ 	m_hwPanel		= new CheckedStaticBox( this, wxVERTICAL, L"Registers" );
+ 	m_evtPanel		= new CheckedStaticBox( this, wxVERTICAL, L"Events" );
+ 
+-	wxFlexGridSizer& iopTable( *new wxFlexGridSizer( 2, 5 ) );
++	wxFlexGridSizer& iopTable( *new wxFlexGridSizer( 2, 5, 0 ) );
+ 
+ 	iopTable.AddGrowableCol(0);
+ 	iopTable.AddGrowableCol(1);
+diff --git a/pcsx2/gui/Panels/MemoryCardListPanel.cpp b/pcsx2/gui/Panels/MemoryCardListPanel.cpp
+index 09cd6ae..0740c5d 100644
+--- a/pcsx2/gui/Panels/MemoryCardListPanel.cpp
++++ b/pcsx2/gui/Panels/MemoryCardListPanel.cpp
+@@ -252,7 +252,17 @@ protected:
+ 
+ public:
+ 	McdDataObject(int viewIndex = -1)
++#ifdef __LINUX__
++		// XXX: On linux drag and drop doesn't work. I think wxDF_PRIVATE is a MS extension.
++		// Besides it will raise on assertion on wx3.0.
++		//
++		// wxDF_FILENAME returns the filename of the memory card dropped. Maybe code can be updated
++		// to use it. However Model/view stuff is not my cup of tea so I will
++		// let others improve it on linux. --Greg
++		: wxDataObjectSimple( /*wxDF_FILENAME*/ )
++#else
+ 		: wxDataObjectSimple( wxDF_PRIVATE )
++#endif
+ 	{
+ 		m_viewIndex = viewIndex;
+ 	}
+diff --git a/pcsx2/gui/RecentIsoList.cpp b/pcsx2/gui/RecentIsoList.cpp
+index 092831a..8b6cb7e 100644
+--- a/pcsx2/gui/RecentIsoList.cpp
++++ b/pcsx2/gui/RecentIsoList.cpp
+@@ -127,7 +127,12 @@ void RecentIsoManager::Repopulate()
+ 	// it trys to add them to a group that doesn't exist. Since the group doesn't exist, 
+ 	// it starts a new group, but it also spews a couple warnings about it in Linux.
+ #ifdef __LINUX__
+-	m_Menu->Remove( m_Menu->Append( -1, wxEmptyString ) );
++	// FIXME is it still useful on v3
++#if wxMAJOR_VERSION >= 3
++	m_Menu->Remove( m_Menu->Append( -1, "dummy" ) );
++#else
++	m_Menu->Remove( m_Menu->Append( -1 ) );
++#endif
+ #endif
+ 	//Note: the internal recent iso list (m_Items) has the most recent item last (also at the INI file)
+ 	//  but the menu is composed in reverse order such that the most recent item appears at the top.
+diff --git a/pcsx2/gui/i18n.cpp b/pcsx2/gui/i18n.cpp
+index 6f58d4b..c9633b5 100644
+--- a/pcsx2/gui/i18n.cpp
++++ b/pcsx2/gui/i18n.cpp
+@@ -79,14 +79,18 @@ static void i18n_DoPackageCheck( wxLanguage wxLangId, LangPackList& langs, bool&
+ 
+ 	// note: wx preserves the current locale for us, so creating a new locale and deleting
+ 	// will not affect program status.
++#if wxMAJOR_VERSION < 3
+ 	ScopedPtr<wxLocale> locale( new wxLocale( wxLangId, wxLOCALE_CONV_ENCODING ) );
++#else
++	ScopedPtr<wxLocale> locale( new wxLocale( wxLangId, 0 ) );
++#endif
+ 
+ 	// Force the msgIdLanguage param to wxLANGUAGE_UNKNOWN to disable wx's automatic english
+ 	// matching logic, which will bypass the catalog loader for all english-based dialects, and
+ 	// (wrongly) enumerate a bunch of locales that don't actually exist.
+ 
+ 	if ((locale->GetLanguage() == wxLANGUAGE_ENGLISH_US) ||
+-		(locale->IsOk() && locale->AddCatalog( L"pcsx2_Main", wxLANGUAGE_UNKNOWN, NULL )) )
++		(locale->IsOk() && locale->AddCatalog( L"pcsx2_Main", wxLANGUAGE_UNKNOWN, wxEmptyString )) )
+ 	{
+ 		langs.push_back( LangPackEnumeration( wxLangId ) );
+ 		valid_stat = true;
