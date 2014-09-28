@@ -88,11 +88,6 @@ if [[ ${PV} == "1.2.2" ]]; then
 		# Honor $GAMES_BINDIR
 		"${FILESDIR}"/bindir-${PV}.patch
 	)
-else
-	PATCHES+=(
-		# Honor $GAMES_BINDIR
-		"${FILESDIR}"/bindir.patch
-	)
 fi
 
 src_prepare() {
