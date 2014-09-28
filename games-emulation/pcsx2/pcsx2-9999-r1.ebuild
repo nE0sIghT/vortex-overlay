@@ -33,7 +33,18 @@ for lang in ${LANGS}; do
         IUSE+=" linguas_${lang}"
 done
 
-RDEPEND="
+WXGTKDEPEND="x11-libs/wxGTK:2.8[abi_x86_32,X]"
+if [[ ${PV} != "1.2.2" ]]; then
+	WXGTKDEPEND="
+		|| (
+			x11-libs/wxGTK:2.8[abi_x86_32,X]
+			x11-libs/wxGTK:3.0[abi_x86_32,X]
+		)
+	"
+fi
+
+RDEPEND="${WXGTKDEPEND}
+
 	app-arch/bzip2[abi_x86_32]
 	dev-libs/libaio[abi_x86_32]
 	virtual/jpeg:62[abi_x86_32]
@@ -42,11 +53,6 @@ RDEPEND="
 	x11-libs/libX11[abi_x86_32]
 	x11-libs/libXext[abi_x86_32]
 	>=sys-libs/zlib-1.2.4[abi_x86_32]
-
-	|| (
-		x11-libs/wxGTK:2.8[abi_x86_32,X]
-		x11-libs/wxGTK:3.0[abi_x86_32,X]
-	)
 
 	video? (
 		virtual/opengl[abi_x86_32]
@@ -79,20 +85,13 @@ if [[ ${PV} == "1.2.2" ]]; then
 	PATCHES+=(
 		# Fix Cg find for Gentoo amd64
 		"${FILESDIR}"/cg-multilib.patch
-		# Backported wxGTK:3.0 support
-		"${FILESDIR}"/00-wxGTK-3.patch
-		"${FILESDIR}"/01-wxGTK-3.patch
-		"${FILESDIR}"/02-wxGTK-3.patch
-		"${FILESDIR}"/03-wxGTK-3.patch
-		"${FILESDIR}"/04-wxGTK-3.patch
-		"${FILESDIR}"/05-wxGTK-3.patch
-		"${FILESDIR}"/06-wxGTK-3.patch
-		"${FILESDIR}"/07-wxGTK-3.patch
-		"${FILESDIR}"/08-wxGTK-3.patch
-		"${FILESDIR}"/09-wxGTK-3.patch
-		"${FILESDIR}"/10-wxGTK-3.patch
-		"${FILESDIR}"/11-wxGTK-3.patch
-		"${FILESDIR}"/12-wxGTK-3.patch
+		# Honor $GAMES_BINDIR
+		"${FILESDIR}"/bindir-${PV}.patch
+	)
+else
+	PATCHES+=(
+		# Honor $GAMES_BINDIR
+		"${FILESDIR}"/bindir.patch
 	)
 fi
 
@@ -137,7 +136,8 @@ src_configure() {
 	local CMAKE_BUILD_TYPE="Release"
 
 	local WX_GTK_VER="2.8"
-	if has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
+	# Prefer wxGTK:3
+	if [[ ${PV} != "1.2.2" ]] && has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
 		WX_GTK_VER="3.0"
 	fi
 	need-wxwidgets unicode
@@ -146,6 +146,7 @@ src_configure() {
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
 		-DCMAKE_INSTALL_PREFIX=/usr
+		-DBIN_DIR=${GAMES_BINDIR}
 		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/${PN}
 		-DGAMEINDEX_DIR=${GAMES_DATADIR}/${PN}
 		-DGLSL_SHADER_DIR=${GAMES_DATADIR}/${PN}
@@ -167,9 +168,5 @@ src_compile() {
 
 src_install() {
 	cmake-utils_src_install DESTDIR="${D}"
-
-	# move binary files to correct directory
-	mv ${D}/usr/bin ${D}/${GAMES_BINDIR} || die
-
 	prepgamesdirs
 }
