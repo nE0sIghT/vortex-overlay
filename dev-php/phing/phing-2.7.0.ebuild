@@ -1,1 +1,0 @@
-/usr/portage/dev-php/phing/phing-2.6.1.ebuild
