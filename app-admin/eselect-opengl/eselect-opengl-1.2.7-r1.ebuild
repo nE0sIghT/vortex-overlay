@@ -16,7 +16,7 @@ GLEXT="86"
 GLXEXT="34"
 
 MIRROR="http://dev.gentoo.org/~mattst88/distfiles"
-SRC_URI="http://www.opengl.org/registry/api/GL/glext.h -> glext.h.86
+SRC_URI="http://www.opengl.org/registry/api/GL/glext.h -> glext.h.${GLEXT}
 	${MIRROR}/glxext.h.${GLXEXT}.xz
 	${MIRROR}/${P}.tar.xz"
 
