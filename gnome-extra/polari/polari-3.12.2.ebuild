@@ -20,6 +20,7 @@ KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	dev-libs/gjs
 	net-libs/telepathy-glib
+	net-irc/telepathy-idle
 	>=x11-libs/gtk+-3.11.5[introspection]
 "
 DEPEND="
