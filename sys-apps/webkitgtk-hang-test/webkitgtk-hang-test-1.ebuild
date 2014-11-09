@@ -7,7 +7,7 @@ GCONF_DEBUG="no"
 
 DESCRIPTION="Test package for bug 463960"
 HOMEPAGE="https://bugs.gentoo.org/show_bug.cgi?id=463960"
-SRC_URI="http://coldzone.ru/${P}.tar.gz"
+SRC_URI="http://coldzone.ru/upload/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"

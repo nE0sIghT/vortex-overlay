@@ -10,7 +10,7 @@ inherit flag-o-matic gnome2 pax-utils python-any-r1
 
 DESCRIPTION="Test pachage for bug 463960"
 HOMEPAGE="https://bugs.gentoo.org/show_bug.cgi?id=463960"
-SRC_URI="http://coldzone.ru/${P}.tar.gz"
+SRC_URI="http://coldzone.ru/upload/${P}.tar.gz"
 
 LICENSE="LGPL-2+ BSD"
 SLOT="0"
