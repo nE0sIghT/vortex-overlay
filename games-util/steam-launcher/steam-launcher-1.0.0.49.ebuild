@@ -13,7 +13,7 @@ DESCRIPTION="Installer, launcher and supplementary files for Valve's Steam clien
 HOMEPAGE="http://steampowered.com"
 SRC_URI="http://repo.steampowered.com/steam/archive/precise/steam_${PV}.tar.gz"
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 LICENSE="ValveSteamLicense"
 
 RESTRICT="bindist mirror"
@@ -61,7 +61,6 @@ src_prepare() {
 		-e "s:/usr/bin/steam:${GAMES_BINDIR}/steam:" \
 		${S}/steam.desktop || die "sed failed" 
 
-	#grep '^/' /etc/ld.so.conf | sed ':a;N;$!ba;s/\n/:/g'
 	sed -i -e 's:exec "$LAUNCHSTEAMDIR:LD_LIBRARY_PATH="$(grep \"^/\" /etc/ld.so.conf | sed '"'"'\:a;N;$!ba;s/\\n/\:/g'"'"')" exec "$LAUNCHSTEAMDIR:g' ${S}/steam || die "sed failed"
 }
 
