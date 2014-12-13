@@ -34,21 +34,36 @@ for lang in ${LANGS}; do
 done
 
 WXGTKDEPEND="x11-libs/wxGTK:2.8[abi_x86_32,X]"
+SDLDEPEND="media-libs/libsdl[abi_x86_32,joystick?,sound?]"
+GTKDEPEND="x11-libs/gtk+:2[abi_x86_32]"
 if [[ ${PV} != "1.2.2" ]]; then
+	IUSE+=" gtk3"
+
+	if use gtk3; then
+		GTKDEPEND="x11-libs/gtk+:3[abi_x86_32]"
+	fi
+
 	WXGTKDEPEND="
 		|| (
 			x11-libs/wxGTK:2.8[abi_x86_32,X]
 			x11-libs/wxGTK:3.0[abi_x86_32,X]
 		)
 	"
+
+	SDLDEPEND="
+		|| (
+			media-libs/libsdl[abi_x86_32,joystick?,sound?]
+			media-libs/libsdl2[abi_x86_32,joystick?,sound?]
+		)
+	"
 fi
 
 RDEPEND="${WXGTKDEPEND}
+	${GTKDEPEND}
 
 	app-arch/bzip2[abi_x86_32]
 	dev-libs/libaio[abi_x86_32]
 	virtual/jpeg:62[abi_x86_32]
-	x11-libs/gtk+:2[abi_x86_32]
 	x11-libs/libICE[abi_x86_32]
 	x11-libs/libX11[abi_x86_32]
 	x11-libs/libXext[abi_x86_32]
@@ -65,7 +80,7 @@ RDEPEND="${WXGTKDEPEND}
 		glew? ( media-libs/glew[abi_x86_32] )
 	)
 
-	sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
+	sdl? ( $SDLDEPEND )
 
 	sound? (
 		media-libs/alsa-lib[abi_x86_32]
@@ -126,16 +141,10 @@ src_prepare() {
 
 src_configure() {
 	multilib_toolchain_setup x86
+
 	# pcsx2 build scripts will force CMAKE_BUILD_TYPE=Devel
 	# if it something other than "Devel|Debug|Release"
 	local CMAKE_BUILD_TYPE="Release"
-
-	local WX_GTK_VER="2.8"
-	# Prefer wxGTK:3
-	if [[ ${PV} != "1.2.2" ]] && has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
-		WX_GTK_VER="3.0"
-	fi
-	need-wxwidgets unicode
 
 	local mycmakeargs=(
 		-DPACKAGE_MODE=TRUE
@@ -150,10 +159,27 @@ src_configure() {
 		$(cmake-utils_use glsl GLSL_API)
 	)
 
-	if [ $WX_GTK_VER == '3.0' ]; then
-		mycmakeargs+=(-DWX28_API=FALSE)
+	local WX_GTK_VER="2.8"
+	if [[ ${PV} != "1.2.2" ]]; then
+		# Prefer wxGTK:3
+		if has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
+			WX_GTK_VER="3.0"
+		fi
+		# Prefer libsdl2
+		if has_version 'media-libs/libsdl2[abi_x86_32,joystick?,sound?]'; then
+			mycmakeargs+=(-DSDL2_API=TRUE)
+		fi
+
+		mycmakeargs+=($(cmake-utils_use gtk3 GTK3_API))
 	fi
 
+	if [ $WX_GTK_VER == '3.0' ]; then
+		mycmakeargs+=(-DWX28_API=FALSE)
+	else
+		mycmakeargs+=(-DWX28_API=TRUE)
+	fi
+
+	need-wxwidgets unicode
 	cmake-utils_src_configure
 }
 

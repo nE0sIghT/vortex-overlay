@@ -1,1 +1,1 @@
-./pcsx2-9999-r1.ebuild
+./pcsx2-9999-r2.ebuild
