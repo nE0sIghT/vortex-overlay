@@ -54,14 +54,16 @@ RDEPEND="
 S=${WORKDIR}/steam/
 
 src_prepare() {
+	epatch "${FILESDIR}"/ld.so.conf-${P}.patch
+
 	# we use our ebuild functions to install the files
 	rm Makefile
 
 	sed -i \
 		-e "s:/usr/bin/steam:${GAMES_BINDIR}/steam:" \
-		${S}/steam.desktop || die "sed failed" 
+		${S}/steam.desktop || die "sed failed"
 
-	sed -i -e 's:exec "$LAUNCHSTEAMDIR:LD_LIBRARY_PATH="$(grep \"^/\" /etc/ld.so.conf | sed '"'"'\:a;N;$!ba;s/\\n/\:/g'"'"')" exec "$LAUNCHSTEAMDIR:g' ${S}/steam || die "sed failed"
+	epatch_user
 }
 
 src_install() {
