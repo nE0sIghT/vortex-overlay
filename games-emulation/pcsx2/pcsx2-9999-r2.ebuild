@@ -4,14 +4,9 @@
 
 EAPI=5
 
-inherit wxwidgets cmake-utils multilib games
-if [[ ${PV} == "9999" ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
-else
-	KEYWORDS="~amd64 ~x86"
-	SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-fi
+inherit wxwidgets cmake-utils multilib games git-r3
+
+EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
@@ -19,7 +14,7 @@ HOMEPAGE="http://www.pcsx2.net"
 LICENSE="GPL-3"
 SLOT="0"
 
-IUSE="cg egl glew glsl joystick sdl sound video"
+IUSE="cg egl glew glsl gtk3 joystick sdl sound video"
 REQUIRED_USE="
     glew? ( || ( cg glsl ) )
     joystick? ( sdl )
@@ -28,46 +23,26 @@ REQUIRED_USE="
     ?? ( cg glsl )
 "
 
-LANGS="ar cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
+LANGS="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
 for lang in ${LANGS}; do
         IUSE+=" linguas_${lang}"
 done
 
-WXGTKDEPEND="x11-libs/wxGTK:2.8[abi_x86_32,X]"
-SDLDEPEND="media-libs/libsdl[abi_x86_32,joystick?,sound?]"
-GTKDEPEND="x11-libs/gtk+:2[abi_x86_32]"
-if [[ ${PV} != "1.2.2" ]]; then
-	IUSE+=" gtk3"
-
-	if use gtk3; then
-		GTKDEPEND="x11-libs/gtk+:3[abi_x86_32]"
-	fi
-
-	WXGTKDEPEND="
-		|| (
-			x11-libs/wxGTK:2.8[abi_x86_32,X]
-			x11-libs/wxGTK:3.0[abi_x86_32,X]
-		)
-	"
-
-	SDLDEPEND="
-		|| (
-			media-libs/libsdl[abi_x86_32,joystick?,sound?]
-			media-libs/libsdl2[abi_x86_32,joystick?,sound?]
-		)
-	"
-fi
-
-RDEPEND="${WXGTKDEPEND}
-	${GTKDEPEND}
-
-	app-arch/bzip2[abi_x86_32]
+RDEPEND="app-arch/bzip2[abi_x86_32]
 	dev-libs/libaio[abi_x86_32]
 	virtual/jpeg:62[abi_x86_32]
 	x11-libs/libICE[abi_x86_32]
 	x11-libs/libX11[abi_x86_32]
 	x11-libs/libXext[abi_x86_32]
 	>=sys-libs/zlib-1.2.4[abi_x86_32]
+
+	|| (
+		x11-libs/wxGTK:2.8[abi_x86_32,X]
+		x11-libs/wxGTK:3.0[abi_x86_32,X]
+	)
+
+	gtk3? ( x11-libs/gtk+:3[abi_x86_32] )
+	!gtk3? ( x11-libs/gtk+:2[abi_x86_32] )
 
 	video? (
 		virtual/opengl[abi_x86_32]
@@ -80,7 +55,7 @@ RDEPEND="${WXGTKDEPEND}
 		glew? ( media-libs/glew[abi_x86_32] )
 	)
 
-	sdl? ( $SDLDEPEND )
+	sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
 
 	sound? (
 		media-libs/alsa-lib[abi_x86_32]
@@ -96,14 +71,6 @@ PATCHES=(
 	# Workaround broken glext.h, bug #510730
 	"${FILESDIR}"/mesa-10.patch
 )
-if [[ ${PV} == "1.2.2" ]]; then
-	PATCHES+=(
-		# Fix Cg find for Gentoo amd64
-		"${FILESDIR}"/cg-multilib.patch
-		# Honor $GAMES_BINDIR
-		"${FILESDIR}"/bindir-${PV}.patch
-	)
-fi
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -152,25 +119,21 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX=/usr
 		-DBIN_DIR=${GAMES_BINDIR}
 		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/${PN}
+		-DDOC_DIR=/usr/share/doc/${PF}
 		-DGAMEINDEX_DIR=${GAMES_DATADIR}/${PN}
 		-DGLSL_SHADER_DIR=${GAMES_DATADIR}/${PN}
 		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
+		# wxGTK must be built against same sdl version
+		-DSDL2_API=FALSE
 		$(cmake-utils_use egl EGL_API)
 		$(cmake-utils_use glsl GLSL_API)
+		$(cmake-utils_use gtk3 GTK3_API)
 	)
 
 	local WX_GTK_VER="2.8"
-	if [[ ${PV} != "1.2.2" ]]; then
-		# Prefer wxGTK:3
-		if has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
-			WX_GTK_VER="3.0"
-		fi
-		# Prefer libsdl2
-		if has_version 'media-libs/libsdl2[abi_x86_32,joystick?,sound?]'; then
-			mycmakeargs+=(-DSDL2_API=TRUE)
-		fi
-
-		mycmakeargs+=($(cmake-utils_use gtk3 GTK3_API))
+	# Prefer wxGTK:3
+	if has_version 'x11-libs/wxGTK:3.0[abi_x86_32,X]'; then
+		WX_GTK_VER="3.0"
 	fi
 
 	if [ $WX_GTK_VER == '3.0' ]; then
