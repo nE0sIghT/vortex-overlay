@@ -14,7 +14,7 @@ HOMEPAGE="http://www.pcsx2.net"
 LICENSE="GPL-3"
 SLOT="0"
 
-IUSE="cg egl glew glsl gtk3 joystick sdl sound video"
+IUSE="cg egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
     glew? ( || ( cg glsl ) )
     joystick? ( sdl )
@@ -31,6 +31,7 @@ done
 RDEPEND="app-arch/bzip2[abi_x86_32]
 	dev-libs/libaio[abi_x86_32]
 	virtual/jpeg:62[abi_x86_32]
+	x11-libs/gtk+:2[abi_x86_32]
 	x11-libs/libICE[abi_x86_32]
 	x11-libs/libX11[abi_x86_32]
 	x11-libs/libXext[abi_x86_32]
@@ -40,9 +41,6 @@ RDEPEND="app-arch/bzip2[abi_x86_32]
 		x11-libs/wxGTK:2.8[abi_x86_32,X]
 		x11-libs/wxGTK:3.0[abi_x86_32,X]
 	)
-
-	gtk3? ( x11-libs/gtk+:3[abi_x86_32] )
-	!gtk3? ( x11-libs/gtk+:2[abi_x86_32] )
 
 	video? (
 		virtual/opengl[abi_x86_32]
@@ -122,12 +120,12 @@ src_configure() {
 		-DDOC_DIR=/usr/share/doc/${PF}
 		-DGAMEINDEX_DIR=${GAMES_DATADIR}/${PN}
 		-DGLSL_SHADER_DIR=${GAMES_DATADIR}/${PN}
+		-DGTK3_API=FALSE
 		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
 		# wxGTK must be built against same sdl version
 		-DSDL2_API=FALSE
 		$(cmake-utils_use egl EGL_API)
 		$(cmake-utils_use glsl GLSL_API)
-		$(cmake-utils_use gtk3 GTK3_API)
 	)
 
 	local WX_GTK_VER="2.8"
