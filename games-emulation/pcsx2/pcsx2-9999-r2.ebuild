@@ -6,10 +6,9 @@ EAPI=5
 
 inherit wxwidgets cmake-utils multilib games git-r3
 
-EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
-
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
+EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -28,94 +27,62 @@ for lang in ${LANGS}; do
         IUSE+=" linguas_${lang}"
 done
 
-RDEPEND="
-	x86? (
-		app-arch/bzip2
-		dev-libs/libaio
-		virtual/jpeg:62
-		x11-libs/gtk+:2
-		x11-libs/libICE
-		x11-libs/libX11
-		x11-libs/libXext
-		>=sys-libs/zlib-1.2.4
+RDEPEND="dev-libs/libaio[abi_x86_32]
 
-		|| (
-			x11-libs/wxGTK:2.8[X]
-			x11-libs/wxGTK:3.0[X]
-		)
+	|| (
+		x11-libs/wxGTK:2.8[abi_x86_32,X]
+		x11-libs/wxGTK:3.0[abi_x86_32,X]
+	)
 
-		video? (
-			virtual/opengl
-
-			cg? ( media-gfx/nvidia-cg-toolkit )
-			egl? ( media-libs/mesa[egl] )
-			glew? ( media-libs/glew )
-		)
-
-		sdl? ( media-libs/libsdl[joystick?,sound?] )
-
-		sound? (
-			media-libs/alsa-lib
-			media-libs/libsoundtouch
-			media-libs/portaudio
+	|| (
+		amd64? ( app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )
+		(
+			app-arch/bzip2[abi_x86_32(-)]
+			virtual/jpeg:62[abi_x86_32(-)]
+			>=sys-libs/zlib-1.2.4[abi_x86_32(-)]
 		)
 	)
-	amd64? (
-		dev-libs/libaio[abi_x86_32]
-
-		|| (
-			x11-libs/wxGTK:2.8[abi_x86_32,X]
-			x11-libs/wxGTK:3.0[abi_x86_32,X]
+	|| (
+		amd64? ( app-emulation/emul-linux-x86-gtklibs[-abi_x86_32(-)] )
+		x11-libs/gtk+:2[abi_x86_32(-)]
+	)
+	|| (
+		amd64? ( app-emulation/emul-linux-x86-xlibs[-abi_x86_32(-)] )
+		(
+			x11-libs/libICE[abi_x86_32(-)]
+			x11-libs/libX11[abi_x86_32(-)]
+			x11-libs/libXext[abi_x86_32(-)]
 		)
+	)
 
+	video? (
 		|| (
-			app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+			amd64? ( app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)] )
 			(
-				app-arch/bzip2[abi_x86_32(-)]
-				virtual/jpeg:62[abi_x86_32(-)]
-				>=sys-libs/zlib-1.2.4[abi_x86_32(-)]
+				virtual/opengl[abi_x86_32(-)]
+				egl? ( media-libs/mesa[abi_x86_32(-),egl] )
+				glew? ( media-libs/glew[abi_x86_32(-)] )
 			)
 		)
+		cg? ( media-gfx/nvidia-cg-toolkit[multilib] )
+	)
+
+	sdl? (
 		|| (
-			app-emulation/emul-linux-x86-gtklibs[-abi_x86_32(-)]
-			x11-libs/gtk+:2[abi_x86_32(-)]
+			amd64? ( app-emulation/emul-linux-x86-sdl[-abi_x86_32(-)] )
+			media-libs/libsdl[abi_x86_32(-),joystick?,sound?]
 		)
+	)
+
+	sound? (
 		|| (
-			app-emulation/emul-linux-x86-xlibs[-abi_x86_32(-)]
+			amd64? ( app-emulation/emul-linux-x86-soundlibs[-abi_x86_32(-)] )
 			(
-				x11-libs/libICE[abi_x86_32(-)]
-				x11-libs/libX11[abi_x86_32(-)]
-				x11-libs/libXext[abi_x86_32(-)]
-			)
-		)
-
-		video? (
-			|| (
-				app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)]
-				(
-					virtual/opengl[abi_x86_32(-)]
-					egl? ( media-libs/mesa[abi_x86_32(-),egl] )
-					glew? ( media-libs/glew[abi_x86_32(-)] )
-				)
-			)
-			cg? ( media-gfx/nvidia-cg-toolkit[multilib] )
-		)
-
-		sdl? (
-			|| (
-				app-emulation/emul-linux-x86-sdl[-abi_x86_32(-)]
-				media-libs/libsdl[abi_x86_32(-),joystick?,sound?]
-			)
-		)
-
-		sound? (
-			|| (
-				app-emulation/emul-linux-x86-soundlibs[-abi_x86_32(-)]
 				media-libs/alsa-lib[abi_x86_32(-)]
 				media-libs/portaudio[abi_x86_32(-)]
 			)
-			media-libs/libsoundtouch[abi_x86_32]
 		)
+		media-libs/libsoundtouch[abi_x86_32]
 	)
 "
 DEPEND="${RDEPEND}
