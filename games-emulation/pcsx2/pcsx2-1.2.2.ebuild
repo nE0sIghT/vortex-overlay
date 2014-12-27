@@ -62,7 +62,7 @@ RDEPEND="dev-libs/libaio[abi_x86_32]
 				glew? ( media-libs/glew[abi_x86_32(-)] )
 			)
 		)
-		cg? ( media-gfx/nvidia-cg-toolkit[multilib] )
+		cg? ( media-gfx/nvidia-cg-toolkit[abi_x86_32] )
 	)
 
 	sdl? (
@@ -75,8 +75,10 @@ RDEPEND="dev-libs/libaio[abi_x86_32]
 	sound? (
 		|| (
 			app-emulation/emul-linux-x86-soundlibs[-abi_x86_32(-)]
-			media-libs/alsa-lib[abi_x86_32(-)]
-			media-libs/portaudio[abi_x86_32(-)]
+			(
+				media-libs/alsa-lib[abi_x86_32(-)]
+				media-libs/portaudio[abi_x86_32(-)]
+			)
 		)
 		media-libs/libsoundtouch[abi_x86_32]
 	)

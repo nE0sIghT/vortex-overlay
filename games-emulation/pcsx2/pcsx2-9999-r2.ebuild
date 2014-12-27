@@ -64,7 +64,7 @@ RDEPEND="dev-libs/libaio[abi_x86_32]
 				glew? ( media-libs/glew[abi_x86_32(-)] )
 			)
 		)
-		cg? ( media-gfx/nvidia-cg-toolkit[multilib] )
+		cg? ( media-gfx/nvidia-cg-toolkit[abi_x86_32] )
 	)
 
 	sdl? (
