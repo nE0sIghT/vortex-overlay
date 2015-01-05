@@ -109,10 +109,13 @@ src_configure() {
 	local CMAKE_BUILD_TYPE="Release"
 
 	local mycmakeargs=(
+		-DCMAKE_CROSSCOMPILING=FALSE
+		-DDISABLE_ADVANCE_SIMD=TRUE
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
-		-DCMAKE_INSTALL_PREFIX=/usr
+
 		-DBIN_DIR=${GAMES_BINDIR}
+		-DCMAKE_INSTALL_PREFIX=/usr
 		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/${PN}
 		-DDOC_DIR=/usr/share/doc/${PF}
 		-DGAMEINDEX_DIR=${GAMES_DATADIR}/${PN}
@@ -121,6 +124,7 @@ src_configure() {
 		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
 		# wxGTK must be built against same sdl version
 		-DSDL2_API=FALSE
+
 		$(cmake-utils_use egl EGL_API)
 		$(cmake-utils_use glsl GLSL_API)
 	)
@@ -135,10 +139,6 @@ src_configure() {
 		mycmakeargs+=(-DWX28_API=FALSE)
 	else
 		mycmakeargs+=(-DWX28_API=TRUE)
-	fi
-
-	if use amd64; then
-		mycmakeargs+=(-D64BIT_BUILD_DONT_WORK=TRUE)
 	fi
 
 	need-wxwidgets unicode
