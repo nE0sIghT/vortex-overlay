@@ -18,7 +18,7 @@ IUSE="examples static-libs"
 RDEPEND=">=net-misc/curl-7.18.2
 	!<media-libs/quvi-0.4.0
 	>=media-libs/libquvi-scripts-0.4.0:0.4
-	>=dev-lang/lua-5.1[deprecated]
+	dev-lang/lua:5.1[deprecated]
 	!=media-libs/libquvi-0.4*:0"
 DEPEND="${RDEPEND}
 	app-arch/xz-utils
