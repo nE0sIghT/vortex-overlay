@@ -137,6 +137,7 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DDISABLE_ADVANCE_SIMD=TRUE
+		-DEXTRA_PLUGINS=TRUE
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
 
