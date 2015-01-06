@@ -91,6 +91,9 @@ src_prepare() {
 	# Remove default CFLAGS
 	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
 
+	# Enable packaged release build for x86_64
+	sed -i -e "s:CMAKE_BUILD_TYPE MATCHES \"Release\" OR PACKAGE_MODE:FALSE:g" cmake/BuildParameters.cmake || die
+
 	einfo "Cleaning up locales..."
 	for lang in ${LANGS}; do
 		use "linguas_${lang}" && {
@@ -99,6 +102,13 @@ src_prepare() {
 		}
 		rm -Rf "${S}"/locales/"${lang}" || die
 	done
+
+	if use amd64; then
+		echo
+		ewarn This build will NOT work
+		ewarn DO NOT report any issues with this ebuild
+		echo
+	fi
 
 	epatch_user
 }
