@@ -69,6 +69,9 @@ PATCHES=(
 	"${FILESDIR}"/mesa-10.patch
 )
 
+# Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
+QA_TEXTRELS="usr/games/lib32/pcsx2/*"
+
 src_prepare() {
 	cmake-utils_src_prepare
 
