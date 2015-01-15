@@ -15,10 +15,8 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="pulseaudio"
 
-RDEPEND="
-	dev-libs/libconfig
+RDEPEND="dev-libs/libconfig
 	dev-libs/libevent[threads]
-	dev-util/ragel
 	media-libs/alsa-lib
 	media-libs/mesa[gles2]
 	x11-libs/gtk+
@@ -36,6 +34,8 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
+
+	dev-util/ragel
 	virtual/pkgconfig
 "
 
