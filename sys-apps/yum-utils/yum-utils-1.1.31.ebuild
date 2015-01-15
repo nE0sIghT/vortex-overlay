@@ -9,7 +9,7 @@ PYTHON_USE_WITH="sqlite"
 inherit eutils python
 
 DESCRIPTION="Utilities for yum such as repotrack, reposync, and yumdownloader"
-HOMEPAGE=""
+HOMEPAGE="http://yum.baseurl.org"
 SRC_URI="http://yum.baseurl.org/download/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
