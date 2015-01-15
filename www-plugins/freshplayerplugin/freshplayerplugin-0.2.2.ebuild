@@ -19,7 +19,7 @@ RDEPEND="dev-libs/libconfig
 	dev-libs/libevent[threads]
 	media-libs/alsa-lib
 	media-libs/mesa[gles2]
-	x11-libs/gtk+
+	x11-libs/gtk+:2
 	x11-libs/pango
 
 	pulseaudio? ( media-sound/pulseaudio )
