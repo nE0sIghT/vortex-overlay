@@ -13,7 +13,7 @@ else
 	SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 fi
 
-DESCRIPTION="VCMI is work-in-progress attempt to recreate engine for Heroes III, giving it new and extended possibilities."
+DESCRIPTION="VCMI is work-in-progress attempt to recreate engine for Heroes III."
 HOMEPAGE="http://vcmi.eu"
 
 LICENSE="GPL-2"
