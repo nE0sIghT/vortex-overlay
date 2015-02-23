@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-3.0.2.0.ebuild,v 1.1 2014/12/31 17:37:49 floppym Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-3.0.2.0-r1.ebuild,v 1.1 2015/02/02 16:26:17 sping Exp $
 
 EAPI="5"
 
@@ -14,7 +14,7 @@ HOMEPAGE="http://wxwidgets.org/"
 SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${PV}.tar.bz2
 	doc? ( mirror://sourceforge/wxpython/wxPython-docs-${PV}.tar.bz2 )"
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos"
 IUSE="+X aqua doc debug gstreamer libnotify opengl sdl tiff webkit"
 
 SLOT="3.0"
@@ -39,13 +39,12 @@ NATIVE_DEPEND="
 		opengl? ( virtual/opengl )
 		tiff?   ( media-libs/tiff:0 )
 		webkit? ( net-libs/webkit-gtk:2 )
-	)
+		)
 	aqua? (
 		>=x11-libs/gtk+-2.4[aqua=]
 		virtual/jpeg
 		tiff?   ( media-libs/tiff:0 )
-	)
-"
+		)"
 
 RDEPEND="
 	!amd64? ( ${NATIVE_DEPEND} )
@@ -148,6 +147,19 @@ S="${WORKDIR}/wxPython-src-${PV}"
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-3.0.0.0-collision.patch
 	epatch_user
+
+	multilib_prepare() {
+		# https://bugs.gentoo.org/421851
+		# https://bugs.gentoo.org/499984
+		# https://bugs.gentoo.org/536004
+		sed \
+			-e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" \
+			-e 's:3\.0\.1:3.0.2:g' \
+			-e 's:^wx_release_number=1$:wx_release_number=2:' \
+			-i "${BUILD_DIR}"/configure || die
+	}
+	multilib_copy_sources
+	multilib_parallel_foreach_abi multilib_prepare
 }
 
 multilib_src_configure() {
