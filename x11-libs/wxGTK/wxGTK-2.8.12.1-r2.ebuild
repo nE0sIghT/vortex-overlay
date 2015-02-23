@@ -16,48 +16,142 @@ BASE_P="${PN}-${BASE_PV}"
 # docs, and are released more frequently than wxGTK.
 SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${PV}.tar.bz2"
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos"
 IUSE="+X aqua doc debug gnome gstreamer odbc opengl pch sdl tiff"
 
 SLOT="2.8"
 
-RDEPEND="
-	dev-libs/expat[${MULTILIB_USEDEP}]
-	odbc?   ( dev-db/unixODBC[${MULTILIB_USEDEP}] )
-	sdl?    ( media-libs/libsdl[${MULTILIB_USEDEP}] )
+NATIVE_DEPEND="
+	dev-libs/expat
+	odbc?   ( dev-db/unixODBC )
+	sdl?    ( media-libs/libsdl )
 	X?  (
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
-		media-libs/libpng:0=[${MULTILIB_USEDEP}]
-		sys-libs/zlib[${MULTILIB_USEDEP}]
-		virtual/jpeg[${MULTILIB_USEDEP}]
-		x11-libs/gtk+:2[${MULTILIB_USEDEP}]
-		x11-libs/libSM[${MULTILIB_USEDEP}]
-		x11-libs/libXinerama[${MULTILIB_USEDEP}]
-		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
-		x11-libs/pango[X,${MULTILIB_USEDEP}]
-		gnome?  ( gnome-base/libgnomeprintui:2.2[${MULTILIB_USEDEP}] )
+		dev-libs/glib:2
+		media-libs/libpng:0=
+		sys-libs/zlib
+		virtual/jpeg
+		x11-libs/gtk+:2
+		x11-libs/libSM
+		x11-libs/libXinerama
+		x11-libs/libXxf86vm
+		x11-libs/pango[X]
+		gnome?  ( gnome-base/libgnomeprintui:2.2 )
 		gstreamer? (
-			gnome-base/gconf:2[${MULTILIB_USEDEP}]
-			media-libs/gstreamer:0.10[${MULTILIB_USEDEP}]
-			media-libs/gst-plugins-base:0.10[${MULTILIB_USEDEP}]
-		)
-		opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
-		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
+			gnome-base/gconf:2
+			media-libs/gstreamer:0.10
+			media-libs/gst-plugins-base:0.10 )
+		opengl? ( virtual/opengl )
+		tiff?   ( media-libs/tiff:0 )
 		)
 	aqua? (
-		>=x11-libs/gtk+-2.4[${MULTILIB_USEDEP},aqua=]
-		virtual/jpeg[${MULTILIB_USEDEP}]
-		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
+		>=x11-libs/gtk+-2.4[aqua=]
+		virtual/jpeg
+		tiff?   ( media-libs/tiff:0 )
 		)"
 
+RDEPEND="
+	!amd64? ( ${NATIVE_DEPEND} )
+	amd64? (
+		abi_x86_64? ( ${NATIVE_DEPEND} )
+		abi_x86_32? (
+			|| (
+				app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+				(
+					dev-libs/expat[abi_x86_32]
+					X? (
+						dev-libs/glib:2[abi_x86_32]
+						media-libs/libpng:0=[abi_x86_32]
+						sys-libs/zlib[abi_x86_32]
+						virtual/jpeg[abi_x86_32]
+						tiff?   ( media-libs/tiff:0[abi_x86_32] )
+					)
+				)
+			)
+			odbc? (
+				|| (
+					app-emulation/emul-linux-x86-db[-abi_x86_32(-)]
+					dev-db/unixODBC[abi_x86_32]
+				)
+			)
+			sdl? (
+				|| (
+					app-emulation/emul-linux-x86-sdl[-abi_x86_32(-)]
+					media-libs/libsdl[abi_x86_32]
+				)
+			)
+			X? (
+				|| (
+					app-emulation/emul-linux-x86-gtklibs[-abi_x86_32(-)]
+					(
+						x11-libs/gtk+:2[abi_x86_32]
+						x11-libs/pango[X,abi_x86_32]
+
+						gstreamer? ( gnome-base/gconf:2[abi_x86_32] )
+					)
+				)
+
+				|| (
+					app-emulation/emul-linux-x86-xlibs[-abi_x86_32(-)]
+					(
+						x11-libs/libSM[abi_x86_32]
+						x11-libs/libXinerama[abi_x86_32]
+						x11-libs/libXxf86vm[abi_x86_32]
+					)
+				)
+
+				gnome?  ( gnome-base/libgnomeprintui:2.2[abi_x86_32] )
+
+				gstreamer? ( || (
+					app-emulation/emul-linux-x86-medialibs[-abi_x86_32(-)]
+					(
+						media-libs/gstreamer:0.10[abi_x86_32]
+						media-libs/gst-plugins-base:0.10[abi_x86_32]
+					)
+				) )
+				opengl? ( || (
+					app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)]
+					virtual/opengl[abi_x86_32]
+				) )
+			)
+			aqua? (
+				|| (
+					app-emulation/emul-linux-x86-gtklibs[-abi_x86_32(-)]
+					>=x11-libs/gtk+-2.4[abi_x86_32,aqua=]
+				)
+
+				|| (
+					app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+					(
+						virtual/jpeg[abi_x86_32]
+						tiff?   ( media-libs/tiff:0[abi_x86_32] )
+					)
+				)
+			)
+		)
+	)
+"
+
 DEPEND="${RDEPEND}
-		virtual/pkgconfig[${MULTILIB_USEDEP}]
-		opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
-		X?  (
-			x11-proto/xproto[${MULTILIB_USEDEP}]
-			x11-proto/xineramaproto[${MULTILIB_USEDEP}]
-			x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
-			)"
+	!amd64? ( virtual/glu )
+	amd64? (
+		abi_x86_64? ( virtual/glu )
+		abi_x86_32? (
+			opengl? (
+				|| (
+					app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)]
+					virtual/glu[abi_x86_32]
+				)
+			)
+		)
+	)
+
+	virtual/pkgconfig[${MULTILIB_USEDEP}]
+	X? (
+		x11-proto/xproto[${MULTILIB_USEDEP}]
+		x11-proto/xineramaproto[${MULTILIB_USEDEP}]
+		x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
+	)
+"
 
 PDEPEND=">=app-admin/eselect-wxwidgets-0.7"
 
@@ -74,15 +168,19 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-2.8.7-mmedia.patch              # Bug #174874
 	epatch "${FILESDIR}"/${PN}-2.8.10.1-odbc-defines.patch     # Bug #310923
 
-	# x32 https://bugs.gentoo.org/421851
-	sed -i -e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" configure || die
-
 	# prefix https://bugs.gentoo.org/394123
 	sed -i -e "s:/usr:${EPREFIX}/usr:g" \
 		-e '/SEARCH_INCLUDE="\\/,/"/cSEARCH_INCLUDE="'${EPREFIX}'/usr/include"' \
 		configure || die
 
 	epatch_user
+
+	multilib_prepare() {
+		# x32 https://bugs.gentoo.org/421851
+		sed -i -e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" "${BUILD_DIR}"/configure || die
+	}
+	multilib_copy_sources
+	multilib_parallel_foreach_abi multilib_prepare
 }
 
 multilib_src_configure() {
