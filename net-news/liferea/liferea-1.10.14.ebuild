@@ -1,0 +1,1 @@
+/usr/portage/net-news/liferea/liferea-1.10.12.ebuild
