@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -6,13 +6,13 @@ EAPI=5
 
 inherit unpacker versionator
 
-DESCRIPTION="A Gens fork which aims to clean up the source code and combine features from other forks"
-HOMEPAGE="http://info.sonicretro.org/Gens/GS"
+DESCRIPTION="Maps & business listings"
+HOMEPAGE="http://2gis.ru"
 SRC_URI="http://deb.2gis.ru/pool/non-free/2/2gis/2gis_$(get_version_component_range 1-3)-0trusty1+shv$(get_version_component_range 4)+r$(get_version_component_range 5)_amd64.deb"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="-* ~amd64"
 IUSE=""
 
 RDEPEND="
@@ -52,4 +52,3 @@ src_install() {
 
 	domenu usr/share/applications/2gis.desktop
 }
-
