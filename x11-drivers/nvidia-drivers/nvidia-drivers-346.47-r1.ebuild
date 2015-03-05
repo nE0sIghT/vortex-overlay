@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-346.35.ebuild,v 1.4 2015/02/09 07:35:58 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-drivers/nvidia-drivers/nvidia-drivers-346.47.ebuild,v 1.2 2015/03/04 11:53:43 jer Exp $
 
 EAPI=5
 
@@ -25,7 +25,7 @@ SRC_URI="
 
 LICENSE="GPL-2 NVIDIA-r2"
 SLOT="0"
-KEYWORDS="-* amd64 x86 ~amd64-fbsd ~x86-fbsd"
+KEYWORDS="-* ~amd64 ~x86 ~amd64-fbsd ~x86-fbsd"
 RESTRICT="bindist mirror strip"
 
 IUSE="acpi kernel_FreeBSD kernel_linux pax_kernel +tools gtk2 gtk3 +X uvm"
@@ -50,7 +50,7 @@ RDEPEND="
 	acpi? ( sys-power/acpid )
 	tools? (
 		dev-libs/atk
-		dev-libs/glib
+		dev-libs/glib:2
 		x11-libs/gdk-pixbuf
 		gtk2? ( >=x11-libs/gtk+-2.4:2 )
 		gtk3? ( x11-libs/gtk+:3 )
@@ -78,11 +78,11 @@ QA_PREBUILT="opt/* usr/lib*"
 S=${WORKDIR}/
 
 pkg_pretend() {
-	if use kernel_linux && kernel_is ge 3 18 ; then
+	if use kernel_linux && kernel_is ge 3 20 ; then
 		ewarn "Gentoo supports kernels which are supported by NVIDIA"
 		ewarn "which are limited to the following kernels:"
-		ewarn "<sys-kernel/gentoo-sources-3.18"
-		ewarn "<sys-kernel/vanilla-sources-3.18"
+		ewarn "<sys-kernel/gentoo-sources-3.20"
+		ewarn "<sys-kernel/vanilla-sources-3.20"
 		ewarn ""
 		ewarn "You are free to utilize epatch_user to provide whatever"
 		ewarn "support you feel is appropriate, but will not receive"
