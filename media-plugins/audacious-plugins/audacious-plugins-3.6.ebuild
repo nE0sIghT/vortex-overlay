@@ -90,6 +90,7 @@ src_configure() {
 		--enable-modplug \
 		--disable-soxr \
 		--enable-neon \
+		--enable-statusicon \
 		$(use_enable adplug) \
 		$(use_enable aac) \
 		$(use_enable alsa) \
