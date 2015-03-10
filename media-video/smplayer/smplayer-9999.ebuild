@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-video/smplayer/smplayer-14.9.0.6690.ebuild,v 1.1 2015/01/31 13:07:57 yngwin Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-video/smplayer/smplayer-14.9.0.6690-r1.ebuild,v 1.1 2015/02/11 14:23:59 yngwin Exp $
 
 EAPI=5
 PLOCALES="ar ar_SY bg ca cs da de el_GR en_GB en_US es et eu fi fr gl he_IL hr hu it ja
@@ -16,14 +16,15 @@ DESCRIPTION="Great Qt GUI front-end for mplayer/mpv"
 HOMEPAGE="http://smplayer.sourceforge.net/"
 LICENSE="GPL-2 BSD"
 SLOT="0"
-KEYWORDS="-*"
+KEYWORDS=""
 IUSE="autoshutdown bidi debug qt4 qt5 streaming"
 REQUIRED_USE="^^ ( qt4 qt5 )"
 
 DEPEND="qt4? ( dev-qt/qtcore:4
 		dev-qt/qtgui:4
 		autoshutdown? ( dev-qt/qtdbus:4 ) )
-	qt5? ( dev-qt/qtcore:5
+	qt5? ( dev-qt/linguist-tools:5
+		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtnetwork:5
 		dev-qt/qtscript:5
@@ -73,9 +74,16 @@ src_configure() {
 	use qt5 && eqmake5
 }
 
+get_qt_bindir() {
+	local qt4bindir=${EPREFIX}/usr/$(get_libdir)/qt4/bin
+	[[ -x ${qtbindir} ]] ||	qt4bindir=${EPREFIX}/usr/bin
+	use qt4 && echo ${qt4bindir}
+	use qt5 && echo ${EPREFIX}/usr/$(get_libdir)/qt5/bin
+}
+
 gen_translation() {
 	ebegin "Generating $1 translation"
-	lrelease ${PN}_${1}.ts
+	"$(get_qt_bindir)"/lrelease ${PN}_${1}.ts
 	eend $? || die "failed to generate $1 translation"
 }
 
