@@ -33,8 +33,3 @@
 # Masked ebuild with 64 bit native build support
 # until pcsx2 WIP 64 bit support will not be finished
 >=games-emulation/pcsx2-999999
-
-
-# No icu:52 dependency
-# Masked until upstream provides build against icu:54
-app-misc/2gis-bin

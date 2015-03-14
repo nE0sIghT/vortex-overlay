@@ -8,22 +8,25 @@ inherit unpacker versionator
 
 DESCRIPTION="Maps & business listings"
 HOMEPAGE="http://2gis.ru"
-SRC_URI="http://deb.2gis.ru/pool/non-free/2/2gis/2gis_$(get_version_component_range 1-3)-0trusty1+shv$(get_version_component_range 4)+r$(get_version_component_range 5)_amd64.deb"
+SRC_URI="
+	amd64? ( http://deb.2gis.ru/pool/non-free/2/2gis/2gis_${PV}-0trusty1+shv280+r339_amd64.deb )
+	x86? ( http://deb.2gis.ru/pool/non-free/2/2gis/2gis_${PV}-0trusty1+shv280+r15_i386.deb )
+"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* ~amd64 ~x86"
 IUSE=""
 
 RDEPEND="
-	dev-libs/icu:0/52
-	dev-libs/libxml2
-	net-print/cups
-	>=media-libs/fontconfig-2.9.0
-	media-libs/freetype
-	media-libs/gst-plugins-base:1.0
 	virtual/opengl
-	x11-base/xorg-server
+	x11-libs/libX11
+	x11-libs/libxcb
+	x11-libs/libXau
+	x11-libs/libXcomposite
+	x11-libs/libXdmcp
+	x11-libs/libXi
+	x11-libs/libXrender
 "
 DEPEND="${RDEPEND}
 "
@@ -49,6 +52,5 @@ src_install() {
 	doins -r usr/share/icons
 
 	doman usr/share/man/man1/2gis.1.gz
-
 	domenu usr/share/applications/2gis.desktop
 }
