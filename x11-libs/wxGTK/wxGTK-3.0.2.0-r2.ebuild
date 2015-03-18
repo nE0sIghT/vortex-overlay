@@ -101,7 +101,6 @@ RDEPEND="
 						app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)]
 						virtual/opengl[abi_x86_32]
 				) )
-				webkit? ( net-libs/webkit-gtk:2[abi_x86_32] )
 			)
 			aqua? (
 				|| (
@@ -216,7 +215,7 @@ multilib_src_configure() {
 				--with-libjpeg=sys
 				--without-gnomevfs
 				$(use_enable gstreamer mediactrl)
-				$(use_enable webkit webview)
+				$(multilib_native_use_enable webkit webview)
 				$(use_with libnotify)
 				$(use_with opengl)
 				$(use_with tiff libtiff sys)"
