@@ -4,6 +4,7 @@
 
 EAPI=5
 
+MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit autotools eutils flag-o-matic games
 
 MY_PV="r${PV}"
@@ -14,7 +15,7 @@ SRC_URI="http://www.soniccenter.org/gerbilsoft/gens/${MY_PV}/${PN}-${MY_PV}.tar.
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="-* ~amd64 ~x86"
 IUSE="opengl"
 
 RDEPEND="opengl? (
@@ -28,7 +29,7 @@ RDEPEND="opengl? (
 
 	|| (
 		amd64? ( app-emulation/emul-linux-x86-sdl[-abi_x86_32(-)] )
-		>=media-libs/libsdl-1.2[opengl?]
+		>=media-libs/libsdl-1.2[opengl?,abi_x86_32(-)]
 	)
 
 	|| (
@@ -39,7 +40,6 @@ RDEPEND="opengl? (
 	!games-emulation/gens
 "
 DEPEND="${RDEPEND}
-
 	>=dev-lang/nasm-0.98
 "
 
