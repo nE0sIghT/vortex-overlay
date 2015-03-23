@@ -1,0 +1,57 @@
+# This file is deprecated as per GLEP 56 in favor of metadata.xml. Please add
+# your descriptions to your package's metadata.xml ONLY.
+# * generated automatically using egencache *
+
+app-emulation/virtualbox-modules:pax_kernel - Apply patch needed for pax enabled kernels
+games-emulation/pcsx2:cg - Use CG backend of ZZogl
+games-emulation/pcsx2:egl - Enable GSdx plugin
+games-emulation/pcsx2:glew - Enable ZZogl plugin
+games-emulation/pcsx2:glsl - Use GLSL backend of ZZogl
+games-emulation/pcsx2:joystick - Control joystick support
+games-emulation/pcsx2:sdl - Use Simple Directmedia Layer (media-libs/libsdl) for audio and joystick support.
+games-emulation/pcsx2:sound - Build sound plugins
+games-emulation/pcsx2:video - Build video plugins
+games-simulation/vegastrike:boost - Enables support for system dev-libs/boost instead of included one. Recommended.
+games-simulation/vegastrike:debug - Enable debugging support.
+games-simulation/vegastrike:ffmpeg - Enables support for media-video/ffmpeg. Recommended.
+games-simulation/vegastrike:gtk - Uses x11-libs/gtk+ allowing graphical configuration with vssetup. Recommended.
+games-simulation/vegastrike:mesher - Builds the Vega Strike mesh tool. Presumably used by starship designers for converting 3D models. Optional.
+games-simulation/vegastrike:server - Builds the Vega Strike server. Optional.
+games-simulation/vegastrike:threads - Enables preliminary support for SMP configuration. Most probably doesn't have any effect at the moment.
+games-strategy/s25rttr:glfw - Build glfw video plugin
+games-strategy/vcmi:editor - Enable compilation of map editor
+games-strategy/vcmi:erm - Enable compilation of ERM scripting module
+games-strategy/vcmi:launcher - Enable compilation of launcher
+media-plugins/audacious-plugins:adplug - Build with AdPlug (Adlib sound card emulation) support
+media-plugins/audacious-plugins:bs2b - Enable Bauer Bauer stereophonic-to-binaural headphone filter
+media-plugins/audacious-plugins:cue - Support CUE sheets using the libcue library
+media-plugins/audacious-plugins:fluidsynth - Support FluidSynth as MIDI synth backend
+media-plugins/audacious-plugins:gtk3 - Link against version 3 of the GIMP Toolkit instead of version 2 (x11-libs/gtk+)
+media-plugins/audacious-plugins:midi - Build with amidi-plug (MIDI synth) support
+media-plugins/audacious-plugins:scrobbler - Build with scrobbler/LastFM submission support
+media-plugins/audacious-plugins:sid - Build with SID (Commodore 64 Audio) support
+media-sound/audacious:chardet - Try to handle non-UTF8 chinese/japanese/korean ID3 tags
+media-sound/audacious:gtk3 - Link against version 3 of the GIMP Toolkit instead of version 2 (x11-libs/gtk+)
+media-video/smplayer:autoshutdown - Enable the option to shutdown your computer after finishing the playlist. This requires dev-qt/qtdbus as dependency.
+media-video/smplayer:streaming - Support for streaming video sites through net-misc/youtube-dl (MPV only).
+net-news/liferea:libnotify - Enable popup notifications
+sys-apps/microcode-data:monolitic - Use monolitic old-style firmware for microcode-ctl
+www-client/firefox:bindist - Disable official Firefox branding (icons, name) which are not binary-redistributable according to upstream.
+www-client/firefox:custom-optimization - Fine-tune custom compiler optimizations (-Os, -O0, -O1, -O2, -O3)
+www-client/firefox:gmp-autoupdate - Allow Gecko Media Plugins (binary blobs) to be automatically downloaded and kept up-to-date in user profiles
+www-client/firefox:minimal - Prevent sdk and headers from being installed
+www-client/firefox:pgo - Add support for profile-guided optimization using gcc-4.5, for faster binaries. This option will double the compile time.
+www-client/firefox:system-cairo - Use the system-wide x11-libs/cairo instead of bundled.
+www-client/firefox:system-icu - Use the system-wide dev-libs/icu instead of bundled.
+www-client/firefox:system-jpeg - Use the system-wide media-libs/libjpeg-turbo instead of bundled.
+www-client/firefox:system-libvpx - Use the system-wide media-libs/libvpx instead of bundled.
+www-client/firefox:system-sqlite - Use the system-wide dev-db/sqlite installation with secure-delete enabled
+x11-drivers/nvidia-drivers:X - Install the X.org driver, OpenGL libraries, XvMC libraries, and VDPAU libraries
+x11-drivers/nvidia-drivers:gtk2 - Install nvidia-settings with support for GTK+ 2
+x11-drivers/nvidia-drivers:gtk3 - Install nvidia-settings with support for GTK+ 3
+x11-drivers/nvidia-drivers:pax_kernel - PaX patches from the PaX project
+x11-drivers/nvidia-drivers:tools - Install additional tools such as nvidia-settings
+x11-drivers/nvidia-drivers:uvm - Install the Unified Memory kernel module (nvidia-uvm) for sharing memory between CPU and GPU in CUDA programs
+x11-libs/wxGTK:gnome - Use gnome-base/libgnomeprintui for printing tasks.
+x11-libs/wxGTK:gstreamer - Enable the wxMediaCtrl class for playing audio and video through gstreamer.
+x11-libs/wxGTK:sdl - Use Simple Directmedia Layer (media-libs/libsdl) for audio.
