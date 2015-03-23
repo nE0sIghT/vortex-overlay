@@ -4,7 +4,6 @@
 
 EAPI=5
 
-MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit autotools eutils flag-o-matic games
 
 MY_PV="r${PV}"
