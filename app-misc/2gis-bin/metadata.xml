@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>ykonotopov@gmail.com</email>
+		<name>Yuri Konotopov</name>
+	</maintainer>
+	<longdescription>
+	    2GIS provides 3D-maps of 180+ cities, contacts of 1.5 million companies, car routing and public transport routes and more!
+	    2GIS is a complete and up-to-date directory of organizations with detailed cities’ maps.
+	    2GIS provides verified information only.
+	</longdescription>
+</pkgmetadata>
