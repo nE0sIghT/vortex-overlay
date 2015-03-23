@@ -13,7 +13,7 @@ EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS=""
-IUSE="debug glfw"
+IUSE="glfw"
 
 RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2

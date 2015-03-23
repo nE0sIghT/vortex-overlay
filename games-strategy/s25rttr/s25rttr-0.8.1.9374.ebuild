@@ -14,7 +14,7 @@ EGIT_COMMIT="9271940"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug glfw"
+IUSE="glfw"
 
 RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2
