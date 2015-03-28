@@ -47,6 +47,9 @@ src_install() {
 	newinitd "${FILESDIR}"/xboxdrv.initd xboxdrv
 	newconfd "${FILESDIR}"/xboxdrv.confd xboxdrv
 
+	insinto /etc/dbus-1/system.d/
+	doins "${FILESDIR}/org.seul.Xboxdrv.conf"
+
 	udev_newrules "${FILESDIR}"/xboxdrv.udev-rules 99-xbox-controller.rules
 	systemd_dounit "${FILESDIR}"/xboxdrv.service
 }
