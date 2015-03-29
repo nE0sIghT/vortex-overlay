@@ -19,115 +19,35 @@ IUSE="+X aqua doc debug gstreamer libnotify opengl sdl tiff webkit"
 
 SLOT="3.0"
 
-NATIVE_DEPEND="
-	dev-libs/expat
-	sdl?    ( media-libs/libsdl )
+RDEPEND="
+	dev-libs/expat[${MULTILIB_USEDEP}]
+	sdl?    ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	X?  (
-		>=dev-libs/glib-2.22:2
-		media-libs/libpng:0=
-		sys-libs/zlib
-		virtual/jpeg
-		>=x11-libs/gtk+-2.18:2
-		x11-libs/gdk-pixbuf
-		x11-libs/libSM
-		x11-libs/libXxf86vm
-		x11-libs/pango[X]
+		>=dev-libs/glib-2.22:2[${MULTILIB_USEDEP}]
+		media-libs/libpng:0=[${MULTILIB_USEDEP}]
+		sys-libs/zlib[${MULTILIB_USEDEP}]
+		virtual/jpeg[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-2.18:2[${MULTILIB_USEDEP}]
+		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
+		x11-libs/libSM[${MULTILIB_USEDEP}]
+		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
+		x11-libs/pango[X,${MULTILIB_USEDEP}]
 		gstreamer? (
-			media-libs/gstreamer:0.10
-			media-libs/gst-plugins-base:0.10 )
-		libnotify? ( x11-libs/libnotify )
-		opengl? ( virtual/opengl )
-		tiff?   ( media-libs/tiff:0 )
+			media-libs/gstreamer:0.10[${MULTILIB_USEDEP}]
+			media-libs/gst-plugins-base:0.10[${MULTILIB_USEDEP}] )
+		libnotify? ( x11-libs/libnotify[${MULTILIB_USEDEP}] )
+		opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
+		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
 		webkit? ( net-libs/webkit-gtk:2 )
 		)
 	aqua? (
-		>=x11-libs/gtk+-2.4[aqua=]
-		virtual/jpeg
-		tiff?   ( media-libs/tiff:0 )
+		>=x11-libs/gtk+-2.4[aqua=,${MULTILIB_USEDEP}]
+		virtual/jpeg[${MULTILIB_USEDEP}]
+		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
 		)"
 
-RDEPEND="
-	!amd64? ( ${NATIVE_DEPEND} )
-	amd64? (
-		abi_x86_64? ( ${NATIVE_DEPEND} )
-		abi_x86_32? (
-			|| (
-				app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-				(
-					dev-libs/expat[abi_x86_32]
-					X? (
-						>=dev-libs/glib-2.22:2[abi_x86_32]
-						media-libs/libpng:0=[abi_x86_32]
-						sys-libs/zlib[abi_x86_32]
-						virtual/jpeg[abi_x86_32]
-						tiff?   ( media-libs/tiff:0[abi_x86_32] )
-					)
-				)
-			)
-			sdl?    ( || (
-					app-emulation/emul-linux-x86-sdl[-abi_x86_32(-)]
-					media-libs/libsdl[abi_x86_32]
-			) )
-			X?  (
-				|| (
-					app-emulation/emul-linux-x86-gtklibs[-abi_x86_32(-)]
-					(
-						>=x11-libs/gtk+-2.18:2[abi_x86_32]
-						x11-libs/gdk-pixbuf[abi_x86_32]
-						x11-libs/pango[X,abi_x86_32]
-						libnotify? ( x11-libs/libnotify )
-					)
-				)
-
-				|| (
-					app-emulation/emul-linux-x86-xlibs[-abi_x86_32(-)]
-					(
-						x11-libs/libSM[abi_x86_32]
-						x11-libs/libXxf86vm[abi_x86_32]
-					)
-				)
-
-				gstreamer? ( || (
-					app-emulation/emul-linux-x86-medialibs[-abi_x86_32(-)]
-					(
-						media-libs/gstreamer:0.10[abi_x86_32]
-						media-libs/gst-plugins-base:0.10[abi_x86_32]
-					)
-				) )
-				opengl? ( || (
-						app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)]
-						virtual/opengl[abi_x86_32]
-				) )
-			)
-			aqua? (
-				|| (
-					app-emulation/emul-linux-x86-gtklibs[-abi_x86_32(-)]
-					>=x11-libs/gtk+-2.4[abi_x86_32,aqua=]
-				)
-
-				|| (
-					app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-					(
-						virtual/jpeg[abi_x86_32]
-						tiff?   ( media-libs/tiff:0[abi_x86_32] )
-					)
-				)
-			)
-		)
-	)
-"
-
 DEPEND="${RDEPEND}
-	!amd64? ( virtual/glu )
-	amd64? (
-		abi_x86_64? ( virtual/glu )
-		abi_x86_32? (
-		    opengl? ( || (
-			app-emulation/emul-linux-x86-opengl[-abi_x86_32(-)]
-			virtual/glu[abi_x86_32]
-		    ) )
-		)
-	)
+	virtual/glu[${MULTILIB_USEDEP}]
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	X?  (
 		x11-proto/xproto[${MULTILIB_USEDEP}]
@@ -219,20 +139,6 @@ multilib_src_configure() {
 	ECONF_SOURCE="${S}" econf ${myconf}
 }
 
-multilib_src_compile() {
-	default
-}
-
-multilib_src_install() {
-	default
-
-	if multilib_is_native_abi; then
-		# Stray windows locale file, causes collisions
-		local wxmsw="${ED}usr/share/locale/it/LC_MESSAGES/wxmsw.mo"
-		[[ -e ${wxmsw} ]] && rm "${wxmsw}"
-	fi 
-}
-
 multilib_src_install_all() {
 	cd "${S}"/docs
 	dodoc changes.txt readme.txt
@@ -242,6 +148,10 @@ multilib_src_install_all() {
 	if use doc; then
 		dohtml -r "${S}"/docs/doxygen/out/html/*
 	fi
+
+	# Stray windows locale file, causes collisions
+	local wxmsw="${ED}usr/share/locale/it/LC_MESSAGES/wxmsw.mo"
+	[[ -e ${wxmsw} ]] && rm "${wxmsw}"
 }
 
 pkg_postinst() {
