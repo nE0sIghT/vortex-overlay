@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit multilib
+inherit eutils multilib
 
 WXWRAP_VER=1.4
 
@@ -20,6 +20,8 @@ IUSE=""
 RDEPEND="app-admin/eselect"
 
 src_prepare() {
+	epatch "${FILESDIR}"/eselect-wxwidgets-multilib.patch
+
 	cp "${FILESDIR}"/{wx-config,wxrc}-${WXWRAP_VER} . || die
 	sed \
 		-e "/^LIBDIR=/s:lib:$(get_libdir):" \
