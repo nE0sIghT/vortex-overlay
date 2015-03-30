@@ -7,6 +7,13 @@
 
 EPREFIX=''
 LIBDIR="lib"
+WXCONFIG_VAR="WXCONFIG"
+
+if [[ -n "${ABI}" ]]; then
+	var="LIBDIR_${ABI}"
+	[[ -n "${!var}" ]] && LIBDIR="${!var}"
+	[[ "${LIBDIR}" == "lib32" ]] && WXCONFIG_VAR="WXCONFIG_32"
+fi
 
 _wxerror() {
 	cat >&2 <<- EOF
@@ -29,6 +36,7 @@ else
 		_wxerror "Cannot find the wxWidgets profile configuration ( ${EPREFIX}/var/lib/wxwidgets/current )"
 	fi
 
+	WXCONFIG=${!WXCONFIG_VAR}
 	[ -z "${WXCONFIG}" -o "${WXCONFIG}" = none ] && _wxerror "No profile currently selected"
 
 	if [ -x "${EPREFIX}/usr/${LIBDIR}/wx/config/${WXCONFIG}" ]; then
