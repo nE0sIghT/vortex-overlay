@@ -2,6 +2,21 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+*xboxdrv-0.8.5-r3 (28 Mar 2015)
+
+  28 Mar 2015; nE0sIghT <ykonotopov@gmail.com> +files/org.seul.Xboxdrv.conf,
+  -xboxdrv-0.8.5-r2.ebuild, +xboxdrv-0.8.5-r3.ebuild:
+  Added missing dbus policy file.
+  https://bugs.gentoo.org/show_bug.cgi?id=481572
+
+*xboxdrv-0.8.5-r2 (28 Mar 2015)
+
+  28 Mar 2015; nE0sIghT <ykonotopov@gmail.com>
+  +files/xboxdrv-0.8.5-scons.patch, files/xboxdrv.service,
+  +files/xboxdrv.udev-rules, -xboxdrv-0.8.5-r1.ebuild,
+  +xboxdrv-0.8.5-r2.ebuild:
+  xboxdrv: enchanced systemd and udev configuration. Synced with tree.
+
   23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> +metadata.xml:
   Metadata
 

@@ -2,6 +2,9 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> libquvi-0.4.1-r1.ebuild:
+  Changed lua dependency to non-slotted not masked version
+
   23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> -files,
   +files/libquvi-0.9.1-headers-reinstall.patch:
   Removed symlinks
