@@ -1,24 +1,29 @@
 #!/bin/sh -
-# $Header: /var/cvsroot/gentoo-x86/app-admin/eselect-wxwidgets/files/wxrc-1.4,v 1.1 2014/04/23 19:55:10 ottxor Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-admin/eselect-wxwidgets/files/wx-config-1.4,v 1.1 2014/04/23 19:55:10 ottxor Exp $
 #
-# /usr/bin/wxrc
+# /usr/bin/wx-config
 #
-#  a lame wxrc wrapper (bugs to wxwidgets@gentoo.org)
+#  a lame wx-config and wxrc wrapper (bugs to wxwidgets@gentoo.org)
 
 EPREFIX=''
 LIBDIR="lib"
 WXCONFIG_VAR="WXCONFIG"
+SELF=$(basename $0)
 
-if [[ -n "${ABI}" ]]; then
+if [ -n "${ABI}" ]; then
 	var="LIBDIR_${ABI}"
-	[[ -n "${!var}" ]] && LIBDIR="${!var}"
-	[[ "${LIBDIR}" == "lib32" ]] && WXCONFIG_VAR="WXCONFIG_32"
+	[ -n "${!var}" ] && LIBDIR="${!var}"
+	[ "${LIBDIR}" = "lib32" ] && WXCONFIG_VAR="WXCONFIG_32"
+fi
+
+if [ "${SELF}" = "wxrc" ]; then
+	WXRC=" --utility=wxrc"
 fi
 
 _wxerror() {
 	cat >&2 <<- EOF
-		An error occurred while calling wxrc:
-
+		An error occurred while calling ${0}:
+		
 		${1}
 
 		Please use \`eselect wxwidgets\` to select an available profile and try again.
@@ -27,7 +32,7 @@ _wxerror() {
 }
 
 if [ -n "${WX_ECLASS_CONFIG}" ]; then
-	$(${WX_ECLASS_CONFIG} --utility=wxrc) "$@"
+	$(${WX_ECLASS_CONFIG}${WXRC}) "$@"
 	exit 0
 else
 	if [ -e "${EPREFIX}"/var/lib/wxwidgets/current ]; then
@@ -40,7 +45,7 @@ else
 	[ -z "${WXCONFIG}" -o "${WXCONFIG}" = none ] && _wxerror "No profile currently selected"
 
 	if [ -x "${EPREFIX}/usr/${LIBDIR}/wx/config/${WXCONFIG}" ]; then
-	   $("${EPREFIX}/usr/${LIBDIR}/wx/config/${WXCONFIG}" --utility=wxrc) "$@"
+	   $("${EPREFIX}/usr/${LIBDIR}/wx/config/${WXCONFIG}"${WXRC}) "$@"
 	else
 		_wxerror "Cannot find wxWidgets profile ( ${WXCONFIG} )"
 	fi
