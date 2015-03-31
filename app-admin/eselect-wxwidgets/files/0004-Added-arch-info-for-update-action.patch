@@ -1,0 +1,36 @@
+From a17379286194990752b9dbb0567f0933596056f6 Mon Sep 17 00:00:00 2001
+From: nE0sIghT <ykonotopov@gmail.com>
+Date: Tue, 31 Mar 2015 19:48:44 +0300
+Subject: [PATCH 4/4] Added arch info for update action
+
+---
+ modules/wxwidgets.eselect | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/modules/wxwidgets.eselect b/modules/wxwidgets.eselect
+index 7b47dc8..04ad16b 100644
+--- a/modules/wxwidgets.eselect
++++ b/modules/wxwidgets.eselect
+@@ -281,7 +281,7 @@ doupdate_helper() {
+ 
+ 	if [[ ${currconf} != "none" && ${foundconf} != "none" ]]; then
+ 		echo
+-		write_warning_msg "Your currently selected wxWidgets profile:    ( ${currconf} )"
++		write_warning_msg "Your currently selected ${multiarch}wxWidgets profile:    ( ${currconf} )"
+ 		write_warning_msg "is no longer available."
+ 		write_warning_msg
+ 		write_warning_msg "The closest matching profile:                 ( ${foundconf} )"
+@@ -295,8 +295,8 @@ do_update() {
+ 	[[ ! -e ${WXCONFFILE} ]] && do_set none
+ 
+ 	if [[ -d "${WXCONFDIR_32}" ]]; then
+-		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit" doupdate_helper
+-		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit" doupdate_helper
++		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doupdate_helper
++		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doupdate_helper
+ 	else
+ 		WXCONFDIR=${WXCONFDIR_64} doupdate_helper
+ 	fi
+-- 
+2.0.5
+

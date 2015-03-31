@@ -4,9 +4,9 @@
 
 EAPI="5"
 
-inherit eutils multilib
+inherit base eutils multilib
 
-WXWRAP_VER=1.4
+WXWRAP_VER=1.5
 
 DESCRIPTION="Eselect module and wrappers for wxWidgets"
 HOMEPAGE="http://www.gentoo.org"
@@ -19,14 +19,21 @@ IUSE=""
 
 RDEPEND="app-admin/eselect"
 
-src_prepare() {
-	epatch "${FILESDIR}"/eselect-wxwidgets-multilib.patch
+PATCHES=(
+	"${FILESDIR}"/0001-wxwidgets.eselect-multilib-support.patch
+	"${FILESDIR}"/0002-Removed-debug-typo.patch
+	"${FILESDIR}"/0003-Moved-args-check-to-proper-function.patch
+	"${FILESDIR}"/0004-Added-arch-info-for-update-action.patch
+)
 
-	cp "${FILESDIR}"/{wx-config,wxrc}-${WXWRAP_VER} . || die
+src_prepare() {
+	base_src_prepare
+
+	cp "${FILESDIR}"/wx-config-${WXWRAP_VER} . || die
 	sed \
 		-e "/^LIBDIR=/s:lib:$(get_libdir):" \
 		-e "/^EPREFIX=/s:'':'${EPREFIX}':" \
-		-i {wx-config,wxrc}-${WXWRAP_VER} || die
+		-i wx-config-${WXWRAP_VER} || die
 }
 
 src_install() {
@@ -37,7 +44,7 @@ src_install() {
 	newins "${FILESDIR}"/wxwin.m4-3.0 wxwin.m4
 
 	newbin wx-config-${WXWRAP_VER} wx-config
-	newbin wxrc-${WXWRAP_VER} wxrc
+	dosym wx-config /usr/bin/wxrc
 
 	keepdir /var/lib/wxwidgets
 	keepdir /usr/share/bakefile/presets

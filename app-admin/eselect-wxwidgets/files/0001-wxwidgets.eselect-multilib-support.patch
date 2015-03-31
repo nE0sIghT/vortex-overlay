@@ -1,8 +1,11 @@
-commit 524a6c248f5dd2617640b0ad06f6742be05f9ecd
-Author: nE0sIghT <ykonotopov@gmail.com>
-Date:   Sun Mar 29 21:18:56 2015 +0300
+From 524a6c248f5dd2617640b0ad06f6742be05f9ecd Mon Sep 17 00:00:00 2001
+From: nE0sIghT <ykonotopov@gmail.com>
+Date: Sun, 29 Mar 2015 21:18:56 +0300
+Subject: [PATCH 1/4] wxwidgets.eselect: multilib support
 
-    wxwidgets.eselect: multilib support
+---
+ modules/wxwidgets.eselect | 179 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 115 insertions(+), 64 deletions(-)
 
 diff --git a/modules/wxwidgets.eselect b/modules/wxwidgets.eselect
 index 55d49d2..400b5f9 100644
@@ -263,3 +266,6 @@ index 55d49d2..400b5f9 100644
 +	fi
 +}
 +
+-- 
+2.0.5
+
