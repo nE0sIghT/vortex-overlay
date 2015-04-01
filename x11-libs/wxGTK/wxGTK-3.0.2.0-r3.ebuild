@@ -55,7 +55,7 @@ DEPEND="${RDEPEND}
 		x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
 	)"
 
-PDEPEND=">=app-admin/eselect-wxwidgets-20131230"
+PDEPEND=">=app-eselect/eselect-wxwidgets-20131230"
 
 LICENSE="wxWinLL-3
 		GPL-2
@@ -155,11 +155,11 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
-	has_version app-admin/eselect-wxwidgets \
+	has_version app-eselect/eselect-wxwidgets \
 		&& eselect wxwidgets update
 }
 
 pkg_postrm() {
-	has_version app-admin/eselect-wxwidgets \
+	has_version app-eselect/eselect-wxwidgets \
 		&& eselect wxwidgets update
 }

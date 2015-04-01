@@ -34,10 +34,10 @@ REQUIRED_USE="
 "
 
 COMMON="
-	app-admin/eselect-opencl
+	app-eselect/eselect-opencl
 	kernel_linux? ( >=sys-libs/glibc-2.6.1 )
 	X? (
-		>=app-admin/eselect-opengl-1.0.9
+		>=app-eselect/eselect-opengl-1.0.9
 	)
 "
 DEPEND="

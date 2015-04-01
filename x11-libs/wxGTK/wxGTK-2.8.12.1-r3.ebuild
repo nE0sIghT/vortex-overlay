@@ -59,7 +59,7 @@ DEPEND="${RDEPEND}
 	)
 "
 
-PDEPEND=">=app-admin/eselect-wxwidgets-0.7"
+PDEPEND=">=app-eselect/eselect-wxwidgets-0.7"
 
 LICENSE="wxWinLL-3
 		GPL-2
@@ -177,11 +177,11 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
-	has_version app-admin/eselect-wxwidgets \
+	has_version app-eselect/eselect-wxwidgets \
 		&& eselect wxwidgets update
 }
 
 pkg_postrm() {
-	has_version app-admin/eselect-wxwidgets \
+	has_version app-eselect/eselect-wxwidgets \
 		&& eselect wxwidgets update
 }
