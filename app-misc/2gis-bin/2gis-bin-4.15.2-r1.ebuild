@@ -13,7 +13,7 @@ SRC_URI="
 	x86? ( http://deb.2gis.ru/pool/non-free/2/2gis/2gis_${PV}-0trusty1+shv280+r15_i386.deb )
 "
 
-LICENSE="GPL-2"
+LICENSE="freedist"
 SLOT="0"
 KEYWORDS="-* ~amd64 ~x86"
 IUSE=""
