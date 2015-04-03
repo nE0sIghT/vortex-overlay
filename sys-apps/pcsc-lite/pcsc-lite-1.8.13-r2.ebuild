@@ -78,8 +78,7 @@ multilib_src_install_all() {
 	newinitd "${FILESDIR}"/pcscd-init.7 pcscd
 
 	if use udev; then
-		insinto "$(get_udevdir)"/rules.d
-		doins "${FILESDIR}"/99-pcscd-hotplug.rules
+		udev_dorules "${FILESDIR}"/99-pcscd-hotplug.rules
 	fi
 
 	python_fix_shebang "${ED}/usr/bin"
@@ -98,6 +97,9 @@ pkg_postinst() {
 	elog "EXTRA_OPTS variable."
 	elog ""
 	if use udev; then
+		udev_reload
+
+		elog
 		elog "Hotplug support is provided by udev rules; you only need to tell"
 		elog "the init system to hotplug it, by setting this variable in"
 		elog "/etc/rc.conf:"
