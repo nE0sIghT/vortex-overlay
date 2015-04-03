@@ -1,0 +1,14 @@
+diff -ur ccid-1.4.18/readers/supported_readers.txt ccid-1.4.18-r1/readers/supported_readers.txt
+--- ccid-1.4.18/readers/supported_readers.txt	2014-09-13 20:27:12.000000000 +0400
++++ ccid-1.4.18-r1/readers/supported_readers.txt	2015-04-03 23:14:49.405749030 +0300
+@@ -519,6 +519,10 @@
+ 0x03F0:0x0036:Hewlett-Packard Company HP USB CCID Smartcard Keyboard
+ 0x03F0:0x1024:Hewlett-Packard Company HP USB Smart Card Keyboard
+ 
++# Jacarta
++0x24DC:0x0101:ARDS JaCarta
++0x24DC:0x100F:ARDS ZAO JaCarta Flash
++
+ # KOBIL Systems
+ 0x0D46:0x4000:KOBIL Systems mIDentity M
+ 0x0D46:0x4001:KOBIL Systems mIDentity XL

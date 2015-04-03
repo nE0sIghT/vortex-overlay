@@ -15,7 +15,7 @@ SRC_URI="http://alioth.debian.org/frs/download.php/file/${STUPID_NUM}/${P}.tar.b
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm ~hppa ~ia64 ppc ppc64 ~sparc x86"
-IUSE="ifcplugin twinserial +usb"
+IUSE="jacarta twinserial +usb"
 
 RDEPEND=">=sys-apps/pcsc-lite-1.8.3
 	usb? ( virtual/libusb:1 )"
@@ -25,7 +25,7 @@ DEPEND="${RDEPEND}
 DOCS=( README AUTHORS )
 
 src_prepare() {
-	use ifcplugin && epatch "${FILESDIR}"/ccid-ifcplugin.patch
+	use jacarta && epatch "${FILESDIR}"/ccid-jacarta.patch
 }
 
 src_configure() {

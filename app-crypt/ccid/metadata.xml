@@ -3,6 +3,7 @@
 <pkgmetadata>
 	<herd>crypto</herd>
 	<use>
+		<flag name="jacarta">Enable Jacarta readers used with ifcplugin</flag>
 		<flag name="twinserial">Enable twinserial reader</flag>
 	</use>
 </pkgmetadata>
