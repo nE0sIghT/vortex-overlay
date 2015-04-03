@@ -45,6 +45,7 @@ RDEPEND="${CDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.8.11-polkit-pcscd.patch
+	"${FILESDIR}/${P}"-unit-user.patch
 )
 
 pkg_setup() {
