@@ -9,8 +9,8 @@ DESCRIPTION="Crypto Interface Web Browser Plugin"
 HOMEPAGE="https://ds-plugin.gosuslugi.ru/plugin/upload/Index.spr"
 
 SRC_URI="
-	x86? ( https://ds-plugin.gosuslugi.ru/plugin/htdocs/plugin/IFCPlugin-i386.deb )
-	amd64? ( https://ds-plugin.gosuslugi.ru/plugin/htdocs/plugin/IFCPlugin-x86_64.deb )
+	x86? ( https://ds-plugin.gosuslugi.ru/plugin/htdocs/plugin/IFCPlugin-i386.deb -> ${P}.x86.deb )
+	amd64? ( https://ds-plugin.gosuslugi.ru/plugin/htdocs/plugin/IFCPlugin-x86_64.deb -> ${P}.amd64.deb )
 "
 IUSE=""
 SLOT="0"
