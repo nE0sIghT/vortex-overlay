@@ -21,7 +21,7 @@ LICENSE="freedist"
 S="${WORKDIR}"
 
 RDEPEND="
-	app-crypt/ccid[jacarta]
+	app-crypt/ccid
 	sys-apps/pcsc-lite
 "
 
