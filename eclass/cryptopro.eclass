@@ -68,6 +68,14 @@ cryptopro_src_install() {
 		done
 	fi
 
+	if [ -n "${CRYPTOPRO_SBINARIES}" ]; then
+		exeinto /opt/cprocsp/sbin/"${CRYPTOPRO_ARCH}"
+
+		for binary in ${CRYPTOPRO_SBINARIES[@]}; do
+			doexe opt/cprocsp/sbin/"${CRYPTOPRO_ARCH}"/"${binary}"
+		done
+	fi
+
 	if [ -d opt/cprocsp/lib/"${CRYPTOPRO_ARCH}" ]; then
 	        insinto /usr/$(get_libdir)
 
