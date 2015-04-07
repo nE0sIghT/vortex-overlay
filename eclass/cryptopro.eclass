@@ -31,7 +31,7 @@ SRC_URI="
 LICENSE="Crypto-Pro"
 S="${WORKDIR}"
 
-RESTRICT="fetch mirror"
+RESTRICT="fetch mirror strip"
 
 cryptopro_pkg_nofetch() {
 	if [ -z "${CRYPTOPRO_FETCH}" ]; then
@@ -61,7 +61,7 @@ cryptopro_pkg_setup() {
 
 cryptopro_src_install() {
 	if [ -n "${CRYPTOPRO_BINARIES}" ]; then
-		exeinto "/opt/cprocsp/bin/${arch}"
+		exeinto /opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"
 
 		for binary in ${CRYPTOPRO_BINARIES[@]}; do
 			doexe opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"/"${binary}"
