@@ -15,3 +15,20 @@ KEYWORDS="-* ~amd64"
 RDEPEND="
 	app-crypt/lsb-cprocsp-base
 "
+
+src_install() {
+	local CRYPTOPRO_BINARIES=(
+		cpverify
+		csptest
+		wipefile
+	)
+	local CRYPTOPRO_SBINARIES=(
+		cpconfig
+		mount_flash.sh
+		set_driver_license.sh
+	)
+	cryptopro_src_install
+
+	insinto /etc/opt/cprocsp
+	doins etc/opt/cprocsp/config64.ini
+}
