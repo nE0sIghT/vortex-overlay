@@ -4,13 +4,13 @@
 
 EAPI=5
 
-inherit cryptopro
-
 DESCRIPTION="Meta package for CryptoPro UEC CSP."
+HOMEPAGE="https://www.cryptopro.ru/"
 
 SRC_URI=""
+LICENSE="Crypto-Pro"
 
-IUSE=""
+IUSE="nsplugin"
 SLOT="0"
 
 KEYWORDS="-* ~amd64"
@@ -27,4 +27,6 @@ RDEPEND="
 	=app-crypt/lsb-cprocsp-rdr-3.9.0
 	=app-crypt/lsb-cprocsp-kc1-3.9.0
 	=app-crypt/lsb-cprocsp-fkc-3.9.0
+
+	nsplugin? ( =www-plugins/cprocsp-npcades-3.9.0 )
 "
