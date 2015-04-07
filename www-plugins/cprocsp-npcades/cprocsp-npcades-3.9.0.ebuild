@@ -24,10 +24,16 @@ pkg_nofetch() {
 
 
 src_install() {
-	insinto "/etc/opt/cprocsp"
+	insinto /etc/opt/cprocsp
 	doins etc/opt/cprocsp/trusted_sites.html
+
+	insinto /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"
+	for file in {libnpcades.so,libnpcades.so.1,libnpcades.so.1.0.0}; do
+		doins opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/"${file}"
+		rm opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/"${file}"
+	done
 
 	cryptopro_src_install
 
-	inst_plugin /usr/$(get_libdir)/libnpcades.so
+	inst_plugin /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
 }
