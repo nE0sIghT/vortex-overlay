@@ -6,6 +6,10 @@ After=network.target nss-lookup.target syslog.target
 [Service]
 ExecStart=/usr/sbin/opendkim -f -x /etc/opendkim/opendkim.conf
 ExecReload=/bin/kill -USR1 $MAINPID
+RuntimeDirectory=opendkim
+RuntimeDirectoryMode=0750
+User=milter
+Group=milter
 
 [Install]
 WantedBy=multi-user.target
