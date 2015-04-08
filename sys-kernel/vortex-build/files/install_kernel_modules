@@ -1,0 +1,3 @@
+#!/bin/sh
+
+make -j5 O=/usr/src/linux-build modules_install

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+efi=/boot/efi
+
+prepare_kernel
+
+mountpoint -q $efi
+efi_mounted=$?
+if [ $efi_mounted != 0 ]; then
+    mount $efi
+fi
+
+cd /usr/src/linux
+make -j5 O=/usr/src/linux-build && \
+install_kernel_modules && \
+install_kernel
+
+if [ $efi_mounted != 0 ]; then
+    umount $efi
+fi
+
+emerge @module-rebuild

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+source /lib/gentoo/functions.sh
+
+latest=$(eselect kernel list | tac | grep -m 1 linux)
+latest_id=$(echo ${latest} | awk '{ print $1 }' | tr -d [])
+latest_version=$(echo ${latest} | awk '{ print $2 }' | awk 'BEGIN { FS = "-" } ; { print $2 }')
+
+einfo Using kernel ${latest_version}
+
+eselect kernel set $latest_id
+
+if [ -e /usr/src/linux-build ]; then
+	rm -rf /usr/src/linux-build
+fi
+mkdir /usr/src/linux-build
+
+zcat /proc/config.gz > /usr/src/linux-build/.config

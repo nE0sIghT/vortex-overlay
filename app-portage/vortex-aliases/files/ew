@@ -1,0 +1,4 @@
+#!/bin/sh
+
+emerge -uDNav --keep-going --with-bdeps=y --backtrack=30 @world
+emerge @live-rebuild

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mv /boot/efi/efi/gentoo/kernel.efi /boot/efi/efi/gentoo/kernel-`uname -r`.efi && \
+cp /usr/src/linux-build/arch/x86/boot/bzImage /boot/efi/efi/gentoo/kernel.efi

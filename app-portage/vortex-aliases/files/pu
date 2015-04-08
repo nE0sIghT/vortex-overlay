@@ -1,0 +1,9 @@
+#!/bin/sh
+
+emaint sync -a
+
+if [ -n "$(emerge -qp sys-apps/portage | egrep ebuild\\s+U)" ]; then
+	emerge -1 sys-apps/portage
+fi
+
+eix-update
