@@ -15,6 +15,7 @@ RESTRICT="fetch mirror"
 RDEPEND="
 	app-crypt/lsb-cprocsp-cades
 	app-crypt/cprocsp-rdr-gui
+	dev-libs/libxml2
 "
 
 pkg_nofetch() {
