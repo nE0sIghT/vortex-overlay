@@ -16,6 +16,14 @@ RDEPEND="
 	app-crypt/lsb-cprocsp-base
 "
 
+CRYPTOPRO_REGISTER_LIBS=(
+	librdrfat12.so
+	librdrrdr.so
+	librdrrndm.so
+	librdrdsrf.so
+	libcpui.so
+)
+
 src_install() {
 	local CRYPTOPRO_BINARIES=(
 		cpverify
@@ -31,4 +39,25 @@ src_install() {
 
 	insinto /etc/opt/cprocsp
 	doins etc/opt/cprocsp/config64.ini
+}
+
+pkg_postinst() {
+	cryptopro_pkg_postinst
+
+	cryptopro_add_hardware rndm cpsd КПИМ 3
+
+	"${CPCONFIG}" -ini '\config\Random\cpsd\Default' -add string '/db1/kis_1' /var/opt/cprocsp/dsrf/db1/kis_1
+	"${CPCONFIG}" -ini '\config\Random\cpsd\Default' -add string '/db2/kis_1' /var/opt/cprocsp/dsrf/db2/kis_1
+
+	${CPCONFIG} -license -view > /dev/null
+	if [ $? -ne 0 ]; then
+		ebegin  "Installing temp license..."
+		"${CPCONFIG}" -license -set 39390-Z0037-EA3YG-GRQED-E6LPZ
+		eend $?
+	fi
+}
+
+pkg_prerm() {
+	cryptopro_pkg_prerm
+	cryptopro_remove_hardware rndm cpsd
 }
