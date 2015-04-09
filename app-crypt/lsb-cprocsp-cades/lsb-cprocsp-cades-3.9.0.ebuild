@@ -12,8 +12,12 @@ SLOT="0"
 
 KEYWORDS="-* ~amd64"
 
+DEPEND="app-crypt/lsb-cprocsp-rdr"
+
 RDEPEND="
 	app-crypt/lsb-cprocsp-capilite
 	app-crypt/lsb-cprocsp-ocsp-util
 	app-crypt/lsb-cprocsp-tsp-util
 "
+
+CRYPTOPRO_REGISTER_LIBS=( libcades.so )

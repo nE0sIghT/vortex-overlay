@@ -4,22 +4,19 @@
 
 EAPI=5
 
+inherit cryptopro
+
 DESCRIPTION="Meta package for CryptoPro UEC CSP."
-HOMEPAGE="https://www.cryptopro.ru/"
 
 SRC_URI=""
-LICENSE="Crypto-Pro"
 
 IUSE="nsplugin"
 SLOT="0"
 
 KEYWORDS="-* ~amd64"
 
-DEPEND="
-	=app-crypt/lsb-cprocsp-capilite-3.9.0
-"
-RDEPEND="
-	${DEPEND}
+DEPEND=""
+RDEPEND="${DEPEND}
 
 	=app-crypt/cprocsp-rdr-pcsc-3.9.0
 	=app-crypt/cprocsp-rdr-uec-3.9.0
@@ -30,3 +27,23 @@ RDEPEND="
 
 	nsplugin? ( =www-plugins/cprocsp-npcades-3.9.0 )
 "
+
+src_install() { :; }
+
+pkg_postinst() {
+	einfo "Installing UEC certificates"
+	for certificate in {uec,uec2}; do
+		ebegin "${certificate}"
+		/opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"/certmgr -inst -file "${FILESDIR}"/"${certificate}".cer -store=Root
+		eend $?
+	done
+
+	ebegin "Configuring KC1 base provider"
+	for param in {"Base Function Table Name","Base CP Module Name"}; do
+		"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\Crypto-Pro GOST R 34.10-2001 FKC CSP\\${param}" -delparam
+	done
+
+	"${CPCONFIG}" -ini '\cryptography\Defaults\Provider\Crypto-Pro GOST R 34.10-2001 FKC CSP' -add string 'Base Function Table Name' CPCSP_GetFunctionTable
+	"${CPCONFIG}" -ini '\cryptography\Defaults\Provider\Crypto-Pro GOST R 34.10-2001 FKC CSP' -add string 'Base CP Module Name' libcsp.so
+	eend 0
+}

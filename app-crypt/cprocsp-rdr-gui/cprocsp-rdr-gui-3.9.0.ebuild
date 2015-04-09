@@ -14,4 +14,26 @@ KEYWORDS="-* ~amd64"
 
 RDEPEND="
 	app-crypt/lsb-cprocsp-rdr
+	x11-libs/motif:2.2
 "
+CRYPTOPRO_REGISTER_LIBS=(
+	librdrrndmbio_gui.so
+	libxcpui.so
+	libxcpuifkc.so
+)
+
+CRYPTOPRO_UNSET_SECTIONS=(
+	'\config\Random\Bio_gui'
+)
+
+pkg_postinst() {
+	cryptopro_pkg_postinst
+
+	cryptopro_add_hardware rndm bio_gui 'rndm GUI' 4
+	"${CPCONFIG}" -ini '\config\Random\Bio_gui' -add string DLL librdrrndmbio_gui.so
+}
+
+pkg_prerm() {
+	cryptopro_pkg_prerm
+	cryptopro_remove_hardware rndm bio_gui
+}

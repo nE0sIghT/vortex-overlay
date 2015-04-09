@@ -16,8 +16,32 @@ RDEPEND="
 	app-crypt/lsb-cprocsp-rdr
 "
 
+CRYPTOPRO_REGISTER_LIBS=(
+	libcsp.so
+	librdrrndmbio_tui.so
+)
+CRYPTOPRO_UNSET_SECTIONS=( '\config\Random\Bio_tui' )
+
+
 src_install() {
 	cryptopro_src_install
 
 	dodir /var/opt/cprocsp/keys
+}
+
+pkg_postinst() {
+	cryptopro_pkg_postinst
+
+	cryptopro_add_hardware reader hdimage "Структура дискеты на жестком диске"
+	cryptopro_add_hardware rndm bio_tui "Биологический текстовый" 5
+	cryptopro_add_provider "Crypto-Pro GOST R 34.10-2001 KC1 CSP" 75\
+                libcsp.so CPCSP_GetFunctionTable
+}
+
+pkg_prerm() {
+	cryptopro_pkg_prerm
+
+	cryptopro_remove_hardware reader hdimage
+	cryptopro_remove_hardware rndm bio_tui
+	cryptopro_remove_provider "Crypto-Pro GOST R 34.10-2001 KC1 CSP"
 }
