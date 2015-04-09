@@ -18,3 +18,24 @@ RDEPEND="
 "
 
 CRYPTOPRO_SBINARIES=( configure_base_prov.sh )
+CRYPTOPRO_REGISTER_LIBS=(
+	libcspfkc.so
+	libcpuifkc.so
+)
+
+pkg_postinst() {
+        cryptopro_pkg_postinst
+
+	cryptopro_add_provider "Crypto-Pro GOST R 34.10-2001 FKC CSP" 75\
+		libcspfkc.so CPFKC_GetFunctionTable\
+		libcsp.so CPCSP_GetFunctionTable
+
+#        ebegin  "Installing temp license..."
+#        "${CPCONFIG}" -license -fkc -set x
+#        eend $?
+}
+
+pkg_prerm() {
+	cryptopro_pkg_prerm
+	cryptopro_remove_provider "Crypto-Pro GOST R 34.10-2001 FKC CSP"
+}
