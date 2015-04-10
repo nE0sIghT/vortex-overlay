@@ -6,7 +6,7 @@ EAPI="5"
 
 inherit base eutils multilib
 
-WXWRAP_VER=1.5
+WXWRAP_VER=1.6
 
 DESCRIPTION="Eselect module and wrappers for wxWidgets"
 HOMEPAGE="http://www.gentoo.org"
