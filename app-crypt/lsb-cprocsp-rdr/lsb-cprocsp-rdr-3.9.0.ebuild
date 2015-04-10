@@ -14,6 +14,7 @@ KEYWORDS="-* ~amd64"
 
 RDEPEND="
 	app-crypt/lsb-cprocsp-base
+	net-misc/curl
 "
 
 CRYPTOPRO_REGISTER_LIBS=(
@@ -22,6 +23,13 @@ CRYPTOPRO_REGISTER_LIBS=(
 	librdrrndm.so
 	librdrdsrf.so
 	libcpui.so
+	libcurl.so
+)
+CRYPTOPRO_UNSET_PARAMS=(
+	'\config\apppath\mount_flash.sh'
+)
+CRYPTOPRO_UNSET_SECTIONS=(
+	'\config\KeyDevices\FLASH'
 )
 
 src_install() {
@@ -44,8 +52,12 @@ src_install() {
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
-	cryptopro_add_hardware rndm cpsd КПИМ 3
+	cpconfig -ini '\config\apppath' -add string mount_flash.sh /opt/cprocsp/sbin/amd64/mount_flash.sh
+	cpconfig -ini '\config\KeyDevices\FLASH' -add string Dll librdrfat12.so
+	cpconfig -ini '\config\KeyDevices\FLASH' -add string Script mount_flash.sh
+	cryptopro_add_hardware reader FLASH FLASH
 
+	cryptopro_add_hardware rndm cpsd КПИМ 3
 	"${CPCONFIG}" -ini '\config\Random\cpsd\Default' -add string '/db1/kis_1' /var/opt/cprocsp/dsrf/db1/kis_1
 	"${CPCONFIG}" -ini '\config\Random\cpsd\Default' -add string '/db2/kis_1' /var/opt/cprocsp/dsrf/db2/kis_1
 
@@ -59,5 +71,7 @@ pkg_postinst() {
 
 pkg_prerm() {
 	cryptopro_pkg_prerm
+
+	cryptopro_remove_hardware reader FLASH
 	cryptopro_remove_hardware rndm cpsd
 }
