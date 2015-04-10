@@ -10,7 +10,6 @@ DESCRIPTION="CryptoPro CAdES NPAPI plugin library."
 SLOT="0"
 
 KEYWORDS="-* ~amd64"
-RESTRICT="fetch mirror"
 
 RDEPEND="
 	app-crypt/lsb-cprocsp-cades
