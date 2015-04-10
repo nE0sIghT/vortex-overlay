@@ -138,18 +138,22 @@ cryptopro_pkg_setup() {
 
 cryptopro_src_install() {
 	if [ -n "${CRYPTOPRO_BINARIES}" ]; then
-		exeinto /opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"
+		local exepath=/opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"
+		exeinto "${exepath}"
 
 		for binary in ${CRYPTOPRO_BINARIES[@]}; do
 			doexe opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"/"${binary}"
+			dosym "${exepath}"/"${binary}" /usr/bin/"${binary}"
 		done
 	fi
 
 	if [ -n "${CRYPTOPRO_SBINARIES}" ]; then
-		exeinto /opt/cprocsp/sbin/"${CRYPTOPRO_ARCH}"
+		local exepath=/opt/cprocsp/sbin/"${CRYPTOPRO_ARCH}"
+		exeinto "${exepath}"
 
 		for binary in ${CRYPTOPRO_SBINARIES[@]}; do
 			doexe opt/cprocsp/sbin/"${CRYPTOPRO_ARCH}"/"${binary}"
+			dosym "${exepath}"/"${binary}" /usr/sbin/"${binary}"
 		done
 	fi
 
