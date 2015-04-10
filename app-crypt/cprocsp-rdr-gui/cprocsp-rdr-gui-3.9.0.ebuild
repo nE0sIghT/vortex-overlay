@@ -23,17 +23,17 @@ CRYPTOPRO_REGISTER_LIBS=(
 )
 
 CRYPTOPRO_UNSET_SECTIONS=(
-	'\config\Random\Bio_gui'
+	'\config\Random\bio_gui'
 )
 
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
+	"${CPCONFIG}" -ini '\config\Random\bio_gui' -add string DLL librdrrndmbio_gui.so
 	cryptopro_add_hardware rndm bio_gui 'rndm GUI' 4
-	"${CPCONFIG}" -ini '\config\Random\Bio_gui' -add string DLL librdrrndmbio_gui.so
 }
 
 pkg_prerm() {
-	cryptopro_pkg_prerm
 	cryptopro_remove_hardware rndm bio_gui
+	cryptopro_pkg_prerm
 }
