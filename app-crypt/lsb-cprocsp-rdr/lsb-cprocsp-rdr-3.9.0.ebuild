@@ -49,12 +49,12 @@ pkg_postinst() {
 	"${CPCONFIG}" -ini '\config\Random\cpsd\Default' -add string '/db1/kis_1' /var/opt/cprocsp/dsrf/db1/kis_1
 	"${CPCONFIG}" -ini '\config\Random\cpsd\Default' -add string '/db2/kis_1' /var/opt/cprocsp/dsrf/db2/kis_1
 
-#	${CPCONFIG} -license -view > /dev/null
-#	if [ $? -ne 0 ]; then
-#		ebegin  "Installing temp license..."
-#		"${CPCONFIG}" -license -set x
-#		eend $?
-#	fi
+	${CPCONFIG} -license -view > /dev/null
+	if [ $? -ne 0 ]; then
+		ebegin  "Installing temp license..."
+		"${CPCONFIG}" -license -set 39390-Z0037-EA3YG-GRQED-E6LPZ
+		eend $?
+	fi
 }
 
 pkg_prerm() {

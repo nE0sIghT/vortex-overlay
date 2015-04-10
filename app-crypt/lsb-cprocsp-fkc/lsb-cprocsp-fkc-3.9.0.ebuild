@@ -30,9 +30,9 @@ pkg_postinst() {
 		libcspfkc.so CPFKC_GetFunctionTable\
 		libcsp.so CPCSP_GetFunctionTable
 
-#        ebegin  "Installing temp license..."
-#        "${CPCONFIG}" -license -fkc -set x
-#        eend $?
+        ebegin  "Installing temp license..."
+        "${CPCONFIG}" -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
+        eend $?
 }
 
 pkg_prerm() {
