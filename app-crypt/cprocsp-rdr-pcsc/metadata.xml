@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>ykonotopov@gmail.com</email>
+		<name>Yuri Konotopov</name>
+	</maintainer>
+	<use>
+	        <flag name="ccid">Use <pkg>app-crypt/ccid</pkg> free software driver to access PC/SC smart card</flag>
+	</use>
+</pkgmetadata>
