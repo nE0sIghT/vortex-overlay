@@ -33,7 +33,7 @@ RDEPEND="dev-libs/libaio[abi_x86_32]
 
 	|| (
 		x11-libs/wxGTK:2.8[abi_x86_32,X]
-		>=x11-libs/wxGTK-3.0.2.0-r2:3.0[abi_x86_32,X]
+		>=x11-libs/wxGTK-3.0.2.0-r4:3.0[abi_x86_32,X]
 	)
 
 	|| (
