@@ -27,6 +27,8 @@ src_install() {
 	cryptopro_src_install
 
 	dodir /var/opt/cprocsp/keys
+	fowners root:cprousers /var/opt/cprocsp/keys
+	fperms 770 /var/opt/cprocsp/keys
 }
 
 pkg_postinst() {
@@ -38,6 +40,9 @@ pkg_postinst() {
 	cryptopro_add_hardware rndm bio_tui "Биологический текстовый" 5
 	cryptopro_add_provider "Crypto-Pro GOST R 34.10-2001 KC1 CSP" 75\
                 libcsp.so CPCSP_GetFunctionTable
+
+	ewarn "Fixing permissions for /var/opt/cprocsp/keys"
+	chmod 770 /var/opt/cprocsp/keys
 }
 
 pkg_prerm() {
