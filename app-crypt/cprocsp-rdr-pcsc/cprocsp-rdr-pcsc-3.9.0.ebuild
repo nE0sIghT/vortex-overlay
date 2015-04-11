@@ -7,12 +7,13 @@ inherit cryptopro
 
 DESCRIPTION="PC/SC components for CryptoPro CSP readers."
 
-IUSE=""
+IUSE="ccid"
 SLOT="0"
 
 KEYWORDS="-* ~amd64"
 
 RDEPEND="
+	ccid? ( app-crypt/ccid )
 	app-crypt/lsb-cprocsp-rdr
 	sys-apps/pcsc-lite
 "
