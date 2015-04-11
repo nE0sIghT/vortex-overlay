@@ -13,7 +13,7 @@ KEYWORDS="-* ~amd64"
 
 RDEPEND="
 	app-crypt/lsb-cprocsp-cades
-	app-crypt/cprocsp-rdr-gui
+	app-crypt/cprocsp-rdr-gui-gtk
 	dev-libs/libxml2
 "
 
@@ -36,4 +36,15 @@ src_install() {
 	cryptopro_src_install
 
 	inst_plugin /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
+}
+
+pkg_postinst() {
+	cryptopro_pkg_postinst
+	cpconfig -ini '\config\apppath' \
+		-add string libnpcades.so /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
+}
+
+pkg_prerm() {
+	cryptopro_pkg_prerm
+	"${CPCONFIG}" -ini "\\config\\apppath\\libnpcades.so" -delparam
 }
