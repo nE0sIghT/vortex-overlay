@@ -108,6 +108,18 @@ cryptopro_remove_provider() {
         eend $?
 }
 
+# path type key value
+cryptopro_ini_add() {
+	if [ "${#@}" -lt 4 ]; then
+		eerror "Too few arguments"
+		die
+	fi
+
+	ebegin "Adding config $(_escape ${1}): ${2} ${3} ${4}"
+	cpconfig -ini "${1}" -add "${2}" "${3}" "${4}"
+	eend $?
+}
+
 cryptopro_pkg_nofetch() {
 	if [ -z "${CRYPTOPRO_FETCH}" ]; then
 		local CRYPTOPRO_FETCH="https://www.cryptopro.ru/"
@@ -204,7 +216,7 @@ cryptopro_pkg_prerm() {
 	if [ -n "${CRYPTOPRO_UNSET_PARAMS}" ]; then
 		einfo "Removing parameters with cpconfig"
 		for param in "${CRYPTOPRO_UNSET_PARAMS[@]}"; do
-			ebegin "${param}"
+			ebegin "$(_escape ${param})"
 			cpconfig -ini "${param}" -delparam
 			eend $?
 		done
@@ -213,9 +225,13 @@ cryptopro_pkg_prerm() {
 	if [ -n "${CRYPTOPRO_UNSET_SECTIONS}" ]; then
 		einfo "Removing sections with cpconfig"
 		for section in "${CRYPTOPRO_UNSET_SECTIONS[@]}"; do
-			ebegin "${section}"
+			ebegin "$(_escape ${section})"
 			cpconfig -ini "${section}" -delsection
 			eend $?
 		done
 	fi
+}
+
+_escape() {
+	echo "$*" | sed 's#\\#\\\\#g'
 }
