@@ -46,5 +46,5 @@ pkg_postinst() {
 
 pkg_prerm() {
 	cryptopro_pkg_prerm
-	"${CPCONFIG}" -ini "\\config\\apppath\\libnpcades.so" -delparam
+	cpconfig -ini "\\config\\apppath\\libnpcades.so" -delparam
 }

@@ -31,7 +31,7 @@ pkg_postinst() {
 		libcsp.so CPCSP_GetFunctionTable
 
         ebegin  "Installing temp license..."
-        "${CPCONFIG}" -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
+        cpconfig -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
         eend $?
 }
 

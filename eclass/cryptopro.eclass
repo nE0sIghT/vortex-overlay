@@ -51,7 +51,7 @@ cryptopro_add_hardware() {
 	fi
 
 	ebegin "Adding ${1} hardware ${2}: ${3}${level_text}"
-	eval "${CPCONFIG}" -hardware "${1}" -add "${2}" -name \""${name_cp1251}"\" ${level} > /dev/null
+	eval cpconfig -hardware "${1}" -add "${2}" -name \""${name_cp1251}"\" ${level} > /dev/null
 	eend $?
 }
 
@@ -63,7 +63,7 @@ cryptopro_remove_hardware() {
 	fi
 
 	ebegin "Removing ${1} hardware ${2}"
-	"${CPCONFIG}" -hardware "${1}" -del "${2}" > /dev/null
+	cpconfig -hardware "${1}" -del "${2}" > /dev/null
 	eend $?
 }
 
@@ -76,21 +76,21 @@ cryptopro_add_provider() {
 	fi
 
 	ebegin "Adding ${1} provider"
-	"${CPCONFIG}" -defprov -setdef -provtype "${2}" \
+	cpconfig -defprov -setdef -provtype "${2}" \
 		 -provname "${1}"
-	"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\${1}"\
+	cpconfig -ini "\\cryptography\\Defaults\\Provider\\${1}"\
 		-add string 'Image Path' /usr/$(get_libdir)/"${3}"
-	"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\${1}"\
+	cpconfig -ini "\\cryptography\\Defaults\\Provider\\${1}"\
 		-add string 'Function Table Name' "${4}"
-	"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\${1}"\
+	cpconfig -ini "\\cryptography\\Defaults\\Provider\\${1}"\
 		-add long Type "${2}"
 
 	if [ -n "${5}" ]; then
-		"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\${1}"\
+		cpconfig -ini "\\cryptography\\Defaults\\Provider\\${1}"\
 			-add string 'Base CP Module Name' "${5}"
 	fi
 	if [ -n "${6}" ]; then
-		"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\${1}"\
+		cpconfig -ini "\\cryptography\\Defaults\\Provider\\${1}"\
 			-add string 'Base Function Table Name' "${6}"
 	fi
         eend 0
@@ -104,7 +104,7 @@ cryptopro_remove_provider() {
 	fi
 
 	ebegin "Removing ${1} provider"
-	"${CPCONFIG}" -ini "\\cryptography\\Defaults\\Provider\\${1}" -delsection
+	cpconfig -ini "\\cryptography\\Defaults\\Provider\\${1}" -delsection
         eend $?
 }
 
@@ -132,8 +132,6 @@ cryptopro_pkg_setup() {
         else
                 CRYPTOPRO_ARCH="ia32"
         fi
-
-	CPCONFIG=/opt/cprocsp/sbin/"${CRYPTOPRO_ARCH}"/cpconfig
 }
 
 cryptopro_src_install() {
@@ -186,7 +184,7 @@ cryptopro_pkg_postinst() {
 				eend 1
 			fi
 
-			"${CPCONFIG}" -ini '\config\apppath' -add string "${lib}"\
+			cpconfig -ini '\config\apppath' -add string "${lib}"\
 				/usr/"$(get_libdir)"/"${lib}"
 			eend $?
 		done
@@ -198,7 +196,7 @@ cryptopro_pkg_prerm() {
 		einfo "Deregistering libs with cpconfig"
 		for lib in "${CRYPTOPRO_REGISTER_LIBS[@]}"; do
 		ebegin "${lib}"
-		"${CPCONFIG}" -ini "\\config\\apppath\\${lib}" -delparam
+		cpconfig -ini "\\config\\apppath\\${lib}" -delparam
 		eend $?
 		done
 	fi
@@ -207,7 +205,7 @@ cryptopro_pkg_prerm() {
 		einfo "Removing parameters with cpconfig"
 		for param in "${CRYPTOPRO_UNSET_PARAMS[@]}"; do
 			ebegin "${param}"
-			"${CPCONFIG}" -ini "${param}" -delparam
+			cpconfig -ini "${param}" -delparam
 			eend $?
 		done
 	fi
@@ -216,7 +214,7 @@ cryptopro_pkg_prerm() {
 		einfo "Removing sections with cpconfig"
 		for section in "${CRYPTOPRO_UNSET_SECTIONS[@]}"; do
 			ebegin "${section}"
-			"${CPCONFIG}" -ini "${section}" -delsection
+			cpconfig -ini "${section}" -delsection
 			eend $?
 		done
 	fi

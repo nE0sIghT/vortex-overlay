@@ -34,7 +34,7 @@ pkg_postinst() {
 
 	cryptopro_add_hardware reader hdimage "Структура дискеты на жестком диске"
 
-	"${CPCONFIG}" -ini '\config\Random\bio_tui' -add string DLL librdrrndmbio_tui.so
+	cpconfig -ini '\config\Random\bio_tui' -add string DLL librdrrndmbio_tui.so
 	cryptopro_add_hardware rndm bio_tui "Биологический текстовый" 5
 	cryptopro_add_provider "Crypto-Pro GOST R 34.10-2001 KC1 CSP" 75\
                 libcsp.so CPCSP_GetFunctionTable
