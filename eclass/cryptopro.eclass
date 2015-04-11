@@ -51,7 +51,7 @@ cryptopro_add_hardware() {
 	fi
 
 	ebegin "Adding ${1} hardware ${2}: ${3}${level_text}"
-	eval "${CPCONFIG}" -hardware "${1}" -add "${2}" -name "${name_cp1251}" ${level} > /dev/null
+	eval "${CPCONFIG}" -hardware "${1}" -add "${2}" -name \""${name_cp1251}"\" ${level} > /dev/null
 	eend $?
 }
 
@@ -180,6 +180,12 @@ cryptopro_pkg_postinst() {
 		einfo "Registering libs with cpconfig"
 		for lib in "${CRYPTOPRO_REGISTER_LIBS[@]}"; do
 			ebegin "${lib}"
+
+			if [ ! -e /usr/"$(get_libdir)"/"${lib}" ]; then
+				die "Trying to register non existing library ${lib}"
+				eend 1
+			fi
+
 			"${CPCONFIG}" -ini '\config\apppath' -add string "${lib}"\
 				/usr/"$(get_libdir)"/"${lib}"
 			eend $?
