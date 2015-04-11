@@ -36,21 +36,21 @@ src_install() {
 	fperms 750 /var/opt/cprocsp
 
 	for dir in {db1,db2}; do
-		dodir /var/opt/cprocsp/dsrf/"${dir}"
+		keepdir /var/opt/cprocsp/dsrf/"${dir}"
 		fowners root:cprousers /var/opt/cprocsp/dsrf/"${dir}"
 		fperms 750 /var/opt/cprocsp/dsrf/"${dir}"
 	done
 
-	dodir /var/opt/cprocsp/mnt
+	keepdir /var/opt/cprocsp/mnt
 	fperms 710 /var/opt/cprocsp/mnt
 
 	for dir in {0,1,2,3,4,5,6,7}; do
-		dodir /var/opt/cprocsp/mnt/"${dir}"
+		keepdir /var/opt/cprocsp/mnt/"${dir}"
 		fowners root:cprousers /var/opt/cprocsp/mnt/"${dir}"
 		fperms 770 /var/opt/cprocsp/mnt/"${dir}"
 	done
 
-	dodir /var/opt/cprocsp/tmp
+	keepdir /var/opt/cprocsp/tmp
 	fowners root:cprousers /var/opt/cprocsp/tmp
 	fperms 770 /var/opt/cprocsp/tmp
 
