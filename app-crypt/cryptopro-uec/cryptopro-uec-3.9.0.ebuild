@@ -18,12 +18,12 @@ KEYWORDS="-* ~amd64"
 DEPEND=""
 RDEPEND="${DEPEND}
 
-	=app-crypt/cprocsp-rdr-pcsc-3.9.0
-	=app-crypt/cprocsp-rdr-uec-3.9.0
-	=app-crypt/lsb-cprocsp-base-3.9.0
-	=app-crypt/lsb-cprocsp-rdr-3.9.0
-	=app-crypt/lsb-cprocsp-kc1-3.9.0
-	=app-crypt/lsb-cprocsp-fkc-3.9.0
+	~app-crypt/cprocsp-rdr-pcsc-3.9.0
+	~app-crypt/cprocsp-rdr-uec-3.9.0
+	~app-crypt/lsb-cprocsp-base-3.9.0
+	~app-crypt/lsb-cprocsp-rdr-3.9.0
+	~app-crypt/lsb-cprocsp-kc1-3.9.0
+	~app-crypt/lsb-cprocsp-fkc-3.9.0
 
 	nsplugin? ( =www-plugins/cprocsp-npcades-3.9.0 )
 "
