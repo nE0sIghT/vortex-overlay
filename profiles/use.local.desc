@@ -2,6 +2,7 @@
 # your descriptions to your package's metadata.xml ONLY.
 # * generated automatically using egencache *
 
+app-crypt/cprocsp-rdr-pcsc:ccid - Use app-crypt/ccid free software driver to access PC/SC smart card
 app-emulation/virtualbox-modules:pax_kernel - Apply patch needed for pax enabled kernels
 games-emulation/pcsx2:cg - Use CG backend of ZZogl
 games-emulation/pcsx2:egl - Enable GSdx plugin
@@ -36,16 +37,9 @@ media-video/smplayer:autoshutdown - Enable the option to shutdown your computer 
 media-video/smplayer:streaming - Support for streaming video sites through net-misc/youtube-dl (MPV only).
 net-news/liferea:libnotify - Enable popup notifications
 sys-apps/microcode-data:monolitic - Use monolitic old-style firmware for microcode-ctl
-www-client/firefox:bindist - Disable official Firefox branding (icons, name) which are not binary-redistributable according to upstream.
-www-client/firefox:custom-optimization - Fine-tune custom compiler optimizations (-Os, -O0, -O1, -O2, -O3)
-www-client/firefox:gmp-autoupdate - Allow Gecko Media Plugins (binary blobs) to be automatically downloaded and kept up-to-date in user profiles
-www-client/firefox:minimal - Prevent sdk and headers from being installed
-www-client/firefox:pgo - Add support for profile-guided optimization using gcc-4.5, for faster binaries. This option will double the compile time.
-www-client/firefox:system-cairo - Use the system-wide x11-libs/cairo instead of bundled.
-www-client/firefox:system-icu - Use the system-wide dev-libs/icu instead of bundled.
-www-client/firefox:system-jpeg - Use the system-wide media-libs/libjpeg-turbo instead of bundled.
-www-client/firefox:system-libvpx - Use the system-wide media-libs/libvpx instead of bundled.
-www-client/firefox:system-sqlite - Use the system-wide dev-db/sqlite installation with secure-delete enabled
+sys-apps/pcsc-lite:libusb - Use dev-libs/libusb detection to hotplug new smartcard readers. This flag should only be enabled if you're running a non-Linux kernel or you don't want to use sys-fs/udev.
+sys-apps/pcsc-lite:policykit - Uses sys-auth/polkit to restrict access to smartcard readers or smartcars to given users.
+sys-apps/pcsc-lite:udev - Use sys-fs/udev rules to handle devices' permissions and hotplug support. Unless you know what you're doing do not disable this flag on Linux kernels. This is provided as an option for completeness.
 x11-drivers/nvidia-drivers:X - Install the X.org driver, OpenGL libraries, XvMC libraries, and VDPAU libraries
 x11-drivers/nvidia-drivers:gtk2 - Install nvidia-settings with support for GTK+ 2
 x11-drivers/nvidia-drivers:gtk3 - Install nvidia-settings with support for GTK+ 3
