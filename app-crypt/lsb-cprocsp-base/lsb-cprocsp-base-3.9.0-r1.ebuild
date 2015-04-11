@@ -70,14 +70,5 @@ src_install() {
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
-	ewarn "Fixing permissions for /var/opt/cprocsp"
-	chown root:cprousers -R /var/opt/cprocsp
-	chmod 750 /var/opt/cprocsp
-	chmod 750 /var/opt/cprocsp/dsrf/{db1,db2}
-	chmod 710 /var/opt/cprocsp/mnt
-	chmod 770 /var/opt/cprocsp/mnt/{0,1,2,3,4,5,6,7}
-	chmod 770 /var/opt/cprocsp/tmp
-	chmod 770 /var/opt/cprocsp/users
-
 	elog "You must be in cprousers group to use CryptoPRO products"
 }
