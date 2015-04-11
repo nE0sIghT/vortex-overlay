@@ -41,9 +41,9 @@ pkg_postinst() {
 }
 
 pkg_prerm() {
-	cryptopro_pkg_prerm
-
 	cryptopro_remove_hardware reader hdimage
 	cryptopro_remove_hardware rndm bio_tui
 	cryptopro_remove_provider "Crypto-Pro GOST R 34.10-2001 KC1 CSP"
+
+	cryptopro_pkg_prerm
 }

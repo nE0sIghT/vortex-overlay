@@ -70,8 +70,8 @@ pkg_postinst() {
 }
 
 pkg_prerm() {
-	cryptopro_pkg_prerm
-
 	cryptopro_remove_hardware reader FLASH
 	cryptopro_remove_hardware rndm cpsd
+
+	cryptopro_pkg_prerm
 }
