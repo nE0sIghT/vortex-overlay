@@ -27,21 +27,19 @@ src_install() {
 	insinto /etc/opt/cprocsp
 	doins etc/opt/cprocsp/trusted_sites.html
 
-	insinto /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"
-	for file in {libnpcades.so,libnpcades.so.1,libnpcades.so.1.0.0}; do
-		doins opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/"${file}"
-		rm opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/"${file}"
-	done
+	# For some weird reason Firefox refuses to load plugin
+	# if it's symlinked
+	dodir /usr/$(get_libdir)/${PLUGINS_DIR}
+	insinto /usr/$(get_libdir)/${PLUGINS_DIR}
+	newins opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so.1.0.0 libnpcades.so
 
 	cryptopro_src_install
-
-	inst_plugin /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
 }
 
 pkg_postinst() {
 	cryptopro_pkg_postinst
 	cpconfig -ini '\config\apppath' \
-		-add string libnpcades.so /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
+		-add string libnpcades.so /usr/$(get_libdir)/${PLUGINS_DIR}/libnpcades.so
 }
 
 pkg_prerm() {
