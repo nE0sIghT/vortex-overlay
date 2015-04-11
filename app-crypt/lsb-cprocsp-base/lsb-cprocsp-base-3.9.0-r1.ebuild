@@ -37,7 +37,7 @@ src_install() {
 
 	for dir in {db1,db2}; do
 		dodir /var/opt/cprocsp/dsrf/"${dir}"
-#		fowners root:cprousers /var/opt/cprocsp/dsrf/"${dir}"
+		fowners root:cprousers /var/opt/cprocsp/dsrf/"${dir}"
 		fperms 750 /var/opt/cprocsp/dsrf/"${dir}"
 	done
 
@@ -46,14 +46,17 @@ src_install() {
 
 	for dir in {0,1,2,3,4,5,6,7}; do
 		dodir /var/opt/cprocsp/mnt/"${dir}"
+		fowners root:cprousers /var/opt/cprocsp/mnt/"${dir}"
 		fperms 770 /var/opt/cprocsp/mnt/"${dir}"
 	done
 
 	dodir /var/opt/cprocsp/tmp
+	fowners root:cprousers /var/opt/cprocsp/tmp
 	fperms 770 /var/opt/cprocsp/tmp
 
 	insinto /var/opt/cprocsp/users
 	doins var/opt/cprocsp/users/global.ini
+	fowners root:cprousers /var/opt/cprocsp/users
 	fperms 770 /var/opt/cprocsp/users
 
 	doman opt/cprocsp/share/man/man8/certmgr.8
