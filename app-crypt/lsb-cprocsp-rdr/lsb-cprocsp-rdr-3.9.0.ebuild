@@ -60,7 +60,7 @@ pkg_postinst() {
 		Script mount_flash.sh
 	cryptopro_add_hardware reader FLASH FLASH
 
-	cryptopro_add_hardware rndm cpsd КПИМ 3
+	cryptopro_add_hardware rndm cpsd КПИМ "" 3
 	cryptopro_add_ini '\config\Random\cpsd\Default' string \
 		'/db1/kis_1' /var/opt/cprocsp/dsrf/db1/kis_1
 	cryptopro_add_ini '\config\Random\cpsd\Default' string \

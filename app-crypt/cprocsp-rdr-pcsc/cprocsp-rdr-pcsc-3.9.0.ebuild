@@ -50,8 +50,7 @@ pkg_postinst() {
 	cpconfig -hardware media -configure oscar -add hex mask 00000000000000ffffffffffffffff
 	cpconfig -hardware media -configure oscar -add string folders 0B00
 
-	# Need to modify eclass to support connect
-	cpconfig -hardware media -add oscar2 -connect CSP -name 'Oscar CSP 2.0'
+	cryptopro_add_hardware media oscar2 'Oscar CSP 2.0' CSP
 	cpconfig -hardware media -configure oscar2 -connect CSP -add hex atr 000000000000004350435350010102
 	cpconfig -hardware media -configure oscar2 -connect CSP -add hex mask 00000000000000ffffffffffffffff
 	cpconfig -hardware media -configure oscar2 -connect CSP -add string folders 0B00
@@ -61,7 +60,7 @@ pkg_postinst() {
 	cpconfig -hardware media -configure oscar2 -connect CSP -add long size_5 70
 	cpconfig -hardware media -configure oscar2 -connect CSP -add long size_6 62
 
-	cpconfig -hardware media -add oscar2 -connect KChannel -name 'Channel K'
+	cryptopro_add_hardware media oscar2 'Channel K' KChannel
 	cpconfig -hardware media -configure oscar2 -connect KChannel -add hex atr 000000000000004350435350010101
 	cpconfig -hardware media -configure oscar2 -connect KChannel -add hex mask 00000000000000ffffffffffffffff
 	cpconfig -hardware media -configure oscar2 -connect KChannel -add string folders 0B00

@@ -30,7 +30,7 @@ pkg_postinst() {
 	cryptopro_pkg_postinst
 
 	cryptopro_add_ini '\config\Random\bio_gui' string DLL librdrrndmbio_gui.so
-	cryptopro_add_hardware rndm bio_gui 'rndm GUI' 4
+	cryptopro_add_hardware rndm bio_gui 'rndm GUI' "" 4
 }
 
 pkg_prerm() {
