@@ -33,7 +33,8 @@ S="${WORKDIR}"
 
 RESTRICT="fetch mirror strip"
 
-# type id name level
+# required: type id name
+# optional: connect level
 cryptopro_add_hardware() {
 	if [ ${#@} -lt 3 ]; then
 		eerror "Too few arguments"
@@ -41,13 +42,19 @@ cryptopro_add_hardware() {
 	fi
 
 	local name_cp1251=`echo "${3}" | iconv -f utf-8 -t cp1251`
+	local connect=Default
+
 	if [ -n "${4}" ]; then
-		local level="-level ${4}"
-		local level_text=" at level ${4}"
+		connect="${4}"
 	fi
 
-	ebegin "Adding ${1} hardware ${2}: ${3}${level_text}"
-	eval cpconfig -hardware "${1}" -add "${2}" -name \""${name_cp1251}"\" ${level} > /dev/null
+	if [ -n "${5}" ]; then
+		local level="-level ${5}"
+		local level_text=" at level ${5}"
+	fi
+
+	ebegin "Adding ${1} hardware ${2}: ${3}<${connect}>${level_text}"
+	eval cpconfig -hardware "${1}" -add "${2}" -connect "${connect}" -name \""${name_cp1251}"\" ${level} > /dev/null
 	eend $?
 }
 
@@ -107,13 +114,27 @@ cryptopro_remove_provider() {
 # path type key value
 cryptopro_add_ini() {
 	if [ "${#@}" -lt 4 ]; then
-	OD	eerror "Too few arguments"
+		eerror "Too few arguments"
 		die
 	fi
 
 	ebegin "Adding config $(_escape ${1}): ${2} ${3} ${4}"
 	cpconfig -ini "${1}" -add "${2}" "${3}" "${4}"
 	eend $?
+}
+
+# path name
+cryptopro_register_lib() {
+	if [ "${#@}" -lt 2 ]; then
+		eerror "Too few arguments"
+		die
+	fi
+
+	if [ ! -e "${1}"/"${2}" ]; then
+                die "Trying to register non existing library ${1}"
+        fi
+
+        cryptopro_add_ini '\config\apppath' string "${2}" "${1}/${2}"
 }
 
 cryptopro_pkg_nofetch() {
@@ -185,16 +206,7 @@ cryptopro_pkg_postinst() {
 	if [ -n "${CRYPTOPRO_REGISTER_LIBS}" ]; then
 		einfo "Registering libs with cpconfig"
 		for lib in "${CRYPTOPRO_REGISTER_LIBS[@]}"; do
-			ebegin "${lib}"
-
-			if [ ! -e /usr/"$(get_libdir)"/"${lib}" ]; then
-				die "Trying to register non existing library ${lib}"
-				eend 1
-			fi
-
-			cpconfig -ini '\config\apppath' -add string "${lib}"\
-				/usr/"$(get_libdir)"/"${lib}"
-			eend $?
+			cryptopro_register_lib /usr/"$(get_libdir)" "${lib}"
 		done
 	fi
 }
