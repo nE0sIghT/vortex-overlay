@@ -52,14 +52,19 @@ src_install() {
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
-	cpconfig -ini '\config\apppath' -add string mount_flash.sh /opt/cprocsp/sbin/amd64/mount_flash.sh
-	cpconfig -ini '\config\KeyDevices\FLASH' -add string Dll librdrfat12.so
-	cpconfig -ini '\config\KeyDevices\FLASH' -add string Script mount_flash.sh
+	cryptopro_add_ini '\config\apppath' string \
+		mount_flash.sh /opt/cprocsp/sbin/amd64/mount_flash.sh
+	cryptopro_add_ini '\config\KeyDevices\FLASH' \
+		string Dll librdrfat12.so
+	cryptopro_add_ini '\config\KeyDevices\FLASH' string \
+		Script mount_flash.sh
 	cryptopro_add_hardware reader FLASH FLASH
 
 	cryptopro_add_hardware rndm cpsd КПИМ 3
-	cpconfig -ini '\config\Random\cpsd\Default' -add string '/db1/kis_1' /var/opt/cprocsp/dsrf/db1/kis_1
-	cpconfig -ini '\config\Random\cpsd\Default' -add string '/db2/kis_1' /var/opt/cprocsp/dsrf/db2/kis_1
+	cryptopro_add_ini '\config\Random\cpsd\Default' string \
+		'/db1/kis_1' /var/opt/cprocsp/dsrf/db1/kis_1
+	cryptopro_add_ini '\config\Random\cpsd\Default' string \
+		'/db2/kis_1' /var/opt/cprocsp/dsrf/db2/kis_1
 
 	cpconfig -license -view > /dev/null
 	if [ $? -ne 0 ]; then

@@ -34,15 +34,12 @@ CRYPTOPRO_UNSET_PARAMS=(
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
-	echo
-	ebegin "Adding cpconfig strings"
-	cpconfig -ini '\config\policy\OIDs' \
-	    -add string '{A4CC781E-04E9-425C-AAFD-1D74DA8DFAF6}' 'libpkivalidator.so OCSPSigningImpl'
-	cpconfig -ini '\config\policy\OIDs' \
-	    -add string '{AF74EE92-A059-492F-9B4B-EAD239B22A1B}' 'libpkivalidator.so TimestampSigningImpl'
-	cpconfig -ini '\config\policy\OIDs' \
-	    -add string '{B52FF66F-13A5-402C-B958-A3A6B5300FB6}' 'libpkivalidator.so SignatureImpl'
-	cpconfig -ini '\config\policy\OIDs' \
-	    -add string '4' 'libpkivalidator.so SSLImpl'
-	eend 0
+	cryptopro_add_ini '\config\policy\OIDs' string \
+		'{A4CC781E-04E9-425C-AAFD-1D74DA8DFAF6}' 'libpkivalidator.so OCSPSigningImpl'
+	cryptopro_add_ini '\config\policy\OIDs' string \
+		'{AF74EE92-A059-492F-9B4B-EAD239B22A1B}' 'libpkivalidator.so TimestampSigningImpl'
+	cryptopro_add_ini '\config\policy\OIDs' string \
+		'{B52FF66F-13A5-402C-B958-A3A6B5300FB6}' 'libpkivalidator.so SignatureImpl'
+	cryptopro_add_ini '\config\policy\OIDs' string \
+		'4' 'libpkivalidator.so SSLImpl'
 }

@@ -38,12 +38,13 @@ pkg_postinst() {
 		eend $?
 	done
 
-	ebegin "Configuring KC1 base provider"
+	einfo "Configuring KC1 base provider"
 	for param in {"Base Function Table Name","Base CP Module Name"}; do
 		cpconfig -ini "\\cryptography\\Defaults\\Provider\\Crypto-Pro GOST R 34.10-2001 FKC CSP\\${param}" -delparam
 	done
 
-	cpconfig -ini '\cryptography\Defaults\Provider\Crypto-Pro GOST R 34.10-2001 FKC CSP' -add string 'Base Function Table Name' CPCSP_GetFunctionTable
-	cpconfig -ini '\cryptography\Defaults\Provider\Crypto-Pro GOST R 34.10-2001 FKC CSP' -add string 'Base CP Module Name' libcsp.so
-	eend 0
+	cryptopro_add_ini '\cryptography\Defaults\Provider\Crypto-Pro GOST R 34.10-2001 FKC CSP' \
+	    string 'Base Function Table Name' CPCSP_GetFunctionTable
+	cryptopro_add_ini '\cryptography\Defaults\Provider\Crypto-Pro GOST R 34.10-2001 FKC CSP' \
+	    string 'Base CP Module Name' libcsp.so
 }

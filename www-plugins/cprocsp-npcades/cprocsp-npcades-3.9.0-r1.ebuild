@@ -43,8 +43,8 @@ src_install() {
 
 pkg_postinst() {
 	cryptopro_pkg_postinst
-	cpconfig -ini '\config\apppath' \
-		-add string libnpcades.so /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
+	cryptopro_add_ini '\config\apppath' string \
+		libnpcades.so /opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/libnpcades.so
 }
 
 pkg_prerm() {
