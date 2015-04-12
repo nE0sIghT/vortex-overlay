@@ -33,3 +33,13 @@
 # Masked ebuild with 64 bit native build support
 # until pcsx2 WIP 64 bit support will not be finished
 >=games-emulation/pcsx2-999999
+
+# Masked ebuild with gtk+-3 support.
+# This is for testing purposes only and not
+# supported by upstream in Release builds
+=games-emulation/pcsx2-1.3.1-r1
+
+# Masked multibuild gtk2/gtk3 ebuild.
+# This is only for testing.
+# https://bugs.gentoo.org/show_bug.cgi?id=491310
+=x11-libs/wxGTK-3.0.2.0-r4
