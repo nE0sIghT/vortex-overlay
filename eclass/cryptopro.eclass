@@ -33,10 +33,6 @@ S="${WORKDIR}"
 
 RESTRICT="fetch mirror strip"
 
-cryptopro_unicode() {
-	"$@" | iconv -f cp1251 -t utf-8
-}
-
 # type id name level
 cryptopro_add_hardware() {
 	if [ ${#@} -lt 3 ]; then
