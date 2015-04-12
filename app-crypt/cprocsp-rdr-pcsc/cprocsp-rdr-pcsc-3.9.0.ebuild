@@ -36,14 +36,14 @@ CRYPTOPRO_UNSET_SECTIONS=(
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
-	cryptopro_ini_add '\config\KeyDevices\PCSC' string DLL librdrpcsc.so
-	cryptopro_ini_add '\config\KeyDevices\PCSC' long Group 1
-	cryptopro_ini_add '\config\KeyDevices\PCSC\PNP PCSC\Default' string Name 'All PC/SC readers'
-	cryptopro_ini_add '\config\KeyCarriers\OSCAR' string DLL librdrric.so
-	cryptopro_ini_add '\config\KeyCarriers\OSCAR2' string DLL librdrric.so
-	cryptopro_ini_add '\config\KeyCarriers\TRUST' string DLL librdrric.so
-	cryptopro_ini_add '\config\KeyCarriers\TRUSTS' string DLL librdrric.so
-	cryptopro_ini_add '\config\KeyCarriers\TRUSTD' string DLL librdrric.so
+	cryptopro_add_ini '\config\KeyDevices\PCSC' string DLL librdrpcsc.so
+	cryptopro_add_ini '\config\KeyDevices\PCSC' long Group 1
+	cryptopro_add_ini '\config\KeyDevices\PCSC\PNP PCSC\Default' string Name 'All PC/SC readers'
+	cryptopro_add_ini '\config\KeyCarriers\OSCAR' string DLL librdrric.so
+	cryptopro_add_ini '\config\KeyCarriers\OSCAR2' string DLL librdrric.so
+	cryptopro_add_ini '\config\KeyCarriers\TRUST' string DLL librdrric.so
+	cryptopro_add_ini '\config\KeyCarriers\TRUSTS' string DLL librdrric.so
+	cryptopro_add_ini '\config\KeyCarriers\TRUSTD' string DLL librdrric.so
 
 	cryptopro_add_hardware media oscar 'Оскар'
 	cpconfig -hardware media -configure oscar -add hex atr 0000000000000043525950544f5052

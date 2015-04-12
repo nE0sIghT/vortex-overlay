@@ -105,9 +105,9 @@ cryptopro_remove_provider() {
 }
 
 # path type key value
-cryptopro_ini_add() {
+cryptopro_add_ini() {
 	if [ "${#@}" -lt 4 ]; then
-		eerror "Too few arguments"
+	OD	eerror "Too few arguments"
 		die
 	fi
 
