@@ -33,9 +33,17 @@ pkg_postinst() {
 		libcspfkc.so CPFKC_GetFunctionTable\
 		libcsp.so CPCSP_GetFunctionTable
 
-        ebegin  "Installing temp license..."
-        cpconfig -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
-        eend $?
+	cpconfig -license -fkc -view > /dev/null
+        if [ $? -ne 0 ]; then
+	        ebegin  "Installing default 3 month license..."
+		        cpconfig -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
+	        eend $?
+
+	        elog "Your license will expire in 3 months."
+	        elog "In order to continue using this software after that"
+	        elog "you must buy proper license and set it using"
+	        elog "  cpconfig -license -fkc -set <your license>"
+	fi
 }
 
 pkg_prerm() {
