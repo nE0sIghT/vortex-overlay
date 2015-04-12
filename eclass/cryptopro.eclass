@@ -25,8 +25,8 @@ EXPORT_FUNCTIONS pkg_nofetch pkg_setup src_install pkg_postinst pkg_prerm
 HOMEPAGE="https://www.cryptopro.ru/"
 SRC_URI="
 	amd64? ( ${PN}-64-${PV}-4.x86_64.rpm )
+	x86? ( ${PN}-${PV}-4.i486.rpm )
 "
-#	x86? ( ${PN}-${PV}-4.i486.rpm )
 
 LICENSE="Crypto-Pro"
 S="${WORKDIR}"
@@ -125,17 +125,17 @@ cryptopro_pkg_nofetch() {
 		local CRYPTOPRO_FETCH="https://www.cryptopro.ru/"
 	fi
 
-	einfo
-	einfo " Due to restrictions, we cannot fetch the"
-	einfo " distributables automagically."
-	einfo
-	einfo " 1. Visit ${CRYPTOPRO_FETCH}"
-	einfo " 2. Download cades_linux_*.tar.gz"
-	einfo " 3. Unpack following file to \$DISTDIR:"
-	einfo "    ${SRC_URI}"
-	einfo
-	einfo " Run emerge on this package again to complete"
-	einfo
+	eerror
+	eerror " Due to restrictions, we cannot fetch the"
+	eerror " distributables automagically."
+	eerror
+	eerror " 1. Visit ${CRYPTOPRO_FETCH}"
+	eerror " 2. Download proper *linux_*.tar.gz archive"
+	eerror " 3. Unpack following file to \$DISTDIR:"
+	eerror "    ${SRC_URI}"
+	eerror
+	eerror " Run emerge on this package again to complete"
+	eerror
 }
 
 cryptopro_pkg_setup() {

@@ -6,6 +6,9 @@ EAPI=5
 inherit cryptopro
 
 DESCRIPTION="Crypto-Pro FKC CSP."
+SRC_URI="
+        ${PN}-64-${PV}-4.x86_64.rpm
+"
 
 IUSE=""
 SLOT="0"

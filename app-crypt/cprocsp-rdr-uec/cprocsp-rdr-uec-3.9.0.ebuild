@@ -10,6 +10,9 @@ DESCRIPTION="UEC support module for CryptoPro CSP."
 IUSE=""
 SLOT="0"
 
+SRC_URI="
+	${PN}-64-${PV}-4.x86_64.rpm
+"
 KEYWORDS="-* ~amd64"
 
 RDEPEND="

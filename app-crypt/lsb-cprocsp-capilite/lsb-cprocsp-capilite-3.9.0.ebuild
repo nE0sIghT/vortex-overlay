@@ -10,7 +10,7 @@ DESCRIPTION="CryptoAPI lite."
 IUSE=""
 SLOT="0"
 
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* ~amd64 ~x86"
 
 DEPEND="app-crypt/lsb-cprocsp-rdr"
 RDEPEND="${DEPEND}"

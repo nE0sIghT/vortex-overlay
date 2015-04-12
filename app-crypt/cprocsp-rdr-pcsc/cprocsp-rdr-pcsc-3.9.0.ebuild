@@ -10,7 +10,7 @@ DESCRIPTION="PC/SC components for CryptoPro CSP readers."
 IUSE="ccid"
 SLOT="0"
 
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* ~amd64 ~x86"
 
 RDEPEND="
 	ccid? ( app-crypt/ccid )

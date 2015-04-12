@@ -12,7 +12,17 @@ SRC_URI="${P}-4.noarch.rpm"
 IUSE=""
 SLOT="0"
 
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* ~amd64 ~x86"
+
+pkg_nofetch() {
+	cryptopro_pkg_nofetch
+
+	if use x86; then
+		eerror "Attention!"
+		eerror "You must use rpm package from linux-amd64 distributive!"
+		eerror
+	fi
+}
 
 pkg_setup() {
 	enewgroup cprousers

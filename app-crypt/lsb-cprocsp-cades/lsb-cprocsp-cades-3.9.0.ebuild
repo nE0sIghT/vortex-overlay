@@ -10,7 +10,7 @@ DESCRIPTION="CryptoPro CAdES shared library."
 IUSE=""
 SLOT="0"
 
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* ~amd64 ~x86"
 
 DEPEND="app-crypt/lsb-cprocsp-rdr"
 

@@ -10,7 +10,7 @@ DESCRIPTION="CryptoPro PKI shared library."
 IUSE=""
 SLOT="0"
 
-KEYWORDS="-* ~amd64"
+KEYWORDS="-* ~amd64 ~x86"
 
 RDEPEND="
 	app-crypt/lsb-cprocsp-capilite

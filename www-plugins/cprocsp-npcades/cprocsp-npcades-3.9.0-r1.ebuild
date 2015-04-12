@@ -7,6 +7,9 @@ inherit nsplugins cryptopro
 
 DESCRIPTION="CryptoPro CAdES NPAPI plugin library."
 
+SRC_URI="
+        ${PN}-64-${PV}-4.x86_64.rpm
+"
 SLOT="0"
 
 KEYWORDS="-* ~amd64"
