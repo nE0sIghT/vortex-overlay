@@ -68,9 +68,14 @@ pkg_postinst() {
 
 	cpconfig -license -view > /dev/null
 	if [ $? -ne 0 ]; then
-		ebegin  "Installing temp license..."
+		ebegin  "Installing default 3 month license..."
 		cpconfig -license -set 39390-Z0037-EA3YG-GRQED-E6LPZ
 		eend $?
+
+		elog "Your license will expire in 3 months."
+		elog "In order to continue using this software after that"
+		elog "you must buy proper license and set it using"
+		elog "	cpconfig -license -set <your license>"
 	fi
 }
 
