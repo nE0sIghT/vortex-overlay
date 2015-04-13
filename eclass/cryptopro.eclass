@@ -118,7 +118,7 @@ cryptopro_add_ini() {
 		die
 	fi
 
-	ebegin "Adding config $(_escape ${1}): ${2} ${3} ${4}"
+	ebegin "Adding config $(_cryptopro_escape ${1}): ${2} ${3} ${4}"
 	cpconfig -ini "${1}" -add "${2}" "${3}" "${4}"
 	eend $?
 }
@@ -189,17 +189,17 @@ cryptopro_src_install() {
 
 		for lib in opt/cprocsp/lib/"${CRYPTOPRO_ARCH}"/lib*.so*; do
 			if [ -e ${lib} ]; then
-		                if [ -L ${lib} ]; then
-		                        doins "${lib}"
-		                else
-		                    dolib.so "${lib}"
-		                fi
-		        fi
-	        done
+				if [ -L ${lib} ]; then
+					doins "${lib}"
+				else
+					dolib.so "${lib}"
+				fi
+			fi
+		done
 	fi
 
-        insinto "/opt/cprocsp/lib"
-        doins -r opt/cprocsp/lib/hashes
+	insinto "/opt/cprocsp/lib"
+	doins -r opt/cprocsp/lib/hashes
 }
 
 cryptopro_pkg_postinst() {
@@ -224,7 +224,7 @@ cryptopro_pkg_prerm() {
 	if [ -n "${CRYPTOPRO_UNSET_PARAMS}" ]; then
 		einfo "Removing parameters with cpconfig"
 		for param in "${CRYPTOPRO_UNSET_PARAMS[@]}"; do
-			ebegin "$(_escape ${param})"
+			ebegin "$(_cryptopro_escape ${param})"
 			cpconfig -ini "${param}" -delparam
 			eend $?
 		done
@@ -233,13 +233,13 @@ cryptopro_pkg_prerm() {
 	if [ -n "${CRYPTOPRO_UNSET_SECTIONS}" ]; then
 		einfo "Removing sections with cpconfig"
 		for section in "${CRYPTOPRO_UNSET_SECTIONS[@]}"; do
-			ebegin "$(_escape ${section})"
+			ebegin "$(_cryptopro_escape ${section})"
 			cpconfig -ini "${section}" -delsection
 			eend $?
 		done
 	fi
 }
 
-_escape() {
+_cryptopro_escape() {
 	echo "$*" | sed 's#\\#\\\\#g'
 }
