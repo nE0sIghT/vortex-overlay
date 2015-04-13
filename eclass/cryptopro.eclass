@@ -131,10 +131,18 @@ cryptopro_register_lib() {
 	fi
 
 	if [ ! -e "${1}"/"${2}" ]; then
-                die "Trying to register non existing library ${1}"
+                die "Trying to register non existing library ${1}/${2}"
         fi
 
         cryptopro_add_ini '\config\apppath' string "${2}" "${1}/${2}"
+}
+
+cryptopro_get_config() {
+	if use amd64; then
+		echo config64.ini
+	else
+		echo config.ini
+	fi
 }
 
 cryptopro_pkg_nofetch() {
@@ -215,9 +223,9 @@ cryptopro_pkg_prerm() {
 	if [ -n "${CRYPTOPRO_REGISTER_LIBS}" ]; then
 		einfo "Deregistering libs with cpconfig"
 		for lib in "${CRYPTOPRO_REGISTER_LIBS[@]}"; do
-		ebegin "${lib}"
-		cpconfig -ini "\\config\\apppath\\${lib}" -delparam
-		eend $?
+			ebegin "${lib}"
+			cpconfig -ini "\\config\\apppath\\${lib}" -delparam
+			eend $?
 		done
 	fi
 
