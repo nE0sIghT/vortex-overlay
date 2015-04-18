@@ -15,7 +15,7 @@ HOMEPAGE="http://www.pcsx2.net"
 LICENSE="GPL-3"
 SLOT="0"
 
-IUSE="cg egl glew glsl joystick sdl sound video"
+IUSE="cg custom-cflags egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
     glew? ( || ( cg glsl ) )
     joystick? ( sdl )
@@ -100,6 +100,10 @@ PATCHES=(
 QA_TEXTRELS="usr/games/lib32/pcsx2/*"
 
 src_prepare() {
+	if use custom-cflags; then
+		PATCHES+=( "${FILESDIR}"/"${P}-custom-cflags.patch" )
+	fi
+
 	cmake-utils_src_prepare
 
 	if ! use egl; then
