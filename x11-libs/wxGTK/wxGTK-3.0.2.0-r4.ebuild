@@ -26,7 +26,7 @@ RDEPEND="
 		>=dev-libs/glib-2.22:2[${MULTILIB_USEDEP}]
 		media-libs/libpng:0=[${MULTILIB_USEDEP}]
 		sys-libs/zlib[${MULTILIB_USEDEP}]
-		virtual/jpeg[${MULTILIB_USEDEP}]
+		virtual/jpeg:=[${MULTILIB_USEDEP}]
 		gtk? ( >=x11-libs/gtk+-2.18:2[${MULTILIB_USEDEP}] )
 		x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
@@ -42,9 +42,9 @@ RDEPEND="
 		webkit? ( net-libs/webkit-gtk:2 )
 		)
 	aqua? (
-		gtk? ( >=x11-libs/gtk+-2.4[aqua=,${MULTILIB_USEDEP}] )
+		gtk? ( >=x11-libs/gtk+-2.4:2[aqua=,${MULTILIB_USEDEP}] )
 		x11-libs/gtk+:3[aqua=,${MULTILIB_USEDEP}]
-		virtual/jpeg[${MULTILIB_USEDEP}]
+		virtual/jpeg:=[${MULTILIB_USEDEP}]
 		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
 		)"
 
@@ -97,7 +97,7 @@ src_prepare() {
 multilib_src_configure() {
 	multibuild_src_configure() {
 		mkdir -p "${BUILD_DIR}" || die
-                pushd "${BUILD_DIR}" >/dev/null || die
+		pushd "${BUILD_DIR}" >/dev/null || die
 
 		local myconf
 
