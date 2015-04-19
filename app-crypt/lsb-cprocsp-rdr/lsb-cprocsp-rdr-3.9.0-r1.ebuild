@@ -7,7 +7,7 @@ inherit cryptopro
 
 DESCRIPTION="CryptoPro CSP readers."
 
-IUSE="jemalloc"
+IUSE=""
 SLOT="0"
 
 KEYWORDS="-* ~amd64 ~x86"
