@@ -1,0 +1,10 @@
+# ChangeLog for app-portage/vortex-aliases
+# Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+*vortex-aliases-1 (08 Apr 2015)
+
+  08 Apr 2015; nE0sIghT <ykonotopov@gmail.com> +files/ew, +files/pu,
+  +files/upg, +vortex-aliases-1.ebuild:
+  vortex-aliases & vortex-build: simple helpers i use
+

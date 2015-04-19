@@ -1,0 +1,19 @@
+# ChangeLog for app-crypt/lsb-cprocsp-cades
+# Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+  12 Apr 2015; nE0sIghT <ykonotopov@gmail.com> lsb-cprocsp-cades-3.9.0.ebuild:
+  Enable x86 support for some packages
+
+  11 Apr 2015; nE0sIghT <ykonotopov@gmail.com> +metadata.xml:
+  Generated metadata and updated use.local.desc
+
+  09 Apr 2015; nE0sIghT <ykonotopov@gmail.com> lsb-cprocsp-cades-3.9.0.ebuild:
+  Crypto-Pro UEC: more work
+
+*lsb-cprocsp-cades-3.9.0 (06 Apr 2015)
+
+  06 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
+  +lsb-cprocsp-cades-3.9.0.ebuild:
+  CryptoPro UEK: initial import. WIP
+

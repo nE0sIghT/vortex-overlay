@@ -1,0 +1,25 @@
+# ChangeLog for app-crypt/cprocsp-rdr-gui-gtk
+# Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
+# $Header: $
+
+  12 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
+  cprocsp-rdr-gui-gtk-3.9.0.ebuild:
+  Changes for updated cryptopro_add_hardware
+
+  12 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
+  cprocsp-rdr-gui-gtk-3.9.0.ebuild:
+  Use eclass function cryptopro_add_ini instead of direct cpconfig call
+
+  12 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
+  cprocsp-rdr-gui-gtk-3.9.0.ebuild:
+  Enable x86 support for some packages
+
+  11 Apr 2015; nE0sIghT <ykonotopov@gmail.com> +metadata.xml:
+  Generated metadata and updated use.local.desc
+
+*cprocsp-rdr-gui-gtk-3.9.0 (11 Apr 2015)
+
+  11 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
+  +cprocsp-rdr-gui-gtk-3.9.0.ebuild:
+  GTK+-2 random bio generator
+
