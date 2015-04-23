@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>ykonotopov@gmail.com</email>
+		<name>Yuri Konotopov</name>
+	</maintainer>
+	<use>
+		<flag name="fuse">Enable the <pkg>sys-fs/fuse</pkg> filesystem support</flag>
+		<flag name="gui">Add support for QT GUI</flag>
+        </use>
+</pkgmetadata>
