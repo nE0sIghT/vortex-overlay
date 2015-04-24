@@ -16,7 +16,7 @@ DEPEND="app-crypt/lsb-cprocsp-rdr"
 RDEPEND="${DEPEND}"
 
 CRYPTOPRO_BINARIES=(
-	certmgr
+	certmgr-cprocsp
 	cryptcp
 	csptestf
 	der2xer
@@ -31,6 +31,14 @@ CRYPTOPRO_UNSET_PARAMS=(
 	'\config\policy\OIDs\4'
 )
 
+src_install() {
+	# Avoid collision with mono (/usr/bin/certmgr)
+	mv opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"/certmgr{,-cprocsp} || die
+	dosym certmgr-cprocsp /opt/cprocsp/bin/"${CRYPTOPRO_ARCH}"/certmgr
+
+	cryptopro_src_install
+}
+
 pkg_postinst() {
 	cryptopro_pkg_postinst
 
@@ -42,4 +50,8 @@ pkg_postinst() {
 		'{B52FF66F-13A5-402C-B958-A3A6B5300FB6}' 'libpkivalidator.so SignatureImpl'
 	cryptopro_add_ini '\config\policy\OIDs' string \
 		'4' 'libpkivalidator.so SSLImpl'
+
+	echo
+	ewarn "To avoid collisions with dev-lang/mono symbolic link to 'certmgr' binary"
+	ewarn "was installed as '/usr/bin/certmgr-cprocsp'"
 }
