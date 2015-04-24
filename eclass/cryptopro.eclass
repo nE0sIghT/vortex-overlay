@@ -131,10 +131,10 @@ cryptopro_register_lib() {
 	fi
 
 	if [ ! -e "${1}"/"${2}" ]; then
-                die "Trying to register non existing library ${1}/${2}"
-        fi
+		die "Trying to register non existing library ${1}/${2}"
+	fi
 
-        cryptopro_add_ini '\config\apppath' string "${2}" "${1}/${2}"
+	cryptopro_add_ini '\config\apppath' string "${2}" "${1}/${2}"
 }
 
 cryptopro_get_config() {
@@ -165,10 +165,10 @@ cryptopro_pkg_nofetch() {
 
 cryptopro_pkg_setup() {
 	if use amd64; then
-                CRYPTOPRO_ARCH="amd64"
-        else
-                CRYPTOPRO_ARCH="ia32"
-        fi
+		CRYPTOPRO_ARCH="amd64"
+	else
+		CRYPTOPRO_ARCH="ia32"
+	fi
 }
 
 cryptopro_src_install() {
