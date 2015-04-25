@@ -13,7 +13,7 @@ HOMEPAGE="https://github.com/i-rinat/freshplayerplugin"
 DESCRIPTION="PPAPI-host NPAPI-plugin adapter for flashplayer in npapi based browsers"
 SRC_URI="https://github.com/i-rinat/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT=0
-IUSE="pulseaudio"
+IUSE="jack pulseaudio"
 
 KEYWORDS="~amd64 ~x86"
 
@@ -29,6 +29,7 @@ CDEPEND="
 	x11-libs/libXrandr:=
 	x11-libs/libXrender:=
 	x11-libs/pango:=[X]
+	jack? ( media-sound/jack )
 	pulseaudio? ( media-sound/pulseaudio )
 "
 
@@ -45,10 +46,11 @@ RDEPEND="${CDEPEND}
 	)
 	"
 
-PATCHES=( "${FILESDIR}/with-pulseaudio-cmake.patch" )
-
 src_configure() {
-	mycmakeargs=( $(cmake-utils_use_with pulseaudio PULSEAUDIO)  )
+	mycmakeargs=(
+		$(cmake-utils_use_with jack JACK)
+		$(cmake-utils_use_with pulseaudio PULSEAUDIO)
+	)
 	cmake-utils_src_configure
 }
 
