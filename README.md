@@ -4,7 +4,7 @@ Vortex ebuild repository
 Introduction
 ------------
 
-This is personal repository contains ebuilds and fixes for packages that
+This personal repository contains ebuilds and fixes for packages that
 i'm interested in.
 
 
