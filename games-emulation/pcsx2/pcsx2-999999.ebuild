@@ -66,7 +66,7 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	# Workaround broken glext.h, bug #510730
-	"${FILESDIR}"/mesa-10.patch
+	"${FILESDIR}"/"${PN}"-9999-mesa-10.patch
 )
 
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
