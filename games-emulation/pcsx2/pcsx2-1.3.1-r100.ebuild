@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -17,16 +17,16 @@ SLOT="0"
 
 IUSE="cg egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
-    glew? ( || ( cg glsl ) )
-    joystick? ( sdl )
-    sound? ( sdl )
-    video? ( || ( egl glew ) )
-    ?? ( cg glsl )
+	glew? ( || ( cg glsl ) )
+	joystick? ( sdl )
+	sound? ( sdl )
+	video? ( || ( egl glew ) )
+	?? ( cg glsl )
 "
 
 LANGS="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
 for lang in ${LANGS}; do
-        IUSE+=" linguas_${lang}"
+	IUSE+=" linguas_${lang}"
 done
 
 RDEPEND="dev-libs/libaio[abi_x86_32]
@@ -155,14 +155,14 @@ src_configure() {
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
 
-		-DBIN_DIR=${GAMES_BINDIR}
+		-DBIN_DIR="${GAMES_BINDIR}"
 		-DCMAKE_INSTALL_PREFIX=/usr
-		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/${PN}
-		-DDOC_DIR=/usr/share/doc/${PF}
-		-DGAMEINDEX_DIR=${GAMES_DATADIR}/${PN}
-		-DGLSL_SHADER_DIR=${GAMES_DATADIR}/${PN}
+		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/"${PN}"
+		-DDOC_DIR=/usr/share/doc/"${PF}"
+		-DGAMEINDEX_DIR=${GAMES_DATADIR}/"${PN}"
+		-DGLSL_SHADER_DIR=${GAMES_DATADIR}/"${PN}"
 		-DGTK3_API=FALSE
-		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
+		-DPLUGIN_DIR=$(games_get_libdir)/"${PN}"
 		# wxGTK must be built against same sdl version
 		-DSDL2_API=FALSE
 
@@ -178,13 +178,13 @@ src_configure() {
 
 	if [ $WX_GTK_VER == '3.0' ]; then
 		mycmakeargs+=(
-		    -DWX28_API=FALSE
-		    -DGTK3_API=TRUE
+			-DWX28_API=FALSE
+			-DGTK3_API=TRUE
 		)
 	else
 		mycmakeargs+=(
-		    -DWX28_API=TRUE
-		    -DGTK3_API=FALSE
+			-DWX28_API=TRUE
+			-DGTK3_API=FALSE
 		)
 	fi
 
