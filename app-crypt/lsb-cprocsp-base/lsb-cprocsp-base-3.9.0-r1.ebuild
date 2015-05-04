@@ -29,7 +29,7 @@ pkg_setup() {
 }
 
 src_install() {
-        cryptopro_src_install
+	cryptopro_src_install
 
 	insinto /etc/opt/cprocsp
 	doins etc/opt/cprocsp/release

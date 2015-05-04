@@ -22,7 +22,6 @@ CRYPTOPRO_REGISTER_LIBS=(
 )
 CRYPTOPRO_UNSET_SECTIONS=( '\config\Random\bio_tui' )
 
-
 src_install() {
 	cryptopro_src_install
 

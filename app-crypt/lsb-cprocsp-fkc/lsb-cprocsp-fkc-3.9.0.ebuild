@@ -7,7 +7,7 @@ inherit cryptopro
 
 DESCRIPTION="Crypto-Pro FKC CSP."
 SRC_URI="
-        ${PN}-64-${PV}-4.x86_64.rpm
+	${PN}-64-${PV}-4.x86_64.rpm
 "
 
 IUSE=""
@@ -27,22 +27,22 @@ CRYPTOPRO_REGISTER_LIBS=(
 )
 
 pkg_postinst() {
-        cryptopro_pkg_postinst
+	cryptopro_pkg_postinst
 
 	cryptopro_add_provider "Crypto-Pro GOST R 34.10-2001 FKC CSP" 75\
 		libcspfkc.so CPFKC_GetFunctionTable\
 		libcsp.so CPCSP_GetFunctionTable
 
 	cpconfig -license -fkc -view > /dev/null
-        if [ $? -ne 0 ]; then
-	        ebegin  "Installing default 3 month license..."
-		        cpconfig -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
-	        eend $?
+	if [ $? -ne 0 ]; then
+		ebegin "Installing default 3 month license..."
+			cpconfig -license -fkc -set 36360-U0030-01C97-HQ92Y-1EY1K
+		eend $?
 
-	        elog "Your license will expire in 3 months."
-	        elog "In order to continue using this software after that"
-	        elog "you must buy proper license and set it using"
-	        elog "  cpconfig -license -fkc -set <your license>"
+		elog "Your license will expire in 3 months."
+		elog "In order to continue using this software after that"
+		elog "you must buy proper license and set it using"
+		elog "  cpconfig -license -fkc -set <your license>"
 	fi
 }
 
