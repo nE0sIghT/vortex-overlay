@@ -2,6 +2,28 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com> pcsx2-1.3.1-r100.ebuild:
+  pcsx2: keyworded gtk+-3 version. Still masked
+
+  03 May 2015; nE0sIghT <ykonotopov@gmail.com> pcsx2-1.3.1-r2.ebuild,
+  pcsx2-1.3.1-r100.ebuild, pcsx2-9999-r2.ebuild:
+  Dropped emul-linux dependencies
+
+  03 May 2015; nE0sIghT <ykonotopov@gmail.com> pcsx2-1.3.1-r2.ebuild,
+  pcsx2-1.3.1-r100.ebuild, pcsx2-9999-r2.ebuild:
+  Repoman QA
+
+  02 May 2015; nE0sIghT <ykonotopov@gmail.com> -pcsx2-999999.ebuild:
+  pcsx2: removed ebuild with 64 bit build support. It is really too far from
+  finish
+
+  02 May 2015; nE0sIghT <ykonotopov@gmail.com> -files/mesa-10.patch,
+  +files/pcsx2-1.3.1-mesa-10.patch, +files/pcsx2-9999-mesa-10.patch,
+  pcsx2-1.3.1-r2.ebuild, pcsx2-1.3.1-r100.ebuild, pcsx2-9999-r2.ebuild,
+  pcsx2-999999.ebuild:
+  pcsx2: reformatted 1.3.1 mesa patch, updated 9999 mesa patch to match
+  upstream #7
+
   18 Apr 2015; nE0sIghT <ykonotopov@gmail.com> pcsx2-1.3.1-r2.ebuild:
   Disable build of extra plugins as they mostly useless and outdated
 

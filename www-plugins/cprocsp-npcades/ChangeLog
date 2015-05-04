@@ -2,6 +2,10 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com>
+  cprocsp-npcades-3.9.0-r1.ebuild:
+  Repoman QA
+
   12 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
   cprocsp-npcades-3.9.0-r1.ebuild:
   Use eclass function crytopro_register_lib instead of direct cpconfig call

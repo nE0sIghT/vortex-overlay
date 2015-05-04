@@ -2,6 +2,11 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+*liferea-1.10.15 (02 May 2015)
+
+  02 May 2015; nE0sIghT <ykonotopov@gmail.com> +liferea-1.10.15.ebuild:
+  liferea: version bump
+
   23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> +metadata.xml:
   Metadata
 

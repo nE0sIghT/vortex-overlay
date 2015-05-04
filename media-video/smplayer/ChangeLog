@@ -2,6 +2,9 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com> smplayer-9999.ebuild:
+  Repoman QA
+
   23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> +metadata.xml:
   Metadata
 

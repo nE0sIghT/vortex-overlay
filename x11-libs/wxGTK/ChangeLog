@@ -2,6 +2,26 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com> wxGTK-2.8.12.1-r3.ebuild,
+  wxGTK-3.0.2.0-r3.ebuild:
+  Repoman QA
+
+*wxGTK-3.0.2.0-r100 (04 May 2015)
+
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com> -wxGTK-3.0.2.0-r4.ebuild,
+  +wxGTK-3.0.2.0-r100.ebuild:
+  Moved multibuild version of wxGTK to higher revision
+
+  19 Apr 2015; nE0sIghT <ykonotopov@gmail.com> wxGTK-2.8.12.1-r3.ebuild,
+  wxGTK-3.0.2.0-r3.ebuild:
+  Sync with tree
+
+  19 Apr 2015; nE0sIghT <ykonotopov@gmail.com> wxGTK-2.8.12.1-r3.ebuild,
+  wxGTK-3.0.2.0-r3.ebuild, wxGTK-3.0.2.0-r4.ebuild:
+  Repoman QA
+
+  Package-Manager: portage-2.2.18
+
   01 Apr 2015; nE0sIghT <ykonotopov@gmail.com> wxGTK-2.8.12.1-r3.ebuild,
   wxGTK-3.0.2.0-r3.ebuild, wxGTK-3.0.2.0-r4.ebuild:
   Moved eselect stuff to app-eselect category

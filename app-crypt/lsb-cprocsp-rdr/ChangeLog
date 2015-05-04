@@ -2,6 +2,13 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+  24 Apr 2015; nE0sIghT <ykonotopov@gmail.com> -lsb-cprocsp-rdr-3.9.0.ebuild:
+  Removed old
+
+  19 Apr 2015; nE0sIghT <ykonotopov@gmail.com>
+  lsb-cprocsp-rdr-3.9.0-r1.ebuild:
+  Repoman QA
+
 *lsb-cprocsp-rdr-3.9.0-r1 (13 Apr 2015)
 
   13 Apr 2015; nE0sIghT <ykonotopov@gmail.com>

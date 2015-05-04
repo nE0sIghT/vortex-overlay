@@ -2,6 +2,15 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+*gens-gs-7-r4 (04 May 2015)
+
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com> -gens-gs-7-r3.ebuild,
+  +gens-gs-7-r4.ebuild:
+  Fixed desktop icon
+
+  03 May 2015; nE0sIghT <ykonotopov@gmail.com> gens-gs-7-r3.ebuild:
+  Repoman QA. Dropped emul-linux dependencies
+
   23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> gens-gs-7-r3.ebuild:
   Useless variable
 

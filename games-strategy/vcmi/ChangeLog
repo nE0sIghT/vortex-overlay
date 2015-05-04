@@ -2,6 +2,12 @@
 # Copyright 1999-2015 Gentoo Foundation; Distributed under the GPL v2
 # $Header: $
 
+*vcmi-0.98 (04 May 2015)
+
+  04 May 2015; nE0sIghT <ykonotopov@gmail.com> -vcmi-0.97.ebuild,
+  +vcmi-0.98.ebuild, vcmi-9999.ebuild:
+  vcmi: version bump. Fixed repoman warnings
+
   23 Mar 2015; nE0sIghT <ykonotopov@gmail.com> +metadata.xml:
   Metadata
 
