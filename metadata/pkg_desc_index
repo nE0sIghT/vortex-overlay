@@ -1,0 +1,41 @@
+app-crypt/cprocsp-rdr-gui 3.9.0: GUI components for CryptoPro CSP readers.
+app-crypt/cprocsp-rdr-gui-gtk 3.9.0: GUI components for CryptoPro CSP readers.
+app-crypt/cprocsp-rdr-pcsc 3.9.0: PC/SC components for CryptoPro CSP readers.
+app-crypt/cprocsp-rdr-uec 3.9.0: UEC support module for CryptoPro CSP.
+app-crypt/cryptopro-uec 3.9.0: Meta package for CryptoPro UEC CSP.
+app-crypt/lsb-cprocsp-base 3.9.0-r1: Crypto-Pro CSP library.
+app-crypt/lsb-cprocsp-cades 3.9.0: CryptoPro CAdES shared library.
+app-crypt/lsb-cprocsp-capilite 3.9.0-r1: CryptoAPI lite.
+app-crypt/lsb-cprocsp-fkc 3.9.0: Crypto-Pro FKC CSP.
+app-crypt/lsb-cprocsp-kc1 3.9.0-r1: Crypto-Pro CSP library.
+app-crypt/lsb-cprocsp-ocsp-util 3.9.0: CryptoPro PKI shared library.
+app-crypt/lsb-cprocsp-rdr 3.9.0-r1: CryptoPro CSP readers.
+app-crypt/lsb-cprocsp-tsp-util 3.9.0: CryptoPro TSP client.
+app-emulation/virtualbox-modules 4.2.24 4.3.18: Kernel Modules for Virtualbox
+app-eselect/eselect-wxwidgets 20140423-r3: Eselect module and wrappers for wxWidgets
+app-misc/2gis-bin 4.15.2-r1: Maps & business listings
+app-portage/vortex-aliases 1: Simple aliases for use with portage
+dev-util/dex2jar 0.0.9.15: Tools to work with android .dex and java .class files
+games-emulation/gens-gs 7-r4: A Gens fork which aims to clean up the source code and combine features from other forks
+games-emulation/pcsx2 1.3.1-r2 1.3.1-r100 9999-r2: A PlayStation 2 emulator
+games-simulation/vegastrike 9999: A 3D space simulator that allows you to trade and bounty hunt
+games-simulation/vegastrike-data 9999: A 3D space simulator that allows you to trade and bounty hunt
+games-strategy/s25rttr 0.8.1.9374 9999: Open Source remake of The Settlers II game (needs original game files)
+games-strategy/vcmi 0.98 9999: VCMI is work-in-progress attempt to recreate engine for Heroes III.
+games-util/xboxdrv 0.8.5-r3: Userspace Xbox 360 Controller driver
+mail-filter/opendkim 2.9.2-r2: A milter-based application to provide DKIM signing and verification
+media-libs/libquvi 0.4.1-r1: Library for parsing video download links
+media-plugins/audacious-plugins 3.6 3.6.1: Audacious Player - Your music, your way, no exceptions
+media-sound/audacious 3.6 3.6.1: Audacious Player - Your music, your way, no exceptions
+media-video/smplayer 9999: Great Qt GUI front-end for mplayer/mpv
+media-video/smtube 1.7 15.1.0: A youtube search and play add-on for smplayer.
+net-dns/ddclient 3.8.3_pre1: Perl updater client for dynamic DNS services
+net-news/liferea 1.10.14 1.10.15: News Aggregator for RDF/RSS/CDF/Atom/Echo feeds
+sys-apps/microcode-data 20150121: Intel IA32 microcode update data
+sys-apps/pcsc-lite 1.8.13-r2: PC/SC Architecture smartcard middleware library
+sys-apps/yum-utils 1.1.31: Utilities for yum such as repotrack, reposync, and yumdownloader
+sys-fs/android-file-transfer-linux 2.0: Reliable MTP client with minimalistic UI
+sys-kernel/vortex-build 1: Simple kernel build scripts for UEFI systems
+www-plugins/cprocsp-npcades 3.9.0-r1: CryptoPro CAdES NPAPI plugin library.
+www-plugins/ifcplugin 2.0.6.0: Crypto Interface Web Browser Plugin
+x11-libs/wxGTK 2.8.12.1-r3 3.0.2.0-r3 3.0.2.0-r100: GTK+ version of wxWidgets, a cross-platform C++ GUI toolkit

@@ -5,6 +5,7 @@
 app-crypt/cprocsp-rdr-pcsc:ccid - Use app-crypt/ccid free software driver to access PC/SC smart card
 app-emulation/virtualbox-modules:pax_kernel - Apply patch needed for pax enabled kernels
 games-emulation/pcsx2:cg - Use CG backend of ZZogl
+games-emulation/pcsx2:custom-cflags - Strip upstream provided optimization flags (unsupported)
 games-emulation/pcsx2:egl - Enable GSdx plugin
 games-emulation/pcsx2:glew - Enable ZZogl plugin
 games-emulation/pcsx2:glsl - Use GLSL backend of ZZogl
@@ -23,11 +24,18 @@ games-strategy/s25rttr:glfw - Build glfw video plugin
 games-strategy/vcmi:editor - Enable compilation of map editor
 games-strategy/vcmi:erm - Enable compilation of ERM scripting module
 games-strategy/vcmi:launcher - Enable compilation of launcher
+mail-filter/opendkim:ldap - Enable openldap as a dataset facilitator or keys, determining domains to sign for, and any other dataset that opendkim supports.
+mail-filter/opendkim:lmdb - Add support for using dev-db/lmdb
+mail-filter/opendkim:lua - Enables control over signature verification, filtering and policy to be controlled by user defined lua scripts.
+mail-filter/opendkim:memcached - Add support for using dev-libs/libmemcached
+mail-filter/opendkim:opendbx - Use opendbx backend to facilitate dataset driven OpenDKIM configuration options like stats, bodylengthdb, etc. against a wide variety of database types
+mail-filter/opendkim:poll - Use poll() instead of select() for the provided asynchronous resolver library.
+mail-filter/opendkim:sasl - Used to authenticate to a LDAP server in various ways if required.
+mail-filter/opendkim:unbound - Use the unbound dnssec library to perform DKIM DNS queries.
 media-plugins/audacious-plugins:adplug - Build with AdPlug (Adlib sound card emulation) support
 media-plugins/audacious-plugins:bs2b - Enable Bauer Bauer stereophonic-to-binaural headphone filter
 media-plugins/audacious-plugins:cue - Support CUE sheets using the libcue library
 media-plugins/audacious-plugins:fluidsynth - Support FluidSynth as MIDI synth backend
-media-plugins/audacious-plugins:gtk3 - Link against version 3 of the GIMP Toolkit instead of version 2 (x11-libs/gtk+)
 media-plugins/audacious-plugins:midi - Build with amidi-plug (MIDI synth) support
 media-plugins/audacious-plugins:scrobbler - Build with scrobbler/LastFM submission support
 media-plugins/audacious-plugins:sid - Build with SID (Commodore 64 Audio) support
@@ -35,17 +43,14 @@ media-sound/audacious:chardet - Try to handle non-UTF8 chinese/japanese/korean I
 media-sound/audacious:gtk3 - Link against version 3 of the GIMP Toolkit instead of version 2 (x11-libs/gtk+)
 media-video/smplayer:autoshutdown - Enable the option to shutdown your computer after finishing the playlist. This requires dev-qt/qtdbus as dependency.
 media-video/smplayer:streaming - Support for streaming video sites through net-misc/youtube-dl (MPV only).
+net-dns/ddclient:hardened - Use iproute2 instead of ifconfig to grab an IP address
 net-news/liferea:libnotify - Enable popup notifications
 sys-apps/microcode-data:monolitic - Use monolitic old-style firmware for microcode-ctl
 sys-apps/pcsc-lite:libusb - Use dev-libs/libusb detection to hotplug new smartcard readers. This flag should only be enabled if you're running a non-Linux kernel or you don't want to use sys-fs/udev.
 sys-apps/pcsc-lite:policykit - Uses sys-auth/polkit to restrict access to smartcard readers or smartcars to given users.
 sys-apps/pcsc-lite:udev - Use sys-fs/udev rules to handle devices' permissions and hotplug support. Unless you know what you're doing do not disable this flag on Linux kernels. This is provided as an option for completeness.
-x11-drivers/nvidia-drivers:X - Install the X.org driver, OpenGL libraries, XvMC libraries, and VDPAU libraries
-x11-drivers/nvidia-drivers:gtk2 - Install nvidia-settings with support for GTK+ 2
-x11-drivers/nvidia-drivers:gtk3 - Install nvidia-settings with support for GTK+ 3
-x11-drivers/nvidia-drivers:pax_kernel - PaX patches from the PaX project
-x11-drivers/nvidia-drivers:tools - Install additional tools such as nvidia-settings
-x11-drivers/nvidia-drivers:uvm - Install the Unified Memory kernel module (nvidia-uvm) for sharing memory between CPU and GPU in CUDA programs
+sys-fs/android-file-transfer-linux:fuse - Enable the sys-fs/fuse filesystem support
+sys-fs/android-file-transfer-linux:gui - Add support for QT GUI
 x11-libs/wxGTK:gnome - Use gnome-base/libgnomeprintui for printing tasks.
 x11-libs/wxGTK:gstreamer - Enable the wxMediaCtrl class for playing audio and video through gstreamer.
 x11-libs/wxGTK:sdl - Use Simple Directmedia Layer (media-libs/libsdl) for audio.
