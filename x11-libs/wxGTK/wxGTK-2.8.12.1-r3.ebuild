@@ -44,7 +44,7 @@ RDEPEND="
 		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
 		)
 	aqua? (
-		>=x11-libs/gtk+-2.4[aqua=,${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-2.4:2[aqua=,${MULTILIB_USEDEP}]
 		virtual/jpeg:=[${MULTILIB_USEDEP}]
 		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
 		)"
