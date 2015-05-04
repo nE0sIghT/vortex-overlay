@@ -34,10 +34,9 @@ DEPEND="${RDEPEND}
 QA_PREBUILT="*"
 
 DOCS=(
-        usr/share/doc/2gis/changelog.Debian.gz
-        usr/share/doc/2gis/copyright
+	usr/share/doc/2gis/changelog.Debian.gz
+	usr/share/doc/2gis/copyright
 )
-
 
 S="${WORKDIR}"
 

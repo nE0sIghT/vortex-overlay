@@ -25,18 +25,20 @@ RDEPEND="
 
 S=${WORKDIR}
 
-if ( ! use monolitic); then
+if ! use monolitic; then
 	CONFIG_CHECK="~MICROCODE_INTEL"
 	ERROR_MICROCODE_INTEL="Your kernel needs to support Intel microcode loading. You're suggested to build it as a module as it doesn't require a reboot to reload the microcode, that way."
 fi
 
 src_unpack() {
 	default
-	! use monolitic && ( cp "${FILESDIR}"/intel-microcode2ucode.c ./ || die )
+	if ! use monolitic; then
+		cp "${FILESDIR}"/intel-microcode2ucode.c ./ || die
+	fi
 }
 
 src_compile() {
-	if ( ! use monolitic ); then
+	if ! use monolitic; then
 		tc-env_build emake intel-microcode2ucode
 		./intel-microcode2ucode microcode.dat || die
 	fi
@@ -44,7 +46,7 @@ src_compile() {
 
 src_install() {
 	insinto /lib/firmware
-	if ( ! use monolitic ); then
+	if ! use monolitic; then
 		doins -r microcode.dat intel-ucode
 	else
 		doins -r intel-ucode
@@ -54,7 +56,7 @@ src_install() {
 pkg_postinst() {
 	elog "The microcode available for Intel CPUs has been updated.  You'll need"
 	elog "to reload the code into your processor."
-	if ( use monolitic ); then
+	if use monolitic; then
 		elog "If you're using the init.d:"
 		elog "/etc/init.d/microcode_ctl restart"
 	fi

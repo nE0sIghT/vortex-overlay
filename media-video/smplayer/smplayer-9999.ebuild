@@ -75,10 +75,10 @@ src_configure() {
 }
 
 get_qt_bindir() {
-	local qt4bindir=${EPREFIX}/usr/$(get_libdir)/qt4/bin
-	[[ -x ${qtbindir} ]] ||	qt4bindir=${EPREFIX}/usr/bin
-	use qt4 && echo ${qt4bindir}
-	use qt5 && echo ${EPREFIX}/usr/$(get_libdir)/qt5/bin
+	local qt4bindir="${EPREFIX}"/usr/$(get_libdir)/qt4/bin
+	[[ -x "${qtbindir}" ]] || qt4bindir="${EPREFIX}"/usr/bin
+	use qt4 && echo "${qt4bindir}"
+	use qt5 && echo "${EPREFIX}"/usr/$(get_libdir)/qt5/bin
 }
 
 gen_translation() {

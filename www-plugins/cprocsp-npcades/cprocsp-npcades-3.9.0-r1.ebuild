@@ -8,7 +8,7 @@ inherit nsplugins cryptopro
 DESCRIPTION="CryptoPro CAdES NPAPI plugin library."
 
 SRC_URI="
-        ${PN}-64-${PV}-4.x86_64.rpm
+	${PN}-64-${PV}-4.x86_64.rpm
 "
 SLOT="0"
 
@@ -21,10 +21,9 @@ RDEPEND="
 "
 
 pkg_nofetch() {
-        local CRYPTOPRO_FETCH="https://www.cryptopro.ru/products/cades/plugin/get"
+	local CRYPTOPRO_FETCH="https://www.cryptopro.ru/products/cades/plugin/get"
 	cryptopro_pkg_nofetch
 }
-
 
 src_install() {
 	insinto /etc/opt/cprocsp

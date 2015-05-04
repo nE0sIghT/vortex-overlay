@@ -39,3 +39,6 @@
 # This is only for testing.
 # https://bugs.gentoo.org/show_bug.cgi?id=491310
 =x11-libs/wxGTK-3.0.2.0-r4
+
+# Depends on masked lua:5.2
+games-strategy/s25rttr

@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-dns/ddclient/ddclient-3.8.2.ebuild,v 1.1 2014/01/30 12:33:29 titanofold Exp $
 
@@ -11,14 +11,14 @@ SRC_URI="https://github.com/nE0sIghT/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~x86"
 IUSE="hardened"
 
 RDEPEND=">=dev-lang/perl-5.1
-	 virtual/perl-Digest-SHA
-	 dev-perl/IO-Socket-SSL
-	 dev-perl/JSON-Any
-	 hardened? ( sys-apps/iproute2 )
+	virtual/perl-Digest-SHA
+	dev-perl/IO-Socket-SSL
+	dev-perl/JSON-Any
+	hardened? ( sys-apps/iproute2 )
 "
 
 pkg_setup() {
