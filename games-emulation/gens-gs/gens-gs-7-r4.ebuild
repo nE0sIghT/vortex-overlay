@@ -61,6 +61,6 @@ src_install() {
 	emake DESTDIR="${D}" install || die "install failed"
 	einstalldocs
 
-	make_desktop_entry "${PN}" "Gens/GS" "/usr/share/games/gens/gensgs_48x48.png"
+	make_desktop_entry gens "Gens/GS" "/usr/share/games/gens/gensgs_48x48.png"
 	prepgamesdirs
 }
