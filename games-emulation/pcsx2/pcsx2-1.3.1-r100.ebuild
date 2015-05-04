@@ -6,7 +6,7 @@ EAPI=5
 
 inherit wxwidgets cmake-utils multilib games
 
-KEYWORDS=""
+KEYWORDS="-* ~amd64 ~x86"
 SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 DESCRIPTION="A PlayStation 2 emulator"
