@@ -22,13 +22,11 @@ SLOT="0"
 IUSE="editor erm +launcher"
 
 RDEPEND="
-	>=dev-libs/boost-1.48
-	media-libs/libsdl2
+	media-libs/libsdl2[video]
 	media-libs/sdl2-image
 	media-libs/sdl2-mixer
 	media-libs/sdl2-ttf
-	>=sys-devel/gcc-4.6:*
-	sys-libs/zlib
+	sys-libs/zlib[minizip]
 	virtual/ffmpeg
 
 	editor? (
@@ -40,10 +38,11 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
-"
 
-PATCHES=(
-)
+	>=dev-libs/boost-1.48
+	>=sys-devel/gcc-4.6:*
+	virtual/pkgconfig
+"
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -52,9 +51,9 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DBIN_DIR=${GAMES_BINDIR#/usr/}
-		-DDATA_DIR=${GAMES_DATADIR#/usr/}/${PN}
-		-DLIB_DIR=${GAMES_PREFIX#/usr/}/$(get_libdir)/${PN}
+		-DBIN_DIR="${GAMES_BINDIR#/usr/}"
+		-DDATA_DIR="${GAMES_DATADIR#/usr/}"/"${PN}"
+		-DLIB_DIR="${GAMES_PREFIX#/usr/}"/$(get_libdir)/"${PN}"
 		-DENABLE_PCH=OFF # Do not works with NDEBUG set
 		-DENABLE_TEST=OFF
 		$(cmake-utils_use_enable editor)
@@ -70,7 +69,7 @@ src_compile() {
 }
 
 src_install() {
-	cmake-utils_src_install DESTDIR="${D}"
+	cmake-utils_src_install
 	prepgamesdirs
 
 	dodir /etc/ld.so.conf.d/
