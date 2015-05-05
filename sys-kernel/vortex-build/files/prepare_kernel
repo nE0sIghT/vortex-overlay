@@ -1,18 +1,29 @@
 #!/bin/sh
+#
+# Author: Yuri <nE0sIghT> Konotopov
+# License: GNU GPL v3 or any later version
+#
 
 source /lib/gentoo/functions.sh
+source /usr/$(get_libdir)/vortex-build/vortex-functions.sh
 
-latest=$(eselect kernel list | tac | grep -m 1 linux)
-latest_id=$(echo ${latest} | awk '{ print $1 }' | tr -d [])
-latest_version=$(echo ${latest} | awk '{ print $2 }' | awk 'BEGIN { FS = "-" } ; { print $2 }')
-
-einfo Using kernel ${latest_version}
-
-eselect kernel set $latest_id
-
-if [ -e /usr/src/linux-build ]; then
-	rm -rf /usr/src/linux-build
+if [ -z "${BUILD_PATH}" ]; then
+	eerror "BUILD_PATH variable is empty. Exiting."
+	exit 1
 fi
-mkdir /usr/src/linux-build
 
-zcat /proc/config.gz > /usr/src/linux-build/.config
+if [ $(realpath "${BUILD_PATH}") = "/" -o "${BUILD_PATH}" = "/*" ]; then
+	eerror "You can not set BUILD_PATH variable to root partition"
+	exit 1
+fi
+
+einfo "Using kernel $(get_latest_kernel_version)"
+
+eselect kernel set $(get_latest_kernel_id)
+
+if [ -e "${BUILD_PATH}" ]; then
+	rm -rf "${BUILD_PATH}"
+fi
+mkdir "${BUILD_PATH}"
+
+zcat /proc/config.gz > "${BUILD_PATH}"/.config
