@@ -18,7 +18,6 @@ REQUIRED_USE="
 	glew? ( || ( cg glsl ) )
 	joystick? ( sdl )
 	sound? ( sdl )
-	video? ( || ( egl glew ) )
 	?? ( cg glsl )
 "
 
@@ -76,7 +75,7 @@ src_prepare() {
 
 	cmake-utils_src_prepare
 
-	if ! use egl; then
+	if ! use video; then
 		sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
 	fi
 	if ! use glew || ! use cg; then
