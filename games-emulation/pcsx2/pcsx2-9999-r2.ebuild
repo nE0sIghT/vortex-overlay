@@ -13,12 +13,11 @@ EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
 LICENSE="GPL-3"
 SLOT="0"
 
-IUSE="cg custom-cflags egl glew glsl joystick sdl sound video"
+IUSE="custom-cflags egl joystick +sdl +sound +video"
 REQUIRED_USE="
-	glew? ( || ( cg glsl ) )
+	egl? ( video )
 	joystick? ( sdl )
 	sound? ( sdl )
-	?? ( cg glsl )
 "
 
 LANGS="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
@@ -44,8 +43,6 @@ RDEPEND="
 	video? (
 		virtual/opengl[abi_x86_32]
 		egl? ( media-libs/mesa[abi_x86_32,egl] )
-		glew? ( media-libs/glew[abi_x86_32] )
-		cg? ( media-gfx/nvidia-cg-toolkit[abi_x86_32] )
 	)
 
 	sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
@@ -77,12 +74,6 @@ src_prepare() {
 
 	if ! use video; then
 		sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
-	fi
-	if ! use glew || ! use cg; then
-		sed -i -e "s:zerogs TRUE:zerogs FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
-	fi
-	if ! use glew; then
-		sed -i -e "s:zzogl TRUE:zzogl FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
 	fi
 	if ! use joystick; then
 		sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
@@ -121,7 +112,7 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DDISABLE_ADVANCE_SIMD=TRUE
-		-DEXTRA_PLUGINS=TRUE
+		-DEXTRA_PLUGINS=FALSE
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
 
