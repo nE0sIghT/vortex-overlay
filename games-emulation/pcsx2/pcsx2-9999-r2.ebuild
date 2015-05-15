@@ -128,7 +128,6 @@ src_configure() {
 		-DSDL2_API=FALSE
 
 		$(cmake-utils_use egl EGL_API)
-		$(cmake-utils_use glsl GLSL_API)
 	)
 
 	local WX_GTK_VER="2.8"
