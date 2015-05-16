@@ -55,7 +55,7 @@ DEPEND="${RDEPEND}
 		x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
 	)"
 
-PDEPEND=">=app-eselect/eselect-wxwidgets-20131230"
+PDEPEND=">=app-eselect/eselect-wxwidgets-20140423-r3"
 
 LICENSE="wxWinLL-3
 		GPL-2
