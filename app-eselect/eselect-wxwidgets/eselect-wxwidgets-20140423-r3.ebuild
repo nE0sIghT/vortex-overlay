@@ -21,9 +21,6 @@ RDEPEND="app-admin/eselect"
 
 PATCHES=(
 	"${FILESDIR}"/0001-wxwidgets.eselect-multilib-support.patch
-	"${FILESDIR}"/0002-Removed-debug-typo.patch
-	"${FILESDIR}"/0003-Moved-args-check-to-proper-function.patch
-	"${FILESDIR}"/0004-Added-arch-info-for-update-action.patch
 )
 
 src_prepare() {

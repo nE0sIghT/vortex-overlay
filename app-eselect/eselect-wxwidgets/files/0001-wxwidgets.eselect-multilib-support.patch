@@ -1,14 +1,14 @@
-From 524a6c248f5dd2617640b0ad06f6742be05f9ecd Mon Sep 17 00:00:00 2001
+From 69efadbccf10da6e65c7d459c5cfea38375824b6 Mon Sep 17 00:00:00 2001
 From: nE0sIghT <ykonotopov@gmail.com>
 Date: Sun, 29 Mar 2015 21:18:56 +0300
-Subject: [PATCH 1/4] wxwidgets.eselect: multilib support
+Subject: [PATCH] wxwidgets.eselect: multilib support
 
 ---
- modules/wxwidgets.eselect | 179 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 115 insertions(+), 64 deletions(-)
+ modules/wxwidgets.eselect | 181 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 116 insertions(+), 65 deletions(-)
 
 diff --git a/modules/wxwidgets.eselect b/modules/wxwidgets.eselect
-index 55d49d2..400b5f9 100644
+index 55d49d2..04ad16b 100644
 --- a/modules/wxwidgets.eselect
 +++ b/modules/wxwidgets.eselect
 @@ -6,10 +6,11 @@ inherit config
@@ -25,7 +25,7 @@ index 55d49d2..400b5f9 100644
  
  find_targets() {
  	local conf
-@@ -18,90 +19,61 @@ find_targets() {
+@@ -18,67 +19,29 @@ find_targets() {
  	done
  }
  
@@ -82,32 +82,31 @@ index 55d49d2..400b5f9 100644
  	echo "Show the currently selected profile"
  }
  
--do_show() {
 +doshow_helper() {
- 	[[ ${#@} -gt 0 ]] && die -q "Too many parameters"
- 
--	write_list_start "Current wxWidgets profile:"
 +	write_list_start "Current ${multiarch}wxWidgets profile:"
- 	if [[ -e ${WXCONFFILE} ]]; then
--		write_kv_list_entry "$(load_config ${WXCONFFILE} WXCONFIG)" ""
++	if [[ -e ${WXCONFFILE} ]]; then
 +		write_kv_list_entry "$(load_config ${WXCONFFILE} WXCONFIG${WXCONF_SUFFIX})" ""
- 	else
- 		write_kv_list_entry "(none)" ""
- 	fi
- }
- 
-+do_show() {
-+	if [[ -d "${WXCONFDIR_32}" ]]; then
-+		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doshow_helper
-+		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doshow_helper
 +	else
-+		WXCONFDIR=${WXCONFDIR_64} doshow_helper
++		write_kv_list_entry "(none)" ""
 +	fi
 +}
 +
- ### list action ###
+ do_show() {
+ 	[[ ${#@} -gt 0 ]] && die -q "Too many parameters"
  
- describe_list() {
+-	write_list_start "Current wxWidgets profile:"
+-	if [[ -e ${WXCONFFILE} ]]; then
+-		write_kv_list_entry "$(load_config ${WXCONFFILE} WXCONFIG)" ""
++	if [[ -d "${WXCONFDIR_32}" ]]; then
++		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doshow_helper
++		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doshow_helper
+ 	else
+-		write_kv_list_entry "(none)" ""
++		WXCONFDIR=${WXCONFDIR_64} doshow_helper
+ 	fi
+ }
+ 
+@@ -88,20 +51,29 @@ describe_list() {
  	echo "List available profiles"
  }
  
@@ -204,9 +203,8 @@ index 55d49d2..400b5f9 100644
  
  do_set() {
 -	[[ ! ${#@} -eq 1 ]] \
--		&& die -q "You must specify a profile name or number"
 +	[[ ${#@} -eq 0 ]] \
-+		&& die -q "You must specify a profile name or number: ${#@}"
+ 		&& die -q "You must specify a profile name or number"
  
  	[[ ! -w "${EROOT}"/var/lib/ ]] \
  		&& die -q "You need write permission to /var/lib to perform this action."
@@ -247,25 +245,33 @@ index 55d49d2..400b5f9 100644
  
  	# if current config is valid leave it alone
  	[[ -e ${WXCONFDIR}/${currconf} ]] && return 0
-@@ -249,5 +288,17 @@ do_update() {
+@@ -242,12 +281,24 @@ do_update() {
+ 
+ 	if [[ ${currconf} != "none" && ${foundconf} != "none" ]]; then
+ 		echo
+-		write_warning_msg "Your currently selected wxWidgets profile:    ( ${currconf} )"
++		write_warning_msg "Your currently selected ${multiarch}wxWidgets profile:    ( ${currconf} )"
+ 		write_warning_msg "is no longer available."
+ 		write_warning_msg
+ 		write_warning_msg "The closest matching profile:                 ( ${foundconf} )"
  		write_warning_msg "will be activated in its place."
  	fi
  
 -	do_set ${foundconf}
 +	doset_helper ${foundconf}
- }
++}
 +
 +do_update() {
 +	[[ ! -e ${WXCONFFILE} ]] && do_set none
 +
 +	if [[ -d "${WXCONFDIR_32}" ]]; then
-+		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit" doupdate_helper
-+		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit" doupdate_helper
++		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doupdate_helper
++		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doupdate_helper
 +	else
 +		WXCONFDIR=${WXCONFDIR_64} doupdate_helper
 +	fi
-+}
+ }
 +
 -- 
-2.0.5
+2.3.6
 
