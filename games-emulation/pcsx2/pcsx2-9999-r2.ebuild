@@ -54,6 +54,8 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
+
+	dev-cpp/pngpp
 	>=dev-cpp/sparsehash-1.5
 "
 
