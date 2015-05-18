@@ -41,6 +41,7 @@ RDEPEND="
 	)
 
 	video? (
+		media-libs/libpng:=[abi_x86_32]
 		virtual/opengl[abi_x86_32]
 		egl? ( media-libs/mesa[abi_x86_32,egl] )
 	)
