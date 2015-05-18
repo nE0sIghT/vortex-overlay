@@ -44,6 +44,7 @@ RDEPEND="
 		media-libs/libpng:=[abi_x86_32]
 		virtual/opengl[abi_x86_32]
 		egl? ( media-libs/mesa[abi_x86_32,egl] )
+		app-arch/xz-utils
 	)
 
 	sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
@@ -74,7 +75,6 @@ src_prepare() {
 	fi
 
 	cmake-utils_src_prepare
-
 	if ! use video; then
 		sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
 	fi
