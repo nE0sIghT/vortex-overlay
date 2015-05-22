@@ -111,7 +111,7 @@ need-wxwidgets() {
 	# wxbase is provided by both gtk2 and base installations
 	if has_version "x11-libs/wxGTK:${WX_GTK_VER}[aqua]"; then
 		wxtoolkit="mac"
-	elif has_version ">=x11-libs/wxGTK-3.0.2.0-r4:${WX_GTK_VER}[X]" && [[ ${WX_GTK_VER} = 3.0 ]]; then
+	elif has_version ">=x11-libs/wxGTK-3.0.2.0-r100:${WX_GTK_VER}[X]" && [[ ${WX_GTK_VER} = 3.0 ]]; then
 		wxtoolkit="gtk3"
 	elif has_version "x11-libs/wxGTK:${WX_GTK_VER}[X]"; then
 		wxtoolkit="gtk2"
