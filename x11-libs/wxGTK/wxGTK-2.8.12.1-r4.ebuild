@@ -1,44 +1,47 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-3.0.2.0-r1.ebuild,v 1.1 2015/02/02 16:26:17 sping Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-2.8.12.1-r1.ebuild,v 1.12 2014/05/23 08:21:26 rhill Exp $
 
 EAPI="5"
 
-inherit eutils flag-o-matic multilib-minimal
+inherit eutils flag-o-matic versionator multilib-minimal
 
 DESCRIPTION="GTK+ version of wxWidgets, a cross-platform C++ GUI toolkit"
 HOMEPAGE="http://wxwidgets.org/"
 
+BASE_PV="$(get_version_component_range 1-3)"
+BASE_P="${PN}-${BASE_PV}"
+
 # we use the wxPython tarballs because they include the full wxGTK sources and
 # docs, and are released more frequently than wxGTK.
-SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${PV}.tar.bz2
-	doc? ( mirror://sourceforge/wxpython/wxPython-docs-${PV}.tar.bz2 )"
+SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${PV}.tar.bz2"
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos"
-IUSE="+X aqua doc debug gstreamer libnotify opengl sdl tiff webkit"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos"
+IUSE="+X aqua doc debug gnome gstreamer odbc opengl pch sdl tiff"
 
-SLOT="3.0"
+SLOT="2.8"
 
 RDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
+	odbc?   ( dev-db/unixODBC[${MULTILIB_USEDEP}] )
 	sdl?    ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	X?  (
-		>=dev-libs/glib-2.22:2[${MULTILIB_USEDEP}]
+		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		media-libs/libpng:0=[${MULTILIB_USEDEP}]
 		sys-libs/zlib[${MULTILIB_USEDEP}]
 		virtual/jpeg:=[${MULTILIB_USEDEP}]
-		>=x11-libs/gtk+-2.18:2[${MULTILIB_USEDEP}]
-		x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
+		x11-libs/gtk+:2[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
+		x11-libs/libXinerama[${MULTILIB_USEDEP}]
 		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
 		x11-libs/pango[X,${MULTILIB_USEDEP}]
+		gnome?  ( gnome-base/libgnomeprintui:2.2[${MULTILIB_USEDEP}] )
 		gstreamer? (
+			gnome-base/gconf:2[${MULTILIB_USEDEP}]
 			media-libs/gstreamer:0.10[${MULTILIB_USEDEP}]
 			media-libs/gst-plugins-base:0.10[${MULTILIB_USEDEP}] )
-		libnotify? ( x11-libs/libnotify[${MULTILIB_USEDEP}] )
 		opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 		tiff?   ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
-		webkit? ( net-libs/webkit-gtk:2 )
 		)
 	aqua? (
 		>=x11-libs/gtk+-2.4:2[aqua=,${MULTILIB_USEDEP}]
@@ -49,33 +52,38 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
-	X?  (
+	X? (
 		x11-proto/xproto[${MULTILIB_USEDEP}]
 		x11-proto/xineramaproto[${MULTILIB_USEDEP}]
 		x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
-	)"
+	)
+"
 
 PDEPEND=">=app-eselect/eselect-wxwidgets-20140423-r3"
 
 LICENSE="wxWinLL-3
 		GPL-2
+		odbc?	( LGPL-2 )
 		doc?	( wxWinFDL-3 )"
 
 S="${WORKDIR}/wxPython-src-${PV}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-3.0.0.0-collision.patch
+	epatch "${FILESDIR}"/${PN}-2.8.11-unicode-odbc.patch
+	epatch "${FILESDIR}"/${PN}-2.8.11-collision.patch
+	epatch "${FILESDIR}"/${PN}-2.8.7-mmedia.patch              # Bug #174874
+	epatch "${FILESDIR}"/${PN}-2.8.10.1-odbc-defines.patch     # Bug #310923
+
+	# prefix https://bugs.gentoo.org/394123
+	sed -i -e "s:/usr:${EPREFIX}/usr:g" \
+		-e '/SEARCH_INCLUDE="\\/,/"/cSEARCH_INCLUDE="'${EPREFIX}'/usr/include"' \
+		configure || die
+
 	epatch_user
 
 	multilib_prepare() {
-		# https://bugs.gentoo.org/421851
-		# https://bugs.gentoo.org/499984
-		# https://bugs.gentoo.org/536004
-		sed \
-			-e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" \
-			-e 's:3\.0\.1:3.0.2:g' \
-			-e 's:^wx_release_number=1$:wx_release_number=2:' \
-			-i "${BUILD_DIR}"/configure || die
+		# x32 https://bugs.gentoo.org/421851
+		sed -i -e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" "${BUILD_DIR}"/configure || die
 	}
 	multilib_copy_sources
 	multilib_parallel_foreach_abi multilib_prepare
@@ -84,22 +92,20 @@ src_prepare() {
 multilib_src_configure() {
 	local myconf
 
+	append-flags -fno-strict-aliasing
+
 	# X independent options
-	myconf="
+	myconf="--enable-compat26
+			--enable-shared
+			--enable-unicode
+			--with-regex=builtin
 			--with-zlib=sys
 			--with-expat=sys
-			--enable-compat28
-			$(use_with sdl)"
-
-	# debug in >=2.9
-	# there is no longer separate debug libraries (gtk2ud)
-	# wxDEBUG_LEVEL=1 is the default and we will leave it enabled
-	# wxDEBUG_LEVEL=2 enables assertions that have expensive runtime costs.
-	# apps can disable these features by building w/ -NDEBUG or wxDEBUG_LEVEL_0.
-	# http://docs.wxwidgets.org/3.0/overview_debugging.html
-	# http://groups.google.com/group/wx-dev/browse_thread/thread/c3c7e78d63d7777f/05dee25410052d9c
-	use debug \
-		&& myconf="${myconf} --enable-debug=max"
+			$(use_enable debug)
+			$(use_enable pch precomp-headers)
+			$(use_with odbc odbc sys)
+			$(use_with sdl)
+			$(use_with tiff libtiff sys)"
 
 	# wxGTK options
 	#   --enable-graphics_ctx - needed for webkit, editra
@@ -107,17 +113,15 @@ multilib_src_configure() {
 	use X && \
 		myconf="${myconf}
 			--enable-graphics_ctx
-			--with-gtkprint
 			--enable-gui
 			--with-libpng=sys
 			--with-libxpm=sys
 			--with-libjpeg=sys
-			--without-gnomevfs
 			$(use_enable gstreamer mediactrl)
-			$(multilib_native_use_enable webkit webview)
-			$(use_with libnotify)
+			$(use_enable opengl)
 			$(use_with opengl)
-			$(use_with tiff libtiff sys)"
+			$(use_with gnome gnomeprint)
+			--without-gnomevfs"
 
 	use aqua && \
 		myconf="${myconf}
@@ -136,17 +140,35 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
-	ECONF_SOURCE="${S}" econf ${myconf}
+	econf ${myconf}
+}
+
+multilib_src_compile() {
+	emake
+
+	if [[ -d contrib/src ]]; then
+		cd contrib/src
+		emake
+	fi
+}
+
+multilib_src_install() {
+	default
+
+	if [[ -d contrib/src ]]; then
+		cd contrib/src
+		emake DESTDIR="${D}" install
+	fi
 }
 
 multilib_src_install_all() {
 	cd "${S}"/docs
-	dodoc changes.txt readme.txt
+	dodoc changes.txt readme.txt todo30.txt
 	newdoc base/readme.txt base_readme.txt
 	newdoc gtk/readme.txt gtk_readme.txt
 
 	if use doc; then
-		dohtml -r "${S}"/docs/doxygen/out/html/*
+		dohtml -r "${S}"/docs/html/*
 	fi
 
 	# Stray windows locale file, causes collisions

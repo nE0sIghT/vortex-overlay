@@ -156,7 +156,7 @@ multilib_src_configure() {
 		myconf="${myconf}
 			--with-gtk=${MULTIBUILD_VARIANT: -1}"
 
-		ECONF_SOURCE="${S}" econf ${myconf}
+		econf ${myconf}
 
 		popd >/dev/null || die
 	}
