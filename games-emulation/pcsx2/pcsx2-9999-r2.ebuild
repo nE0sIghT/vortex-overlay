@@ -44,7 +44,7 @@ RDEPEND="
 		media-libs/libpng:=[abi_x86_32]
 		virtual/opengl[abi_x86_32]
 		egl? ( media-libs/mesa[abi_x86_32,egl] )
-		app-arch/xz-utils
+		app-arch/xz-utils[abi_x86_32]
 	)
 
 	sdl? ( media-libs/libsdl[abi_x86_32,joystick?,sound?] )
