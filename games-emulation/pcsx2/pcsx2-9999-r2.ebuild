@@ -13,7 +13,7 @@ EGIT_REPO_URI="git://github.com/PCSX2/pcsx2.git"
 LICENSE="GPL-3"
 SLOT="0"
 
-IUSE="custom-cflags egl joystick +sdl +sound +video"
+IUSE="custom-cflags egl joystick png +sdl +sound +video"
 REQUIRED_USE="
 	egl? ( video )
 	joystick? ( sdl )
@@ -57,7 +57,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 
-	dev-cpp/pngpp
+	png? ( dev-cpp/pngpp )
 	>=dev-cpp/sparsehash-1.5
 "
 

@@ -12,6 +12,7 @@
 		<flag name="glew">Enable ZZogl plugin</flag>
 		<flag name="glsl">Use GLSL backend of ZZogl</flag>
 		<flag name="joystick">Control joystick support</flag>
+		<flag name="png">Allow to dump texture as PNG (require <pkg>dev-cpp/pngpp</pkg>)</flag>
 		<flag name="sdl">
 		    Use Simple Directmedia Layer (<pkg>media-libs/libsdl</pkg>) for
 	            audio and joystick support.
