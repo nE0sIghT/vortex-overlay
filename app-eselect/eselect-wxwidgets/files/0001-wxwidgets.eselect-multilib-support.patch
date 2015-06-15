@@ -1,37 +1,57 @@
-From 69efadbccf10da6e65c7d459c5cfea38375824b6 Mon Sep 17 00:00:00 2001
+From c9b60e8decacd58ebf628219b26b77945111a151 Mon Sep 17 00:00:00 2001
 From: nE0sIghT <ykonotopov@gmail.com>
-Date: Sun, 29 Mar 2015 21:18:56 +0300
+Date: Mon, 15 Jun 2015 23:26:06 +0300
 Subject: [PATCH] wxwidgets.eselect: multilib support
 
 ---
- modules/wxwidgets.eselect | 181 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 116 insertions(+), 65 deletions(-)
+ modules/wxwidgets.eselect | 431 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 261 insertions(+), 170 deletions(-)
 
 diff --git a/modules/wxwidgets.eselect b/modules/wxwidgets.eselect
-index 55d49d2..04ad16b 100644
+index 55d49d2..8c73ee9 100644
 --- a/modules/wxwidgets.eselect
 +++ b/modules/wxwidgets.eselect
-@@ -6,10 +6,11 @@ inherit config
+@@ -2,67 +2,78 @@
+ # Copyright 1999-2014 Gentoo Foundation
+ # Distributed under the terms of the GNU General Public License v2
+ 
+-inherit config
++inherit config multilib
  
  DESCRIPTION="Manage the system default wxWidgets profile"
  MAINTAINER="wxwidgets@gentoo.org"
 -VERSION="20140423"
-+VERSION="20150329"
++VERSION="20150615"
  
  WXCONFFILE="${EROOT}"/var/lib/wxwidgets/current
 -WXCONFDIR="${EROOT}"/usr/lib/wx/config
-+WXCONFDIR_64="${EROOT}"/usr/lib/wx/config
-+WXCONFDIR_32="${EROOT}"/usr/lib32/wx/config
++WXLIBDIRS=""
  
- find_targets() {
- 	local conf
-@@ -18,67 +19,29 @@ find_targets() {
+-find_targets() {
+-	local conf
+-	for conf in ${WXCONFDIR}/*; do
+-		[[ -e ${conf} ]] && basename ${conf}
++get_libdirs() {
++	if [ -n "${WXLIBDIRS}" ]; then
++		echo "${WXLIBDIRS}"
++		return
++	fi
++
++	local libdir
++	local -a libdirs
++
++	for libdir in $(list_libdirs); do
++		[[ ! -L ${EROOT}/${libdir} ]] && libdirs[${#libdirs[@]}]=${libdir}
  	done
++
++	echo "${libdirs[@]}"
  }
  
 -set_config() {
 -	local target="${1}" targets
--
++is_multilib() {
++	local libdirs=$(get_libdirs)
+ 
 -	if is_number "${target}"; then
 -		targets=( $(find_targets) )
 -		[[ ${1} -ge 1 && ${1} -le ${#targets[@]} ]] \
@@ -43,12 +63,20 @@ index 55d49d2..04ad16b 100644
 -	if [[ ${target} == "none" ]]; then
 -		targets=( $(find_targets) )
 -		[[ ${#targets[@]} -ge 1 ]] && target=${targets[0]}
--	fi
--
++	if [ ${#libdirs[@]} -gt 1 ]; then
++		return 1
++	else
++		return 0
+ 	fi
++}
+ 
 -	if [[ ! ${target} == "none" && ! -e ${WXCONFDIR}/${target} ]]; then
 -		die -q "\"${1}\" doesn't appear to be a valid profile name"
--	fi
--
++get_arch() {
++	if [ -z "${1}" -o "${1:0:3}" != "lib" ]; then
++		die -q "Wrong library directory passed: ${1}"
+ 	fi
+ 
 -	echo
 -	echo "Setting wxWidgets profile to ${target}"
 -	echo
@@ -57,8 +85,11 @@ index 55d49d2..04ad16b 100644
 -	if [[ ! ${target} == "none" ]]; then
 -		# expose the slot number of the selected target for various uses
 -		local wxslot=${target##*-}
--	fi
--
++	local space=""
++	if [ "${2}" == "1" ]; then
++		space=" "
+ 	fi
+ 
 -	# symlink bakefile presets to current slot (Bug #209150)
 -	local f
 -	pushd "${EROOT}"/usr/share/bakefile/presets/ &> /dev/null
@@ -71,134 +102,108 @@ index 55d49d2..04ad16b 100644
 -				ln -sf wx${wxslot/./}${f} wx${f} \
 -					|| die -q "Error symlinking wx${wxslot/./}${f}"
 -			fi
--		fi
--	done
--	popd &> /dev/null
--}
--
- ### show action ###
- 
- describe_show() {
- 	echo "Show the currently selected profile"
- }
- 
-+doshow_helper() {
-+	write_list_start "Current ${multiarch}wxWidgets profile:"
-+	if [[ -e ${WXCONFFILE} ]]; then
-+		write_kv_list_entry "$(load_config ${WXCONFFILE} WXCONFIG${WXCONF_SUFFIX})" ""
++	if [ "${1:3}" == "64" -o "${1:3}" == "32" ]; then
++		if [ "${2}" != "2" ]; then
++			echo "${1:3}"bit"${space}"
++		else
++			echo "_${1:3}"
+ 		fi
 +	else
-+		write_kv_list_entry "(none)" ""
++		echo "${1:3}${space}"
 +	fi
 +}
 +
++get_arches() {
++	local libdir
++	local -a arches
++
++	for libdir in $(get_libdirs); do
++		arches[${#arches[@]}]=$(get_arch ${libdir})
++	done
++
++	echo "${arches[@]}"
++}
++
++find_targets() {
++	local conf
++	for conf in ${WXCONFDIR}/*; do
++		[[ -e ${conf} ]] && basename ${conf}
+ 	done
+-	popd &> /dev/null
+ }
+ 
+ ### show action ###
+@@ -74,12 +85,15 @@ describe_show() {
  do_show() {
  	[[ ${#@} -gt 0 ]] && die -q "Too many parameters"
  
 -	write_list_start "Current wxWidgets profile:"
 -	if [[ -e ${WXCONFFILE} ]]; then
 -		write_kv_list_entry "$(load_config ${WXCONFFILE} WXCONFIG)" ""
-+	if [[ -d "${WXCONFDIR_32}" ]]; then
-+		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doshow_helper
-+		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doshow_helper
- 	else
+-	else
 -		write_kv_list_entry "(none)" ""
-+		WXCONFDIR=${WXCONFDIR_64} doshow_helper
- 	fi
+-	fi
++	local libdir
++	for libdir in $(get_libdirs); do
++		write_list_start "Current $(get_arch ${libdir} 1)wxWidgets profile:"
++		if [[ -e ${WXCONFFILE} ]]; then
++			write_kv_list_entry "$(load_config ${WXCONFFILE} WXCONFIG$(get_arch ${libdir} 2))" ""
++		else
++			write_kv_list_entry "(none)" ""
++		fi
++	done
  }
  
-@@ -88,20 +51,29 @@ describe_list() {
- 	echo "List available profiles"
+ ### list action ###
+@@ -89,17 +103,20 @@ describe_list() {
  }
  
--do_list() {
-+dolist_helper() {
- 	local i targets currconf
- 	targets=( $(find_targets) )
+ do_list() {
+-	local i targets currconf
+-	targets=( $(find_targets) )
 -	[[ -e ${WXCONFFILE} ]] && currconf=$(load_config ${WXCONFFILE} WXCONFIG)
-+	[[ -e ${WXCONFFILE} ]] && currconf=$(load_config ${WXCONFFILE} WXCONFIG${WXCONF_SUFFIX})
- 
- 	for (( i = 0; i < ${#targets[@]}; i++ )); do
- 		# highlight current version
- 		[[ ${targets[i]} = ${currconf} ]] \
- 			&& targets[i]=$(highlight_marker "${targets[i]}")
+-
+-	for (( i = 0; i < ${#targets[@]}; i++ )); do
+-		# highlight current version
+-		[[ ${targets[i]} = ${currconf} ]] \
+-			&& targets[i]=$(highlight_marker "${targets[i]}")
++	local libdir i targets currconf WXCONFDIR
++	for libdir in $(get_libdirs); do
++		WXCONFDIR="${EROOT}"/usr/"${libdir}"/wx/config
++		targets=( $(find_targets) )
++		[[ -e ${WXCONFFILE} ]] && currconf=$(load_config ${WXCONFFILE} WXCONFIG$(get_arch ${libdir} 2))
++
++		for (( i = 0; i < ${#targets[@]}; i++ )); do
++			# highlight current version
++			[[ ${targets[i]} = ${currconf} ]] \
++				&& targets[i]=$(highlight_marker "${targets[i]}")
++		done
++		write_list_start "Available $(get_arch ${libdir} 1)wxWidgets profiles:"
++		write_numbered_list -m "(none found)" "${targets[@]}"
  	done
 -	write_list_start "Available wxWidgets profiles:"
-+	write_list_start "Available ${multiarch}wxWidgets profiles:"
- 	write_numbered_list -m "(none found)" "${targets[@]}"
+-	write_numbered_list -m "(none found)" "${targets[@]}"
  }
  
-+do_list() {
-+	if [[ -d "${WXCONFDIR_32}" ]]; then
-+		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " dolist_helper
-+		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " dolist_helper
-+	else
-+		WXCONFDIR=${WXCONFDIR_64} dolist_helper
-+	fi
-+}
-+
  ### set action ###
- 
- describe_set() {
-@@ -109,31 +81,98 @@ describe_set() {
+@@ -109,23 +126,93 @@ describe_set() {
  }
  
  describe_set_options() {
-+	echo "32bit, 64bit : (optional) Apply changes to 32 bit or 64 bit multilib only"
++	if $(is_multilib); then
++		local arches=$(get_arches)
++		echo "${arches// /, }: (optional) Apply changes to multilib arch only"
++	fi
++
  	echo "<target> : Profile name or number (from 'list')"
  }
  
  describe_set_parameters() {
--	echo "<target>"
-+	echo "[32bit|64bit] <target>"
-+}
-+
-+doset_helper() {
-+	local target="${1}" targets
-+
-+	if is_number "${target}"; then
-+		targets=( $(find_targets) )
-+		[[ ${1} -ge 1 && ${1} -le ${#targets[@]} ]] \
-+			|| die -q "Number out of range: ${1}"
-+		target=${targets[$(( ${target} - 1 ))]}
++	if $(is_multilib); then
++		local arches=$(get_arches)
++		echo -n "[${arches// /|}] "
 +	fi
-+	# we shouldn't change the profile to "none" if there are available configs
-+	# this can happen if WXCONFFILE got deleted somehow
-+	if [[ ${target} == "none" ]]; then
-+		targets=( $(find_targets) )
-+		[[ ${#targets[@]} -ge 1 ]] && target=${targets[0]}
-+	fi
-+
-+	if [[ ! ${target} == "none" && ! -e ${WXCONFDIR}/${target} ]]; then
-+		die -q "\"${1}\" doesn't appear to be a valid profile name"
-+	fi
-+
-+	echo
-+	echo "Setting ${multiarch}wxWidgets profile to ${target}"
-+	echo
-+	store_config ${WXCONFFILE} WXCONFIG${WXCONF_SUFFIX} ${target}
-+
-+	if [[ ! ${target} == "none" ]]; then
-+		# expose the slot number of the selected target for various uses
-+		local wxslot=${target##*-}
-+	fi
-+
-+	if [[ -z "${multiarch}" || "${multiarch}" == "64bit" ]]; then 
-+		# symlink bakefile presets to current slot (Bug #209150)
-+		local f
-+		pushd "${EROOT}"/usr/share/bakefile/presets/ &> /dev/null
-+		for f in .bkl _presets.py _unix.bkl _win32.bkl _xrc.bkl; do
-+			if [[ -e wx${f} || -L wx${f} ]]; then
-+				rm -f wx${f} || die -q "Error removing wx${f}"
-+			fi
-+			if [[ ! ${target} == "none" ]]; then
-+				if [[ -e wx${wxslot/./}${f} ]]; then
-+					ln -sf wx${wxslot/./}${f} wx${f} \
-+						|| die -q "Error symlinking wx${wxslot/./}${f}"
-+				fi
-+			fi
-+		done
-+		popd &> /dev/null
-+	fi
+ 	echo "<target>"
  }
  
  do_set() {
@@ -210,24 +215,66 @@ index 55d49d2..04ad16b 100644
  		&& die -q "You need write permission to /var/lib to perform this action."
  
 -	set_config "${1}"
-+	if [[ $1 == "64bit" ]]; then
-+		if [[ -d "${WXCONFDIR_64}" ]]; then
-+			WXCONFDIR=${WXCONFDIR_64} multiarch="$1 " doset_helper $2
++	local libdir do_libdir target="${1}"
++	for libdir in $(get_libdirs); do
++		if [ "$1" == $(get_arch ${libdir}) ]; then
++			do_libdir="${libdir}"
++			target="${2}"
 +		fi
-+	elif [[ $1 == "32bit" ]]; then
-+		if [[ -d "${WXCONFDIR_32}" ]]; then
-+			WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="$1 " doset_helper $2
-+		else
-+			write_warning_msg "The 32bit parameter is intended for multilib systems only"
++	done
++
++	for libdir in $(get_libdirs); do
++		if [ -z "${do_libdir}" -o "${do_libdir}" == "${libdir}" ]; then
++			local targets
++			local WXCONFDIR="${EROOT}"/usr/"${libdir}"/wx/config
++			local arch=$(get_arch ${libdir})
++
++			if is_number "${target}"; then
++				targets=( $(find_targets) )
++				[[ ${target} -ge 1 && ${target} -le ${#targets[@]} ]] \
++					|| die -q "Number out of range: ${1}"
++				target=${targets[$(( ${target} - 1 ))]}
++			fi
++			# we shouldn't change the profile to "none" if there are available configs
++			# this can happen if WXCONFFILE got deleted somehow
++			if [[ ${target} == "none" ]]; then
++				targets=( $(find_targets) )
++				[[ ${#targets[@]} -ge 1 ]] && target=${targets[0]}
++			fi
++
++			if [[ ! ${target} == "none" && ! -e ${WXCONFDIR}/${target} ]]; then
++				die -q "\"${1}\" doesn't appear to be a valid profile name"
++			fi
++
++			echo
++			echo "Setting $(get_arch ${libdir} 1)wxWidgets profile to ${target}"
++			echo
++			store_config ${WXCONFFILE} WXCONFIG$(get_arch ${libdir} 2) ${target}
++
++			if [[ ! ${target} == "none" ]]; then
++				# expose the slot number of the selected target for various uses
++				local wxslot=${target##*-}
++			fi
++
++			if [[ -z "${arch}" || "${arch}" == "64bit" ]]; then 
++				# symlink bakefile presets to current slot (Bug #209150)
++				local f
++				pushd "${EROOT}"/usr/share/bakefile/presets/ &> /dev/null
++				for f in .bkl _presets.py _unix.bkl _win32.bkl _xrc.bkl; do
++					if [[ -e wx${f} || -L wx${f} ]]; then
++						rm -f wx${f} || die -q "Error removing wx${f}"
++					fi
++					if [[ ! ${target} == "none" ]]; then
++						if [[ -e wx${wxslot/./}${f} ]]; then
++							ln -sf wx${wxslot/./}${f} wx${f} \
++								|| die -q "Error symlinking wx${wxslot/./}${f}"
++						fi
++					fi
++				done
++				popd &> /dev/null
++			fi
 +		fi
-+	else
-+		if [[ -d "${WXCONFDIR_32}" ]]; then
-+			WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doset_helper $1
-+			WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doset_helper $1
-+		else
-+			WXCONFDIR=${WXCONFDIR_64} doset_helper $1
-+		fi
-+	fi		
++	done
  }
  
 +### update action ###
@@ -235,41 +282,239 @@ index 55d49d2..04ad16b 100644
  describe_update() {
  	echo "Check current profile and update it if invalid (internal use only)"
  }
+@@ -133,121 +220,125 @@ describe_update() {
+ do_update() {
+ 	[[ ! -e ${WXCONFFILE} ]] && do_set none
  
--do_update() {
--	[[ ! -e ${WXCONFFILE} ]] && do_set none
--
 -	currconf=$(load_config ${WXCONFFILE} WXCONFIG)
-+doupdate_helper() {
-+	currconf=$(load_config ${WXCONFFILE} WXCONFIG${WXCONF_SUFFIX})
+-
+-	# if current config is valid leave it alone
+-	[[ -e ${WXCONFDIR}/${currconf} ]] && return 0
+-
+-	# split the current config into components
+-	OIFS=${IFS}
+-	IFS=-
+-	set -- ${currconf}
+-	IFS=${OIFS}
+-
+-	declare -a wxtoolkit wxchar wxdebug wxver
+-
+-	# put them into the first element of the arrays
+-	wxtoolkit=(${1})
+-	wxchar=(${2})
+-	if [[ $# -eq 3 ]]; then
+-		# >=2.9 doesn't have a debug component, so fake it
+-		wxdebug=(release)
+-		wxver=(${3})
+-	else
+-		wxdebug=(${3})
+-		wxver=(${4})
+-	fi
++	for libdir in $(get_libdirs); do
++		local WXCONFDIR="${EROOT}"/usr/"${libdir}"/wx/config
++		currconf=$(load_config ${WXCONFFILE} WXCONFIG$(get_arch ${libdir} 2))
++
++		# if current config is valid leave it alone
++		[[ -e ${WXCONFDIR}/${currconf} ]] && return 0
++
++		# split the current config into components
++		OIFS=${IFS}
++		IFS=-
++		set -- ${currconf}
++		IFS=${OIFS}
++
++		declare -a wxtoolkit wxchar wxdebug wxver
++
++		# put them into the first element of the arrays
++		wxtoolkit=(${1})
++		wxchar=(${2})
++		if [[ $# -eq 3 ]]; then
++			# >=2.9 doesn't have a debug component, so fake it
++			wxdebug=(release)
++			wxver=(${3})
++		else
++			wxdebug=(${3})
++			wxver=(${4})
++		fi
  
- 	# if current config is valid leave it alone
- 	[[ -e ${WXCONFDIR}/${currconf} ]] && return 0
-@@ -242,12 +281,24 @@ do_update() {
+-	# now put all possible components into the next elements
+-	local component toolkit char debug ver i opt
+-
+-	for component in toolkit char debug ver; do
+-		i=1
+-		case ${component} in
+-			toolkit)
+-				for opt in base gtk2 mac; do
+-					if [[ ${opt} == ${wxtoolkit[0]} ]]; then
+-						continue
+-					else
+-						wxtoolkit[${i}]=${opt}
+-						(( i++ ))
+-					fi
+-				done
+-				;;
+-
+-			char)
+-				for opt in ansi unicode; do
+-					if [[ ${opt} == ${wxchar[0]} ]]; then
+-						continue
+-					else
+-						wxchar[${i}]=${opt}
+-						(( i++ ))
+-					fi
+-				done
+-				;;
+-
+-			debug)
+-				for opt in release debug; do
+-					if [[ ${opt} == ${wxdebug[0]} ]]; then
+-						continue
+-					else
+-						wxdebug[${i}]=${opt}
+-						(( i++ ))
+-					fi
+-				done
+-				;;
+-
+-			ver)
+-				for opt in 3.0 2.9 2.8; do
+-					if [[ ${opt} == ${wxver[0]} ]]; then
+-						continue
+-					else
+-						wxver[${i}]=${opt}
+-						(( i++ ))
+-					fi
+-				done
+-				;;
+-		esac
+-	done
++		# now put all possible components into the next elements
++		local component toolkit char debug ver i opt
++
++		for component in toolkit char debug ver; do
++			i=1
++			case ${component} in
++				toolkit)
++					for opt in base gtk2 mac; do
++						if [[ ${opt} == ${wxtoolkit[0]} ]]; then
++							continue
++						else
++							wxtoolkit[${i}]=${opt}
++							(( i++ ))
++						fi
++					done
++					;;
++
++				char)
++					for opt in ansi unicode; do
++						if [[ ${opt} == ${wxchar[0]} ]]; then
++							continue
++						else
++							wxchar[${i}]=${opt}
++							(( i++ ))
++						fi
++					done
++					;;
++
++				debug)
++					for opt in release debug; do
++						if [[ ${opt} == ${wxdebug[0]} ]]; then
++							continue
++						else
++							wxdebug[${i}]=${opt}
++							(( i++ ))
++						fi
++					done
++					;;
++
++				ver)
++					for opt in 3.0 2.9 2.8; do
++						if [[ ${opt} == ${wxver[0]} ]]; then
++							continue
++						else
++							wxver[${i}]=${opt}
++							(( i++ ))
++						fi
++					done
++					;;
++			esac
++		done
  
- 	if [[ ${currconf} != "none" && ${foundconf} != "none" ]]; then
- 		echo
+-	# Now we iterate through all the installed configs and find the closest match
+-	# ( debug -> char -> toolkit -> ver )
+-	# meaning w/ a current config of gtk2-unicode-debug-2.8, it will pick
+-	# gtk2-unicode-release-2.8 before
+-	# base-unicode-debug-2.8 before
+-	# gtk2-unicode-2.9
+-
+-	local d c t v checkconf foundconf
+-
+-	for (( v = 0 ; v < ${#wxver[@]} ; v++ )); do
+-		for (( t = 0 ; t < ${#wxtoolkit[@]} ; t++ )); do
+-			for (( c = 0 ; c < ${#wxchar[@]} ; c++ )); do
+-				for (( d = 0 ; d < ${#wxdebug[@]} ; d++ )); do
+-					if [[ ${wxver[$v]} != 2.8 ]]; then
+-						# >=2.9 doesn't have a debug component
+-						checkconf="${wxtoolkit[$t]}-${wxchar[$c]}-${wxver[$v]}"
+-					else
+-						checkconf="${wxtoolkit[$t]}-${wxchar[$c]}-${wxdebug[$d]}-${wxver[$v]}"
+-					fi
+-					[[ -e ${WXCONFDIR}/${checkconf} ]] || continue
+-					foundconf=${checkconf}
+-					break 4
++		# Now we iterate through all the installed configs and find the closest match
++		# ( debug -> char -> toolkit -> ver )
++		# meaning w/ a current config of gtk2-unicode-debug-2.8, it will pick
++		# gtk2-unicode-release-2.8 before
++		# base-unicode-debug-2.8 before
++		# gtk2-unicode-2.9
++
++		local d c t v checkconf foundconf
++
++		for (( v = 0 ; v < ${#wxver[@]} ; v++ )); do
++			for (( t = 0 ; t < ${#wxtoolkit[@]} ; t++ )); do
++				for (( c = 0 ; c < ${#wxchar[@]} ; c++ )); do
++					for (( d = 0 ; d < ${#wxdebug[@]} ; d++ )); do
++						if [[ ${wxver[$v]} != 2.8 ]]; then
++							# >=2.9 doesn't have a debug component
++							checkconf="${wxtoolkit[$t]}-${wxchar[$c]}-${wxver[$v]}"
++						else
++							checkconf="${wxtoolkit[$t]}-${wxchar[$c]}-${wxdebug[$d]}-${wxver[$v]}"
++						fi
++						[[ -e ${WXCONFDIR}/${checkconf} ]] || continue
++						foundconf=${checkconf}
++						break 4
++					done
+ 				done
+ 			done
+ 		done
+-	done
+ 
+-	# nothing installed
+-	[[ -z ${foundconf} ]] && foundconf="none"
++		# nothing installed
++		[[ -z ${foundconf} ]] && foundconf="none"
+ 
+-	if [[ ${currconf} != "none" && ${foundconf} != "none" ]]; then
+-		echo
 -		write_warning_msg "Your currently selected wxWidgets profile:    ( ${currconf} )"
-+		write_warning_msg "Your currently selected ${multiarch}wxWidgets profile:    ( ${currconf} )"
- 		write_warning_msg "is no longer available."
- 		write_warning_msg
- 		write_warning_msg "The closest matching profile:                 ( ${foundconf} )"
- 		write_warning_msg "will be activated in its place."
- 	fi
+-		write_warning_msg "is no longer available."
+-		write_warning_msg
+-		write_warning_msg "The closest matching profile:                 ( ${foundconf} )"
+-		write_warning_msg "will be activated in its place."
+-	fi
++		if [[ ${currconf} != "none" && ${foundconf} != "none" ]]; then
++			echo
++			write_warning_msg "Your currently selected ${multiarch}wxWidgets profile:    ( ${currconf} )"
++			write_warning_msg "is no longer available."
++			write_warning_msg
++			write_warning_msg "The closest matching profile:                 ( ${foundconf} )"
++			write_warning_msg "will be activated in its place."
++		fi
  
 -	do_set ${foundconf}
-+	doset_helper ${foundconf}
-+}
-+
-+do_update() {
-+	[[ ! -e ${WXCONFFILE} ]] && do_set none
-+
-+	if [[ -d "${WXCONFDIR_32}" ]]; then
-+		WXCONFDIR=${WXCONFDIR_64} multiarch="64bit " doupdate_helper
-+		WXCONFDIR=${WXCONFDIR_32} WXCONF_SUFFIX=_32 multiarch="32bit " doupdate_helper
-+	else
-+		WXCONFDIR=${WXCONFDIR_64} doupdate_helper
-+	fi
++		do_set ${foundconf}
++	done
  }
 +
 -- 
