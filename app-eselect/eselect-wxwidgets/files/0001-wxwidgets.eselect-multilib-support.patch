@@ -1,14 +1,14 @@
-From c9b60e8decacd58ebf628219b26b77945111a151 Mon Sep 17 00:00:00 2001
+From ee2fc6be15c28d329f41c85c1ab589337a0ec2e8 Mon Sep 17 00:00:00 2001
 From: nE0sIghT <ykonotopov@gmail.com>
-Date: Mon, 15 Jun 2015 23:26:06 +0300
+Date: Tue, 16 Jun 2015 00:20:03 +0300
 Subject: [PATCH] wxwidgets.eselect: multilib support
 
 ---
- modules/wxwidgets.eselect | 431 ++++++++++++++++++++++++++++------------------
- 1 file changed, 261 insertions(+), 170 deletions(-)
+ modules/wxwidgets.eselect | 429 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 261 insertions(+), 168 deletions(-)
 
 diff --git a/modules/wxwidgets.eselect b/modules/wxwidgets.eselect
-index 55d49d2..8c73ee9 100644
+index 55d49d2..5df32b0 100644
 --- a/modules/wxwidgets.eselect
 +++ b/modules/wxwidgets.eselect
 @@ -2,67 +2,78 @@
@@ -282,7 +282,7 @@ index 55d49d2..8c73ee9 100644
  describe_update() {
  	echo "Check current profile and update it if invalid (internal use only)"
  }
-@@ -133,121 +220,125 @@ describe_update() {
+@@ -133,121 +220,127 @@ describe_update() {
  do_update() {
  	[[ ! -e ${WXCONFFILE} ]] && do_set none
  
@@ -290,7 +290,10 @@ index 55d49d2..8c73ee9 100644
 -
 -	# if current config is valid leave it alone
 -	[[ -e ${WXCONFDIR}/${currconf} ]] && return 0
--
++	for libdir in $(get_libdirs); do
++		local WXCONFDIR="${EROOT}"/usr/"${libdir}"/wx/config
++		currconf=$(load_config ${WXCONFFILE} WXCONFIG$(get_arch ${libdir} 2))
+ 
 -	# split the current config into components
 -	OIFS=${IFS}
 -	IFS=-
@@ -298,7 +301,11 @@ index 55d49d2..8c73ee9 100644
 -	IFS=${OIFS}
 -
 -	declare -a wxtoolkit wxchar wxdebug wxver
--
++		# if current config is valid leave it alone
++		if [ -n "${currconf}" -a -e "${WXCONFDIR}/${currconf}" ]; then
++			continue
++		fi
+ 
 -	# put them into the first element of the arrays
 -	wxtoolkit=(${1})
 -	wxchar=(${2})
@@ -310,13 +317,6 @@ index 55d49d2..8c73ee9 100644
 -		wxdebug=(${3})
 -		wxver=(${4})
 -	fi
-+	for libdir in $(get_libdirs); do
-+		local WXCONFDIR="${EROOT}"/usr/"${libdir}"/wx/config
-+		currconf=$(load_config ${WXCONFFILE} WXCONFIG$(get_arch ${libdir} 2))
-+
-+		# if current config is valid leave it alone
-+		[[ -e ${WXCONFDIR}/${currconf} ]] && return 0
-+
 +		# split the current config into components
 +		OIFS=${IFS}
 +		IFS=-
@@ -505,7 +505,7 @@ index 55d49d2..8c73ee9 100644
 -	fi
 +		if [[ ${currconf} != "none" && ${foundconf} != "none" ]]; then
 +			echo
-+			write_warning_msg "Your currently selected ${multiarch}wxWidgets profile:    ( ${currconf} )"
++			write_warning_msg "Your currently selected $(get_arch ${libdir} 1)wxWidgets profile:    ( ${currconf} )"
 +			write_warning_msg "is no longer available."
 +			write_warning_msg
 +			write_warning_msg "The closest matching profile:                 ( ${foundconf} )"

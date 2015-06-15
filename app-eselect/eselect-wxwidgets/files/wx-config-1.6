@@ -7,14 +7,12 @@
 
 EPREFIX=''
 LIBDIR="lib"
-WXCONFIG_VAR="WXCONFIG"
-SELF=$(basename $0)
-
 if [ -n "${ABI}" ]; then
 	var="LIBDIR_${ABI}"
 	[ -n "${!var}" ] && LIBDIR="${!var}"
-	[ "${LIBDIR}" = "lib32" ] && WXCONFIG_VAR="WXCONFIG_32"
 fi
+WXCONFIG_VAR="WXCONFIG_${${LIBDIR:3}}"
+SELF=$(basename $0)
 
 if [ "${SELF}" = "wxrc" ]; then
 	WXRC=" --utility=wxrc"

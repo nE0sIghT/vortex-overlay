@@ -48,8 +48,13 @@ src_install() {
 }
 
 pkg_postinst() {
+	local libdir=$(get_libdir)
+
 	if [[ ! -e ${EROOT}/var/lib/wxwidgets/current ]]; then
-		echo 'WXCONFIG="none"' > "${EROOT}"/var/lib/wxwidgets/current
+		echo "WXCONFIG_${libdir:3}=\"none\"" > "${EROOT}"/var/lib/wxwidgets/current
+	else
+		# Upgrade non-multilib configuration
+		sed -i "s:WXCONFIG=:WXCONFIG_${libdir:3}=:g" "${EROOT}"/var/lib/wxwidgets/current || die
 	fi
 
 	echo
