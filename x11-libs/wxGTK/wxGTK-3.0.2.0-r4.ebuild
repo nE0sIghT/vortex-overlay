@@ -140,13 +140,13 @@ multilib_src_configure() {
 }
 
 multilib_src_install_all() {
-	cd "${S}"/docs
+	cd "${S}"/docs || die
 	dodoc changes.txt readme.txt
 	newdoc base/readme.txt base_readme.txt
 	newdoc gtk/readme.txt gtk_readme.txt
 
 	if use doc; then
-		dohtml -r "${S}"/docs/doxygen/out/html/*
+		dodoc -r "${S}"/docs/doxygen/out/html
 	fi
 
 	# Stray windows locale file, causes collisions

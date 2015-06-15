@@ -147,7 +147,7 @@ multilib_src_compile() {
 	emake
 
 	if [[ -d contrib/src ]]; then
-		cd contrib/src
+		cd contrib/src || die
 		emake
 	fi
 }
@@ -156,19 +156,19 @@ multilib_src_install() {
 	default
 
 	if [[ -d contrib/src ]]; then
-		cd contrib/src
+		cd contrib/src || die
 		emake DESTDIR="${D}" install
 	fi
 }
 
 multilib_src_install_all() {
-	cd "${S}"/docs
+	cd "${S}"/docs || die
 	dodoc changes.txt readme.txt todo30.txt
 	newdoc base/readme.txt base_readme.txt
 	newdoc gtk/readme.txt gtk_readme.txt
 
 	if use doc; then
-		dohtml -r "${S}"/docs/html/*
+		dodoc -r "${S}"/docs/html
 	fi
 
 	# Stray windows locale file, causes collisions
