@@ -59,7 +59,7 @@ DEPEND="${RDEPEND}
 	)
 "
 
-PDEPEND=">=app-eselect/eselect-wxwidgets-20140423-r3"
+PDEPEND=">=app-eselect/eselect-wxwidgets-0.7"
 
 LICENSE="wxWinLL-3
 		GPL-2
