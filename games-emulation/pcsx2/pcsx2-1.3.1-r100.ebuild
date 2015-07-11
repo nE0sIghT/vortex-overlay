@@ -169,6 +169,6 @@ src_compile() {
 }
 
 src_install() {
-	cmake-utils_src_install DESTDIR="${D}"
+	cmake-utils_src_install
 	prepgamesdirs
 }
