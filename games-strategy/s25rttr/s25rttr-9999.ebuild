@@ -28,11 +28,12 @@ RDEPEND="app-arch/bzip2
 DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
-src_prepare() {
-	epatch "${FILESDIR}"/${P}-cmake.patch \
-		"${FILESDIR}"/${P}-soundconverter.patch \
-		"${FILESDIR}"/${P}-liblua.patch
-}
+PATCHES=(
+        "${FILESDIR}"/${P}-cmake.patch
+        "${FILESDIR}"/${P}-soundconverter.patch
+        "${FILESDIR}"/${P}-liblua.patch
+        "${FILESDIR}"/${P}-sdl.patch
+)
 
 src_configure() {
 	local arch
