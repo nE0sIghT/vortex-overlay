@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit autotools eutils flag-o-matic multilib-minimal
+inherit eutils flag-o-matic multilib-minimal
 
 DESCRIPTION="GTK+ version of wxWidgets, a cross-platform C++ GUI toolkit"
 HOMEPAGE="http://wxwidgets.org/"
