@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit eutils flag-o-matic multilib-minimal
+inherit autotools eutils flag-o-matic multilib-minimal
 
 DESCRIPTION="GTK+ version of wxWidgets, a cross-platform C++ GUI toolkit"
 HOMEPAGE="http://wxwidgets.org/"
@@ -65,20 +65,15 @@ S="${WORKDIR}/wxPython-src-${PV}"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-3.0.0.0-collision.patch
+	epatch "${FILESDIR}"/${P}-libdir.patch
 	epatch_user
 
-	multilib_prepare() {
-		# https://bugs.gentoo.org/421851
-		# https://bugs.gentoo.org/499984
-		# https://bugs.gentoo.org/536004
-		sed \
-			-e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" \
-			-e 's:3\.0\.1:3.0.2:g' \
-			-e 's:^wx_release_number=1$:wx_release_number=2:' \
-			-i "${BUILD_DIR}"/configure || die
-	}
-	multilib_copy_sources
-	multilib_parallel_foreach_abi multilib_prepare
+	# https://bugs.gentoo.org/536004
+	sed \
+		-e 's:3\.0\.1:3.0.2:g' \
+		-e 's:^wx_release_number=1$:wx_release_number=2:' \
+		-i "${S}"/configure || die
+
 }
 
 multilib_src_configure() {
@@ -136,7 +131,7 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
-	econf ${myconf}
+	ECONF_SOURCE="${S}" wx_cv_std_libpath=$(get_libdir) econf ${myconf}
 }
 
 multilib_src_install_all() {

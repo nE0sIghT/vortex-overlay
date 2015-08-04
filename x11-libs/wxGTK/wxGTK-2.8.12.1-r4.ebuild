@@ -73,6 +73,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-2.8.11-collision.patch
 	epatch "${FILESDIR}"/${PN}-2.8.7-mmedia.patch              # Bug #174874
 	epatch "${FILESDIR}"/${PN}-2.8.10.1-odbc-defines.patch     # Bug #310923
+	epatch "${FILESDIR}"/${P}-libdir.patch                     # Bug #421851
 
 	# prefix https://bugs.gentoo.org/394123
 	sed -i -e "s:/usr:${EPREFIX}/usr:g" \
@@ -80,13 +81,6 @@ src_prepare() {
 		configure || die
 
 	epatch_user
-
-	multilib_prepare() {
-		# x32 https://bugs.gentoo.org/421851
-		sed -i -e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" "${BUILD_DIR}"/configure || die
-	}
-	multilib_copy_sources
-	multilib_parallel_foreach_abi multilib_prepare
 }
 
 multilib_src_configure() {
@@ -140,7 +134,7 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
-	econf ${myconf}
+	ECONF_SOURCE="${S}" wx_cv_std_libpath=$(get_libdir) econf ${myconf}
 }
 
 multilib_src_compile() {
