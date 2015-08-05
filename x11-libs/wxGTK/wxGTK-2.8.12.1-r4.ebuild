@@ -57,6 +57,7 @@ DEPEND="${RDEPEND}
 		x11-proto/xineramaproto[${MULTILIB_USEDEP}]
 		x11-proto/xf86vidmodeproto[${MULTILIB_USEDEP}]
 	)
+	sys-devel/autoconf:2.59
 "
 
 PDEPEND=">=app-eselect/eselect-wxwidgets-0.7"
@@ -73,7 +74,11 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-2.8.11-collision.patch
 	epatch "${FILESDIR}"/${PN}-2.8.7-mmedia.patch              # Bug #174874
 	epatch "${FILESDIR}"/${PN}-2.8.10.1-odbc-defines.patch     # Bug #310923
-	epatch "${FILESDIR}"/${P}-libdir.patch                     # Bug #421851
+
+	# Bug #421851
+	epatch "${FILESDIR}"/${P}-libdir-1.patch
+	epatch "${FILESDIR}"/${P}-libdir-2.patch
+	epatch "${FILESDIR}"/${P}-bakefile.patch
 
 	# prefix https://bugs.gentoo.org/394123
 	sed -i -e "s:/usr:${EPREFIX}/usr:g" \
@@ -81,6 +86,9 @@ src_prepare() {
 		configure || die
 
 	epatch_user
+
+	# autoconf-2.69 produces wrong configure script
+	autoconf-2.59 -i
 }
 
 multilib_src_configure() {
@@ -134,7 +142,7 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
-	ECONF_SOURCE="${S}" wx_cv_std_libpath=$(get_libdir) econf ${myconf}
+	ECONF_SOURCE="${S}" econf ${myconf}
 }
 
 multilib_src_compile() {
