@@ -65,7 +65,6 @@ S="${WORKDIR}/wxPython-src-${PV}"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-3.0.0.0-collision.patch
-	epatch "${FILESDIR}"/${P}-libdir.patch
 	epatch_user
 
 	# https://bugs.gentoo.org/536004
@@ -131,7 +130,7 @@ multilib_src_configure() {
 			--disable-gui"
 	fi
 
-	ECONF_SOURCE="${S}" wx_cv_std_libpath=$(get_libdir) econf ${myconf}
+	ECONF_SOURCE="${S}" econf ${myconf}
 }
 
 multilib_src_install_all() {
