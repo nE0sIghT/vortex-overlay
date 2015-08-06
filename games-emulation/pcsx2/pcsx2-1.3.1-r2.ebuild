@@ -3,8 +3,9 @@
 # $Header: $
 
 EAPI=5
+PLOCALES="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
 
-inherit wxwidgets cmake-utils multilib games
+inherit wxwidgets cmake-utils l10n multilib games
 
 KEYWORDS="-* ~amd64 ~x86"
 SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -23,11 +24,6 @@ REQUIRED_USE="
 	video? ( || ( egl glew ) )
 	?? ( cg glsl )
 "
-
-LANGS="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
-for lang in ${LANGS}; do
-	IUSE+=" linguas_${lang}"
-done
 
 RDEPEND="
 	app-arch/bzip2[abi_x86_32]
@@ -71,6 +67,10 @@ PATCHES=(
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
 QA_TEXTRELS="usr/games/lib32/pcsx2/*"
 
+clean_locale() {
+	rm -Rf "${S}"/locales/"${1}" || die
+}
+
 src_prepare() {
 	if use custom-cflags; then
 		PATCHES+=( "${FILESDIR}"/"${P}-custom-cflags.patch" )
@@ -97,14 +97,9 @@ src_prepare() {
 	# Remove default CFLAGS
 	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
 
-	einfo "Cleaning up locales..."
-	for lang in ${LANGS}; do
-		use "linguas_${lang}" && {
-			einfo "- keeping ${lang}"
-			continue
-		}
-		rm -Rf "${S}"/locales/"${lang}" || die
-	done
+	ebegin "Cleaning up locales..."
+	l10n_for_each_disabled_locale_do clean_locale
+	eend $?
 
 	epatch_user
 }

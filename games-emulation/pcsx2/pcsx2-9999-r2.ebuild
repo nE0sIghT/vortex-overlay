@@ -3,8 +3,9 @@
 # $Header: $
 
 EAPI=5
+PLOCALES="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
 
-inherit wxwidgets cmake-utils multilib games git-r3
+inherit wxwidgets cmake-utils l10n multilib games git-r3
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
@@ -19,11 +20,6 @@ REQUIRED_USE="
 	joystick? ( sdl )
 	sound? ( sdl )
 "
-
-LANGS="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
-for lang in ${LANGS}; do
-	IUSE+=" linguas_${lang}"
-done
 
 RDEPEND="
 	app-arch/bzip2[abi_x86_32]
@@ -69,6 +65,10 @@ PATCHES=(
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
 QA_TEXTRELS="usr/games/lib32/pcsx2/*"
 
+clean_locale() {
+	rm -Rf "${S}"/locales/"${1}" || die
+}
+
 src_prepare() {
 	if use custom-cflags; then
 		PATCHES+=( "${FILESDIR}"/"${P}-custom-cflags.patch" )
@@ -88,14 +88,9 @@ src_prepare() {
 	# Remove default CFLAGS
 	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
 
-	einfo "Cleaning up locales..."
-	for lang in ${LANGS}; do
-		use "linguas_${lang}" && {
-			einfo "- keeping ${lang}"
-			continue
-		}
-		rm -Rf "${S}"/locales/"${lang}" || die
-	done
+	ebegin "Cleaning up locales..."
+	l10n_for_each_disabled_locale_do clean_locale
+	eend $?
 
 	epatch_user
 }
@@ -115,6 +110,7 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DDISABLE_ADVANCE_SIMD=TRUE
+		-DDISABLE_BUILD_DATE=TRUE
 		-DEXTRA_PLUGINS=FALSE
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
