@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-3.0.2.0-r1.ebuild,v 1.4 2015/05/27 11:17:50 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/wxGTK/wxGTK-3.0.2.0-r2.ebuild,v 1.1 2015/08/06 12:02:36 mgorny Exp $
 
 EAPI="5"
 
@@ -49,8 +49,8 @@ RDEPEND="
 		)"
 
 DEPEND="${RDEPEND}
-	virtual/glu[${MULTILIB_USEDEP}]
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
+	opengl? ( virtual/glu[${MULTILIB_USEDEP}] )
 	X?  (
 		x11-proto/xproto[${MULTILIB_USEDEP}]
 		x11-proto/xineramaproto[${MULTILIB_USEDEP}]
@@ -80,118 +80,111 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-3.0.0.0-collision.patch
 	epatch_user
 
-	multilib_prepare() {
-		# https://bugs.gentoo.org/421851
-		# https://bugs.gentoo.org/499984
-		# https://bugs.gentoo.org/536004
-		sed \
-			-e "/wx_cv_std_libpath=/s:=.*:=$(get_libdir):" \
-			-e 's:3\.0\.1:3.0.2:g' \
-			-e 's:^wx_release_number=1$:wx_release_number=2:' \
-			-i "${BUILD_DIR}"/configure || die
-	}
-	multilib_copy_sources
-	multilib_foreach_abi multilib_prepare
+	# https://bugs.gentoo.org/536004
+	sed \
+		-e 's:3\.0\.1:3.0.2:g' \
+		-e 's:^wx_release_number=1$:wx_release_number=2:' \
+		-i "${S}"/configure || die
+}
+
+multibuild_src_configure() {
+	local myconf
+
+	mkdir -p "${BUILD_DIR}" || die
+	pushd "${BUILD_DIR}" >/dev/null || die
+
+	# X independent options
+	myconf="
+			--with-zlib=sys
+			--with-expat=sys
+			--enable-compat28
+			$(use_with sdl)"
+
+	# debug in >=2.9
+	# there is no longer separate debug libraries (gtk2ud)
+	# wxDEBUG_LEVEL=1 is the default and we will leave it enabled
+	# wxDEBUG_LEVEL=2 enables assertions that have expensive runtime costs.
+	# apps can disable these features by building w/ -NDEBUG or wxDEBUG_LEVEL_0.
+	# http://docs.wxwidgets.org/3.0/overview_debugging.html
+	# http://groups.google.com/group/wx-dev/browse_thread/thread/c3c7e78d63d7777f/05dee25410052d9c
+	use debug \
+		&& myconf="${myconf} --enable-debug=max"
+
+	# wxGTK options
+	#   --enable-graphics_ctx - needed for webkit, editra
+	#   --without-gnomevfs - bug #203389
+	use X && \
+		myconf="${myconf}
+			--enable-graphics_ctx
+			--with-gtkprint
+			--enable-gui
+			--with-libpng=sys
+			--with-libxpm=sys
+			--with-libjpeg=sys
+			--without-gnomevfs
+			$(use_enable gstreamer mediactrl)
+			$(multilib_native_use_enable webkit webview)
+			$(use_with libnotify)
+			$(use_with opengl)
+			$(use_with tiff libtiff sys)"
+
+	use aqua && \
+		myconf="${myconf}
+			--enable-graphics_ctx
+			--enable-gui
+			--with-libpng=sys
+			--with-libxpm=sys
+			--with-libjpeg=sys
+			--with-mac
+			--with-opengl"
+			# cocoa toolkit seems to be broken
+
+	# wxBase options
+	if use !X && use !aqua ; then
+		myconf="${myconf}
+			--disable-gui"
+	fi
+
+	myconf="${myconf}
+		--with-gtk=${MULTIBUILD_VARIANT: -1}"
+
+	ECONF_SOURCE="${S}" econf ${myconf}
+
+	popd >/dev/null || die
+}
+
+multibuild_src_compile() {
+	pushd "${BUILD_DIR}" >/dev/null || die
+	emake
+	popd >/dev/null || die
+}
+
+multibuild_src_install() {
+	pushd "${BUILD_DIR}" >/dev/null || die
+	emake DESTDIR="${D}" install
+	popd >/dev/null || die
 }
 
 multilib_src_configure() {
-	multibuild_src_configure() {
-		mkdir -p "${BUILD_DIR}" || die
-		pushd "${BUILD_DIR}" >/dev/null || die
-
-		local myconf
-
-		# X independent options
-		myconf="
-				--with-zlib=sys
-				--with-expat=sys
-				--enable-compat28
-				$(use_with sdl)"
-
-		# debug in >=2.9
-		# there is no longer separate debug libraries (gtk2ud)
-		# wxDEBUG_LEVEL=1 is the default and we will leave it enabled
-		# wxDEBUG_LEVEL=2 enables assertions that have expensive runtime costs.
-		# apps can disable these features by building w/ -NDEBUG or wxDEBUG_LEVEL_0.
-		# http://docs.wxwidgets.org/3.0/overview_debugging.html
-		# http://groups.google.com/group/wx-dev/browse_thread/thread/c3c7e78d63d7777f/05dee25410052d9c
-		use debug \
-			&& myconf="${myconf} --enable-debug=max"
-
-		# wxGTK options
-		#   --enable-graphics_ctx - needed for webkit, editra
-		#   --without-gnomevfs - bug #203389
-		use X && \
-			myconf="${myconf}
-				--enable-graphics_ctx
-				--with-gtkprint
-				--enable-gui
-				--with-libpng=sys
-				--with-libxpm=sys
-				--with-libjpeg=sys
-				--without-gnomevfs
-				$(use_enable gstreamer mediactrl)
-				$(multilib_native_use_enable webkit webview)
-				$(use_with libnotify)
-				$(use_with opengl)
-				$(use_with tiff libtiff sys)"
-
-		use aqua && \
-			myconf="${myconf}
-				--enable-graphics_ctx
-				--enable-gui
-				--with-libpng=sys
-				--with-libxpm=sys
-				--with-libjpeg=sys
-				--with-mac
-				--with-opengl"
-				# cocoa toolkit seems to be broken
-
-		# wxBase options
-		if use !X && use !aqua ; then
-			myconf="${myconf}
-				--disable-gui"
-		fi
-
-		myconf="${myconf}
-			--with-gtk=${MULTIBUILD_VARIANT: -1}"
-
-		econf ${myconf}
-
-		popd >/dev/null || die
-	}
-
 	wxgtk_setup multibuild_foreach_variant multibuild_src_configure
 }
 
 multilib_src_compile() {
-	multibuild_src_compile() {
-		pushd "${BUILD_DIR}" >/dev/null || die
-		emake
-		popd >/dev/null || die
-	}
-
 	wxgtk_setup multibuild_foreach_variant multibuild_src_compile
 }
 
 multilib_src_install() {
-	multibuild_src_install() {
-		pushd "${BUILD_DIR}" >/dev/null || die
-		emake DESTDIR="${D}" install
-		popd >/dev/null || die
-	}
-
 	wxgtk_setup multibuild_foreach_variant multibuild_src_install
 }
 
 multilib_src_install_all() {
-	cd "${S}"/docs
+	cd "${S}"/docs || die
 	dodoc changes.txt readme.txt
 	newdoc base/readme.txt base_readme.txt
 	newdoc gtk/readme.txt gtk_readme.txt
 
 	if use doc; then
-		dohtml -r "${S}"/docs/doxygen/out/html/*
+		dodoc -r "${S}"/docs/doxygen/out/html
 	fi
 
 	# Stray windows locale file, causes collisions
