@@ -56,14 +56,11 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
+
+	!<app-eselect/eselect-opengl-1.3.1
 	>=dev-cpp/sparsehash-1.5
 	!<sys-devel/gcc-4.7
 "
-
-PATCHES=(
-	# Workaround broken glext.h, bug #510730
-	"${FILESDIR}"/"${P}"-mesa-10.patch
-)
 
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
 QA_TEXTRELS="usr/lib32/pcsx2/*"
