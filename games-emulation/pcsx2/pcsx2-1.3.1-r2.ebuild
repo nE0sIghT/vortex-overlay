@@ -57,6 +57,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	>=dev-cpp/sparsehash-1.5
+	!<sys-devel/gcc-4.7
 "
 
 PATCHES=(

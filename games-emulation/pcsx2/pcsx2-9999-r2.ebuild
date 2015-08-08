@@ -56,6 +56,7 @@ DEPEND="${RDEPEND}
 	!<app-eselect/eselect-opengl-1.3.1
 	png? ( dev-cpp/pngpp )
 	>=dev-cpp/sparsehash-1.5
+	!<sys-devel/gcc-4.8
 "
 
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
