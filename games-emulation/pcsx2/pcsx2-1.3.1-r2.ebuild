@@ -5,7 +5,7 @@
 EAPI=5
 PLOCALES="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
 
-inherit wxwidgets cmake-utils l10n multilib games
+inherit wxwidgets cmake-utils l10n multilib
 
 KEYWORDS="-* ~amd64 ~x86"
 SRC_URI="https://github.com/PCSX2/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -66,7 +66,7 @@ PATCHES=(
 )
 
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
-QA_TEXTRELS="usr/games/lib32/pcsx2/*"
+QA_TEXTRELS="usr/lib32/pcsx2/*"
 
 clean_locale() {
 	rm -Rf "${S}"/locales/"${1}" || die
@@ -124,14 +124,11 @@ src_configure() {
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
 
-		-DBIN_DIR="${GAMES_BINDIR}"
 		-DCMAKE_INSTALL_PREFIX=/usr
-		-DCMAKE_LIBRARY_PATH=$(games_get_libdir)/"${PN}"
+		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)/"${PN}"
 		-DDOC_DIR=/usr/share/doc/"${PF}"
-		-DGAMEINDEX_DIR="${GAMES_DATADIR}"/"${PN}"
-		-DGLSL_SHADER_DIR="${GAMES_DATADIR}"/"${PN}"
 		-DGTK3_API=FALSE
-		-DPLUGIN_DIR=$(games_get_libdir)/${PN}
+		-DPLUGIN_DIR=/usr/$(get_libdir)/"${PN}"
 		# wxGTK must be built against same sdl version
 		-DSDL2_API=FALSE
 
@@ -161,5 +158,5 @@ src_compile() {
 
 src_install() {
 	cmake-utils_src_install
-	prepgamesdirs
+#	prepgamesdirs
 }
