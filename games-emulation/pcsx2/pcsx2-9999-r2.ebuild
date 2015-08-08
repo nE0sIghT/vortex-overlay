@@ -58,6 +58,10 @@ DEPEND="${RDEPEND}
 	!<sys-devel/gcc-4.8
 "
 
+PATCHES=(
+	"${FILESDIR}"/"${P}-cmake-options.patch"
+)
+
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
 QA_TEXTRELS="usr/lib32/pcsx2/*"
 
@@ -67,15 +71,6 @@ clean_locale() {
 
 src_prepare() {
 	cmake-utils_src_prepare
-	if ! use video; then
-		sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
-	fi
-	if ! use joystick; then
-		sed -i -e "s:onepad TRUE:onepad FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
-	fi
-	if ! use sound; then
-		sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
-	fi
 
 	ebegin "Cleaning up locales..."
 	l10n_for_each_disabled_locale_do clean_locale
@@ -115,6 +110,10 @@ src_configure() {
 		-DSDL2_API=FALSE
 
 		$(cmake-utils_use egl EGL_API)
+
+		$(cmake-utils_use_build video GSDX)
+		$(cmake-utils_use_build joystick ONEPAD)
+		$(cmake-utils_use_build sound SPU2-X)
 	)
 
 	local WX_GTK_VER="2.8"
