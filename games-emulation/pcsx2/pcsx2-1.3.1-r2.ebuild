@@ -16,7 +16,7 @@ HOMEPAGE="http://www.pcsx2.net"
 LICENSE="GPL-3"
 SLOT="0"
 
-IUSE="cg custom-cflags egl glew glsl joystick sdl sound video"
+IUSE="cg egl glew glsl joystick sdl sound video"
 REQUIRED_USE="
 	glew? ( || ( cg glsl ) )
 	joystick? ( sdl )
@@ -62,6 +62,10 @@ DEPEND="${RDEPEND}
 	!<sys-devel/gcc-4.7
 "
 
+PATCHES=(
+	"${FILESDIR}"/"${P}-cflags.patch"
+)
+
 # Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
 QA_TEXTRELS="usr/lib32/pcsx2/*"
 
@@ -70,10 +74,6 @@ clean_locale() {
 }
 
 src_prepare() {
-	if use custom-cflags; then
-		PATCHES+=( "${FILESDIR}"/"${P}-custom-cflags.patch" )
-	fi
-
 	cmake-utils_src_prepare
 
 	if ! use egl; then
@@ -91,9 +91,6 @@ src_prepare() {
 	if ! use sound; then
 		sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
 	fi
-
-	# Remove default CFLAGS
-	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
 
 	ebegin "Cleaning up locales..."
 	l10n_for_each_disabled_locale_do clean_locale
@@ -116,9 +113,10 @@ src_configure() {
 	fi
 
 	local mycmakeargs=(
-		-DDISABLE_ADVANCE_SIMD=TRUE
+		-DARCH_FLAG=
 		-DEXTRA_PLUGINS=FALSE
 		-DPACKAGE_MODE=TRUE
+		-DOPTIMIZATION_FLAG=
 		-DXDG_STD=TRUE
 
 		-DCMAKE_INSTALL_PREFIX=/usr

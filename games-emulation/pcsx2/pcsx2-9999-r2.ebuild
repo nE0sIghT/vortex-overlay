@@ -52,7 +52,6 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
-
 	!<app-eselect/eselect-opengl-1.3.1
 	png? ( dev-cpp/pngpp )
 	>=dev-cpp/sparsehash-1.5
@@ -67,10 +66,6 @@ clean_locale() {
 }
 
 src_prepare() {
-	if use custom-cflags; then
-		PATCHES+=( "${FILESDIR}"/"${P}-custom-cflags.patch" )
-	fi
-
 	cmake-utils_src_prepare
 	if ! use video; then
 		sed -i -e "s:GSdx TRUE:GSdx FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
@@ -81,9 +76,6 @@ src_prepare() {
 	if ! use sound; then
 		sed -i -e "s:spu2-x TRUE:spu2-x FALSE:g" cmake/SelectPcsx2Plugins.cmake || die
 	fi
-
-	# Remove default CFLAGS
-	sed -i -e "s:-msse -msse2 -march=i686::g" cmake/BuildParameters.cmake || die
 
 	ebegin "Cleaning up locales..."
 	l10n_for_each_disabled_locale_do clean_locale
@@ -106,10 +98,11 @@ src_configure() {
 	fi
 
 	local mycmakeargs=(
-		-DDISABLE_ADVANCE_SIMD=TRUE
+		-DARCH_FLAG=
 		-DDISABLE_BUILD_DATE=TRUE
 		-DDISABLE_PCSX2_WRAPPER=TRUE
 		-DEXTRA_PLUGINS=FALSE
+		-DOPTIMIZATION_FLAG=
 		-DPACKAGE_MODE=TRUE
 		-DXDG_STD=TRUE
 
