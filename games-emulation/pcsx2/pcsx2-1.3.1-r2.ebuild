@@ -56,7 +56,6 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
-
 	!<app-eselect/eselect-opengl-1.3.1
 	>=dev-cpp/sparsehash-1.5
 	!<sys-devel/gcc-4.7
