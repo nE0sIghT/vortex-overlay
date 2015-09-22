@@ -1,21 +1,24 @@
-commit 93b7e6f86d5d15ddd47326ceebb9e6c1ba2c80d2
-Author: Julian Ospald <hasufell@gentoo.org>
-Date:   Mon Mar 9 15:15:03 2015 +0300
+From fea284f4124780a5e393b1e487c005d5c6b28fd0 Mon Sep 17 00:00:00 2001
+From: Julian Ospald <hasufell@gentoo.org>
+Date: Tue, 22 Sep 2015 10:46:19 +0300
+Subject: [PATCH 1/3] make build system gentoo-compatible provide options for
+ SDL and GLFW video drivers
 
-    make build system gentoo-compatible
-    provide options for SDL and GLFW video drivers
+---
+ CMakeLists.txt                       | 45 ++++++++----------------------------
+ build_paths.h.cmake                  |  1 +
+ cmake/linux.cmake                    |  4 ++--
+ driver/audio/SDL/src/CMakeLists.txt  |  6 ++---
+ driver/video/CMakeLists.txt          |  8 +++++--
+ driver/video/GLFW/src/CMakeLists.txt |  2 +-
+ driver/video/SDL/src/CMakeLists.txt  |  6 ++---
+ 7 files changed, 25 insertions(+), 47 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d9778b7..a59f833 100644
+index d79eedf..d50b826 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -19,12 +19,19 @@ INCLUDE(CMakeMacroEnsureOutOfSourceBuild)
- 
- ################################################################################
- 
--INCLUDE(cmake/crosscompile.cmake)
--
- PROJECT(s25client)
+@@ -106,6 +106,15 @@ ENDIF ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
  
  ################################################################################
  
@@ -28,13 +31,13 @@ index d9778b7..a59f833 100644
 +       ENDIF (NOT BUILD_SDL_DRIVER AND NOT BUILD_GLFW_DRIVER)
 +ENDIF (UNIX)
 +
- SET(PREFIX ${PREFIX} CACHE STRING "Path prefix")
- SET(BINDIR ${BINDIR} CACHE STRING "Directory for the binaries")
- SET(DATADIR ${DATADIR} CACHE STRING "Data directory")
-@@ -106,38 +113,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_paths.h.cmake"
- 			   build_paths.h)
- CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version.h.cmake"
+ IF ("${PREFIX}" STREQUAL "")
+     IF ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+         SET(PREFIX .)
+@@ -208,40 +217,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version.h.cmake"
  			   build_version.h)
+ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version_defines.h.cmake"
+ 			   build_version_defines.h)
 -CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build/preinstall.sh.cmake"
 -			   preinstall.sh @ONLY)
 -CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build/postinstall.sh.cmake"
@@ -45,32 +48,34 @@ index d9778b7..a59f833 100644
 -ADD_SUBDIRECTORY(version)
 -
 -ADD_CUSTOM_TARGET(updateversion ALL
--				  COMMAND "${CMAKE_BINARY_DIR}/version/src/version" "${CMAKE_SOURCE_DIR}"
+-				  COMMAND "$<TARGET_FILE:version>" "${CMAKE_SOURCE_DIR}"
 -				  DEPENDS version
 -				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
 -)
+-	
+-IF(NOT ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
+-	ADD_CUSTOM_TARGET(mrproper
+-					  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/build/cleanup.sh"
+-					  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+-	)
 -
--ADD_CUSTOM_TARGET(mrproper
--				  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/build/cleanup.sh"
--				  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
--)
+-	ADD_CUSTOM_TARGET(create_nightly
+-					  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/release/create_release.sh" "nightly" "${CMAKE_SOURCE_DIR}"
+-					  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+-	)
 -
--ADD_CUSTOM_TARGET(create_nightly
--				  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/release/create_release.sh" "nightly" "${CMAKE_SOURCE_DIR}"
--				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
--)
+-	ADD_CUSTOM_TARGET(create_stable
+-					  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/release/create_release.sh" "stable" "${CMAKE_SOURCE_DIR}"
+-					  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+-	)
 -
--ADD_CUSTOM_TARGET(create_stable
--				  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/release/create_release.sh" "stable" "${CMAKE_SOURCE_DIR}"
--				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
--)
--
--# preinstall script
--INSTALL(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/preinstall.cmake")
+-	# preinstall script
+-	INSTALL(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/preinstall.cmake")
+-ENDIF()
  
  ################################################################################
  
-@@ -148,7 +123,6 @@ ADD_SUBDIRECTORY(libsiedler2)
+@@ -252,7 +227,6 @@ ADD_SUBDIRECTORY(libsiedler2)
  ADD_SUBDIRECTORY(libutil)
  ADD_SUBDIRECTORY(liblobby)
  ADD_SUBDIRECTORY(s-c)
@@ -78,7 +83,7 @@ index d9778b7..a59f833 100644
  ADD_SUBDIRECTORY(src)
  
  ################################################################################
-@@ -157,7 +131,6 @@ ADD_SUBDIRECTORY(src)
+@@ -261,7 +235,6 @@ ADD_SUBDIRECTORY(src)
  INSTALL(CODE "INCLUDE(driver/cmake_install.cmake)")
  INSTALL(CODE "INCLUDE(libsiedler2/cmake_install.cmake)")
  INSTALL(CODE "INCLUDE(s-c/cmake_install.cmake)")
@@ -98,12 +103,27 @@ index b35105e..38469b9 100644
  
  //	set driver directory (normal $(libdir)/driver)
  //#define DRIVERDIR LIBDIR"/driver"
+diff --git a/cmake/linux.cmake b/cmake/linux.cmake
+index a025e39..9ab448c 100644
+--- a/cmake/linux.cmake
++++ b/cmake/linux.cmake
+@@ -10,8 +10,8 @@ if(CCACHE_FOUND)
+ endif(CCACHE_FOUND)
+ 
+ # set compiler flags
+-FORCE_ADD_FLAGS(CMAKE_C_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
+-FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
++#FORCE_ADD_FLAGS(CMAKE_C_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
++#FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
+ 
+ IF(${PLATFORM_ARCH} STREQUAL "i386")
+     FORCE_ADD_FLAGS(CMAKE_C_FLAGS -malign-double)
 diff --git a/driver/audio/SDL/src/CMakeLists.txt b/driver/audio/SDL/src/CMakeLists.txt
-index 213794e..5ad3f02 100644
+index c18f8ba..94542ed 100644
 --- a/driver/audio/SDL/src/CMakeLists.txt
 +++ b/driver/audio/SDL/src/CMakeLists.txt
-@@ -34,9 +34,9 @@ IF (SDL_FOUND)
-         ADD_CUSTOM_COMMAND(TARGET audioSDL POST_BUILD COMMAND ln -fvs SDL/src/${SL_PREFIX}audioSDL${CMAKE_SHARED_LIBRARY_SUFFIX} ../../audioSDL${CMAKE_SHARED_LIBRARY_SUFFIX})
+@@ -48,9 +48,9 @@ IF (SDL_FOUND)
+         ENDIF()
  
          INSTALL(TARGETS audioSDL 
 -            RUNTIME DESTINATION ${LIBDIR}/driver/audio 
@@ -116,11 +136,10 @@ index 213794e..5ad3f02 100644
      ELSE (SDLMIXER_FOUND)
          MESSAGE(WARNING ": SDL_mixer library not found: Not building SDL audiodriver")
 diff --git a/driver/video/CMakeLists.txt b/driver/video/CMakeLists.txt
-index 35328d2..dd20be8 100644
+index bcc8e10..d8e7119 100644
 --- a/driver/video/CMakeLists.txt
 +++ b/driver/video/CMakeLists.txt
-@@ -3,7 +3,11 @@
- #################################################################################
+@@ -1,6 +1,10 @@
  
  ADD_SUBDIRECTORY( WinAPI )
 -ADD_SUBDIRECTORY( GLFW )
@@ -134,32 +153,22 @@ index 35328d2..dd20be8 100644
  
  #################################################################################
 diff --git a/driver/video/GLFW/src/CMakeLists.txt b/driver/video/GLFW/src/CMakeLists.txt
-index fee5c2c..37a635f 100644
+index 07fb6f1..81dc236 100644
 --- a/driver/video/GLFW/src/CMakeLists.txt
 +++ b/driver/video/GLFW/src/CMakeLists.txt
-@@ -2,7 +2,7 @@
- ### $Id: CMakeLists.txt 6458 2010-05-31 11:38:51Z FloSoft $
- #################################################################################
+@@ -1,5 +1,5 @@
  
--IF ("${COMPILEFOR}/${COMPILEARCH}" STREQUAL "linux/i386" )
+-IF (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND ${PLATFORM_ARCH} STREQUAL "i386")
 +IF ("${COMPILEFOR}" STREQUAL "linux")
  	FIND_LIBRARY(GLFW_LIBRARY glfw) 
  	
  	IF (GLFW_LIBRARY)
-@@ -21,6 +21,6 @@ IF ("${COMPILEFOR}/${COMPILEARCH}" STREQUAL "linux/i386" )
- 	ELSE (GLFW_LIBRARY)
- 		MESSAGE(WARNING ": GLFW library not found: Not building GLFW videodriver")
- 	ENDIF (GLFW_LIBRARY)
--ENDIF ("${COMPILEFOR}/${COMPILEARCH}" STREQUAL "linux/i386" )
-+ENDIF ("${COMPILEFOR}" STREQUAL "linux")
- 
- #################################################################################
 diff --git a/driver/video/SDL/src/CMakeLists.txt b/driver/video/SDL/src/CMakeLists.txt
-index f0bdeb6..83d10cf 100644
+index 1c30050..7605f1f 100644
 --- a/driver/video/SDL/src/CMakeLists.txt
 +++ b/driver/video/SDL/src/CMakeLists.txt
-@@ -30,9 +30,9 @@ IF (SDL_FOUND)
- 	ADD_CUSTOM_COMMAND(TARGET videoSDL POST_BUILD COMMAND ln -fvs SDL/src/${SL_PREFIX}videoSDL${CMAKE_SHARED_LIBRARY_SUFFIX} ../../videoSDL${CMAKE_SHARED_LIBRARY_SUFFIX})
+@@ -39,9 +39,9 @@ IF (SDL_FOUND)
+ 	ENDIF()
  	
  	INSTALL(TARGETS videoSDL 
 -		RUNTIME DESTINATION ${LIBDIR}/driver/video 
@@ -171,3 +180,6 @@ index f0bdeb6..83d10cf 100644
  	)
  ELSE (SDL_FOUND)
  	MESSAGE(WARNING ": SDL library not found: Not building SDL videodriver")
+-- 
+2.5.3
+

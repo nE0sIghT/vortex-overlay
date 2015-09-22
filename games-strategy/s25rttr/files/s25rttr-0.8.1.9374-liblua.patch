@@ -1,1 +1,42 @@
-./s25rttr-9999-liblua.patch
+commit 0c8a724e86ab1cc881192f7a232a7146f3e22fc9
+Author: nE0sIghT <ykonotopov@gmail.com>
+Date:   Mon Mar 9 15:45:11 2015 +0300
+
+    Use system liblua and link dynamically against it.
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 632cfe3..1c0f0e9 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -462,18 +462,14 @@ IF ( "${COMPILEFOR}" STREQUAL "windows")
+ ENDIF ( "${COMPILEFOR}" STREQUAL "windows")
+ 
+ IF ( "${COMPILEFOR}" STREQUAL "linux")
+-	IF ( "${COMPILEARCH}" STREQUAL "i386" )
+-		SET(LUA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../contrib/lua/lin32")
+-	ELSE ( "${COMPILEARCH}" STREQUAL "i386" )
+-		SET(LUA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../contrib/lua/lin64")
+-	ENDIF ( "${COMPILEARCH}" STREQUAL "i386" )
++	SET(LUA_DIR "/usr")
+ ENDIF ( "${COMPILEFOR}" STREQUAL "linux")
+ 
+ IF ( "${COMPILEFOR}" STREQUAL "apple")
+ 	SET(LUA_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../contrib/lua/mac")
+ ENDIF ( "${COMPILEFOR}" STREQUAL "apple")
+ 
+-SET(LUA_LIB "${LUA_DIR}/liblua${LUA_VERSION}.a")
++SET(LUA_LIB "${LUA_DIR}/lib/liblua${LUA_VERSION}.so")
+ 
+ MESSAGE(STATUS "Checking LUA library at ${LUA_LIB}")
+ IF ( NOT EXISTS "${LUA_LIB}" )
+@@ -490,8 +486,8 @@ ENDIF ( NOT EXISTS "${LUA_LIB}" )
+ 
+ MESSAGE(STATUS "Using LUA library from ${LUA_LIB}")
+ 
+-ADD_FLAGS(CMAKE_C_FLAGS -I${LUA_DIR}/include)
+-ADD_FLAGS(CMAKE_CXX_FLAGS -I${LUA_DIR}/include)
++ADD_FLAGS(CMAKE_C_FLAGS -I${LUA_DIR}/include/lua${LUA_VERSION})
++ADD_FLAGS(CMAKE_CXX_FLAGS -I${LUA_DIR}/include/lua${LUA_VERSION})
+ 
+ ################################################################################
+ 

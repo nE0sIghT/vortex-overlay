@@ -26,14 +26,22 @@ RDEPEND="app-arch/bzip2
 	virtual/opengl
 	glfw? ( <media-libs/glfw-3 )"
 DEPEND="${RDEPEND}
+	>=dev-libs/boost-1.58.0:0=
 	sys-devel/gettext"
 
 PATCHES=(
         "${FILESDIR}"/${P}-cmake.patch
         "${FILESDIR}"/${P}-soundconverter.patch
         "${FILESDIR}"/${P}-liblua.patch
-        "${FILESDIR}"/${P}-sdl.patch
+        "${FILESDIR}"/${P}-boost.patch
 )
+
+src_prepare() {
+	# Ensure no bundled libraries are used
+#	rm -r contrib/ || die
+
+	cmake-utils_src_prepare
+}
 
 src_configure() {
 	local arch
