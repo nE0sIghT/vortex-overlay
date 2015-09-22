@@ -1,0 +1,33 @@
+From 00ee7c465e353ca4a2a6e0b2f7b7e83aeceac4ba Mon Sep 17 00:00:00 2001
+From: Kai Willadsen <kai.willadsen@gmail.com>
+Date: Sun, 23 Aug 2015 09:51:15 +1000
+Subject: meldapp: Monkey-patch optparse's gettext alias for ugettext compat
+
+Meld uses and assumes ugettext for our translations, and this doesn't
+interact well with optparse's use of gettext, when it tries to mash
+together its bytestring translations with our unicode translations.
+
+While this is an ugly hack, the only other simple option is not using
+optparse, which is a longer-term goal but much too invasive for a
+quick fix.
+
+diff --git a/meld/meldapp.py b/meld/meldapp.py
+index 153783a..8fd11c9 100644
+--- a/meld/meldapp.py
++++ b/meld/meldapp.py
+@@ -34,6 +34,12 @@ from meld.conf import _
+ 
+ log = logging.getLogger(__name__)
+ 
++# Monkeypatching optparse like this is obviously awful, but this is to
++# handle Unicode translated strings within optparse itself that will
++# otherwise crash badly. This just makes optparse use our ugettext
++# import of _, rather than the non-unicode gettext.
++optparse._ = _
++
+ 
+ class MeldApp(Gtk.Application):
+ 
+-- 
+cgit v0.10.2
+

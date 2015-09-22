@@ -33,6 +33,10 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext
 "
 
+PATCHES=(
+	"${FILESDIR}"/${P}-optparse.patch
+)
+
 python_compile_all() {
 	mydistutilsargs=( --no-update-icon-cache --no-compile-schemas )
 }
