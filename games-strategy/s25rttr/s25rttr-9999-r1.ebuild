@@ -38,7 +38,10 @@ PATCHES=(
 
 src_prepare() {
 	# Ensure no bundled libraries are used
-#	rm -r contrib/ || die
+	rm -r contrib/ || die
+	# Prevent installation of git stuff
+	rm -r RTTR/languages/.git/ || die
+	rm RTTR/languages/.gitignore || die
 
 	cmake-utils_src_prepare
 }
