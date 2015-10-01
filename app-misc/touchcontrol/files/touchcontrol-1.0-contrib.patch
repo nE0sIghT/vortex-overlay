@@ -1,0 +1,972 @@
+diff -ur TouchControl-for-Android-1.0/main.cpp TouchControl-for-Android-1.0-r1/main.cpp
+--- TouchControl-for-Android-1.0/main.cpp	2014-07-06 13:38:40.000000000 +0400
++++ TouchControl-for-Android-1.0-r1/main.cpp	2015-10-01 14:01:16.125480892 +0300
+@@ -8,27 +8,9 @@
+ {
+     QApplication a(argc, argv);
+     qApp->setWindowIcon(QIcon(":/img/phone.png"));
+-    //Check for Files
+-    if ( !boost::filesystem::exists( "tools/droidAtScreen.jar" ) || !boost::filesystem::exists( "tools/adb" ) )
+-	{
+-        //create folder
+-        boost::filesystem::path dir("tools");
+-        boost::filesystem::create_directory(dir);
+-
+-        //write missing files
+-        QFile::copy(":/tools/droidAtScreen.jar", "tools/droidAtScreen.jar");
+-        QFile::copy(":/tools/adb", "tools/adb");
+-
+-        //start
+-        touchcontrol w;
+-        w.show();
+-        return a.exec();
+-	}
+-    else
+-    {
++ 
+         //all right -> start
+         touchcontrol w;
+         w.show();
+         exit(a.exec());
+-    }
+ }
+diff -ur TouchControl-for-Android-1.0/specialcharacter.cpp TouchControl-for-Android-1.0-r1/specialcharacter.cpp
+--- TouchControl-for-Android-1.0/specialcharacter.cpp	2014-07-06 13:38:40.000000000 +0400
++++ TouchControl-for-Android-1.0-r1/specialcharacter.cpp	2015-10-01 14:03:20.522234346 +0300
+@@ -46,140 +46,140 @@
+ 
+ void SpecialCharacter::push_1() {
+     string command;
+-    command = "./tools/adb shell input text '#'&";
++    command = "adb shell input text '#'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_oe() {
+     string command;
+-    command = "./tools/adb shell input text 'ö'&";
++    command = "adb shell input text 'ö'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_ue() {
+     string command;
+-    command = "./tools/adb shell input text 'ü'&";
++    command = "adb shell input text 'ü'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_equal() {
+     string command;
+-    command = "./tools/adb shell input text '='&";
++    command = "adb shell input text '='&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_star() {
+     string command;
+-    command = "./tools/adb shell input text '*'&";
++    command = "adb shell input text '*'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_2() {
+     string command;
+-    command = "./tools/adb shell input text '('&";
++    command = "adb shell input text '('&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_3() {
+     string command;
+-    command = "./tools/adb shell input text ')'&";
++    command = "adb shell input text ')'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_4() {
+     string command;
+-    command = "./tools/adb shell input text '\"'&";
++    command = "adb shell input text '\"'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_5() {
+     string command;
+-    command = "./tools/adb shell input text '\''&";
++    command = "adb shell input text '\''&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_6() {
+     string command;
+-    command = "./tools/adb shell input text ';'&";
++    command = "adb shell input text ';'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_7() {
+     string command;
+-    command = "./tools/adb shell input text '!'&";
++    command = "adb shell input text '!'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_8() {
+     string command;
+-    command = "./tools/adb shell input text '?' &";
++    command = "adb shell input text '?' &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_9() {
+     string command;
+-    command = "./tools/adb shell input text '~'&";
++    command = "adb shell input text '~'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_10() {
+     string command;
+-    command = "./tools/adb shell input text '_'&";
++    command = "adb shell input text '_'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_AE() {
+     string command;
+-    command = "./tools/adb shell input text 'Ä'&";
++    command = "adb shell input text 'Ä'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_ae() {
+     string command;
+-    command = "./tools/adb shell input text 'ä'&";
++    command = "adb shell input text 'ä'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_at() {
+     string command;
+-    command = "./tools/adb shell input text '@'&";
++    command = "adb shell input text '@'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_bslash() {
+     string command;
+-    command = "./tools/adb shell input text '\\'&";
++    command = "adb shell input text '\\'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_dollar() {
+     string command;
+-    command = "./tools/adb shell input text '$'&";
++    command = "adb shell input text '$'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_dpoint() {
+     string command;
+-    command = "./tools/adb shell input text ':'&";
++    command = "adb shell input text ':'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -187,42 +187,42 @@
+ 
+ void SpecialCharacter::push_euro() {
+     string command;
+-    command = "./tools/adb shell input text '€'&";
++    command = "adb shell input text '€'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_minus() {
+     string command;
+-    command = "./tools/adb shell input text '-'&";
++    command = "adb shell input text '-'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_OE() {
+     string command;
+-    command = "./tools/adb shell input text 'Ö'&";
++    command = "adb shell input text 'Ö'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_plus() {
+     string command;
+-    command = "./tools/adb shell input text '+'&";
++    command = "adb shell input text '+'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_procnet() {
+     string command;
+-    command = "./tools/adb shell input text '%'&";
++    command = "adb shell input text '%'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void SpecialCharacter::push_UE() {
+     string command;
+-    command = "./tools/adb shell input text 'Ü'&";
++    command = "adb shell input text 'Ü'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+diff -ur TouchControl-for-Android-1.0/touchcontrol.cpp TouchControl-for-Android-1.0-r1/touchcontrol.cpp
+--- TouchControl-for-Android-1.0/touchcontrol.cpp	2014-07-06 13:38:40.000000000 +0400
++++ TouchControl-for-Android-1.0-r1/touchcontrol.cpp	2015-10-01 14:03:05.043053107 +0300
+@@ -9,11 +9,6 @@
+     setupUi(this);
+ 	//check
+ 	lock = false;
+-	//start droidAtScreen
+-	string startdroid;
+-	startdroid = "java -jar ./tools/droidAtScreen.jar &";
+-    const char * c = startdroid.c_str();
+-    system(c);
+ 
+     //set icons
+     button_a_h->setIcon(QIcon(":/img/home.png"));
+@@ -95,14 +90,14 @@
+   if(lock == false)
+   {
+       string command;
+-      command = "./tools/adb shell input text 'w'&";
++      command = "adb shell input text 'w'&";
+       const char * cs = command.c_str();
+       system(cs);
+   }
+   else
+   {
+       string command;
+-      command = "./tools/adb shell input text 'W'&";
++      command = "adb shell input text 'W'&";
+       const char * cs = command.c_str();
+       system(cs);
+   }
+@@ -112,14 +107,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'e'&";
++        command = "adb shell input text 'e'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'E'&";
++        command = "adb shell input text 'E'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -129,14 +124,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'r'&";
++        command = "adb shell input text 'r'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'R'&";
++        command = "adb shell input text 'R'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -146,14 +141,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 't'&";
++        command = "adb shell input text 't'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'T'&";
++        command = "adb shell input text 'T'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -163,14 +158,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'z'&";
++        command = "adb shell input text 'z'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'Z'&";
++        command = "adb shell input text 'Z'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -180,14 +175,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'u'&";
++        command = "adb shell input text 'u'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'U'&";
++        command = "adb shell input text 'U'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -197,14 +192,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'i'&";
++        command = "adb shell input text 'i'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'I'&";
++        command = "adb shell input text 'I'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -214,14 +209,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'o'&";
++        command = "adb shell input text 'o'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'O'&";
++        command = "adb shell input text 'O'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -231,14 +226,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'p'&";
++        command = "adb shell input text 'p'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'P'&";
++        command = "adb shell input text 'P'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -248,14 +243,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'a'&";
++        command = "adb shell input text 'a'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'A'&";
++        command = "adb shell input text 'A'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -265,14 +260,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 's'&";
++        command = "adb shell input text 's'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'S'&";
++        command = "adb shell input text 'S'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -282,14 +277,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'd'&";
++        command = "adb shell input text 'd'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'D'&";
++        command = "adb shell input text 'D'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -299,14 +294,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'f'&";
++        command = "adb shell input text 'f'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'F'&";
++        command = "adb shell input text 'F'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -316,14 +311,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'g'&";
++        command = "adb shell input text 'g'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'G'&";
++        command = "adb shell input text 'G'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -333,14 +328,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'h'&";
++        command = "adb shell input text 'h'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'H'&";
++        command = "adb shell input text 'H'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -350,14 +345,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'j'&";
++        command = "adb shell input text 'j'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'J'&";
++        command = "adb shell input text 'J'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -367,14 +362,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'k'&";
++        command = "adb shell input text 'k'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'K'&";
++        command = "adb shell input text 'K'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -384,14 +379,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'l'&";
++        command = "adb shell input text 'l'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'L'&";
++        command = "adb shell input text 'L'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -401,14 +396,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'y'&";
++        command = "adb shell input text 'y'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'Y'&";
++        command = "adb shell input text 'Y'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -418,14 +413,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'x'&";
++        command = "adb shell input text 'x'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'X'&";
++        command = "adb shell input text 'X'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -435,14 +430,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'c'&";
++        command = "adb shell input text 'c'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'C'&";
++        command = "adb shell input text 'C'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -452,14 +447,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'v'&";
++        command = "adb shell input text 'v'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'V'&";
++        command = "adb shell input text 'V'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -469,14 +464,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'b'&";
++        command = "adb shell input text 'b'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'B'&";
++        command = "adb shell input text 'B'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -486,14 +481,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'n'&";
++        command = "adb shell input text 'n'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'N'&";
++        command = "adb shell input text 'N'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -503,14 +498,14 @@
+     if(lock == false)
+     {
+         string command;
+-        command = "./tools/adb shell input text 'm'&";
++        command = "adb shell input text 'm'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+     else
+     {
+         string command;
+-        command = "./tools/adb shell input text 'M'&";
++        command = "adb shell input text 'M'&";
+         const char * cs = command.c_str();
+         system(cs);
+     }
+@@ -518,21 +513,21 @@
+ 
+ void touchcontrol::push_comma() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_COMMA &";
++    command = "adb shell input keyevent KEYCODE_COMMA &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_dot() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_PERIOD &";
++    command = "adb shell input keyevent KEYCODE_PERIOD &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_slash() {
+     string command;
+-    command = "./tools/adb shell input text '/'&";
++    command = "adb shell input text '/'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -540,7 +535,7 @@
+ 
+ void touchcontrol::push_enter() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_ENTER &";
++    command = "adb shell input keyevent KEYCODE_ENTER &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -548,7 +543,7 @@
+ 
+ void touchcontrol::push_back() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DEL &";
++    command = "adb shell input keyevent KEYCODE_DEL &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -556,7 +551,7 @@
+ 
+ void touchcontrol::push_space() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_SPACE &";
++    command = "adb shell input keyevent KEYCODE_SPACE &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -564,42 +559,42 @@
+ 
+ void touchcontrol::push_up() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DPAD_UP &";
++    command = "adb shell input keyevent KEYCODE_DPAD_UP &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_left() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DPAD_LEFT &";
++    command = "adb shell input keyevent KEYCODE_DPAD_LEFT &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_right() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DPAD_RIGHT &";
++    command = "adb shell input keyevent KEYCODE_DPAD_RIGHT &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_down() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DPAD_DOWN &";
++    command = "adb shell input keyevent KEYCODE_DPAD_DOWN &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_center() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DPAD_CENTER &";
++    command = "adb shell input keyevent KEYCODE_DPAD_CENTER &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_path() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_DPAD_CENTER &";
++    command = "adb shell input keyevent KEYCODE_DPAD_CENTER &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -607,7 +602,7 @@
+ 
+ void touchcontrol::push_a_o() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_APP_SWITCH &";
++    command = "adb shell input keyevent KEYCODE_APP_SWITCH &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -615,7 +610,7 @@
+ 
+ void touchcontrol::push_a_h() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_HOME &";
++    command = "adb shell input keyevent KEYCODE_HOME &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -624,7 +619,7 @@
+ 
+ void touchcontrol::push_a_b() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_BACK &";
++    command = "adb shell input keyevent KEYCODE_BACK &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -632,21 +627,21 @@
+ 
+ void touchcontrol::push_1() {
+     string command;
+-    command = "./tools/adb shell input text '1'&";
++    command = "adb shell input text '1'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_2() {
+     string command;
+-    command = "./tools/adb shell input text '2'&";
++    command = "adb shell input text '2'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_3() {
+     string command;
+-    command = "./tools/adb shell input text '3'&";
++    command = "adb shell input text '3'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -654,7 +649,7 @@
+ 
+ void touchcontrol::push_4() {
+     string command;
+-    command = "./tools/adb shell input text '4'&";
++    command = "adb shell input text '4'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -662,7 +657,7 @@
+ 
+ void touchcontrol::push_5() {
+     string command;
+-    command = "./tools/adb shell input text '5'&";
++    command = "adb shell input text '5'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -670,7 +665,7 @@
+ 
+ void touchcontrol::push_6() {
+     string command;
+-    command = "./tools/adb shell input text '6'&";
++    command = "adb shell input text '6'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -678,35 +673,35 @@
+ 
+ void touchcontrol::push_7() {
+     string command;
+-    command = "./tools/adb shell input text '7'&";
++    command = "adb shell input text '7'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_8() {
+     string command;
+-    command = "./tools/adb shell input text '8'&";
++    command = "adb shell input text '8'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_9() {
+     string command;
+-    command = "./tools/adb shell input text '9'&";
++    command = "adb shell input text '9'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_0() {
+     string command;
+-    command = "./tools/adb shell input text '0'&";
++    command = "adb shell input text '0'&";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+ 
+ void touchcontrol::push_power() {
+     string command;
+-    command = "./tools/adb shell input keyevent KEYCODE_POWER &";
++    command = "adb shell input keyevent KEYCODE_POWER &";
+     const char * cs = command.c_str();
+     system(cs);
+ }
+@@ -777,7 +772,7 @@
+   text = plainTextEdit->toPlainText();
+ 
+   string command;
+-  command = "./tools/adb shell input text '" + text.toStdString() + "'&";
++  command = "adb shell input text '" + text.toStdString() + "'&";
+   const char * cs = command.c_str();
+   system(cs);
+ }
+@@ -820,37 +815,37 @@
+     if(i.toStdString() == "1440x2560")
+     {
+         string command;
+-        command = "./tools/adb shell input swipe 562 1800 1440 1800";
++        command = "adb shell input swipe 562 1800 1440 1800";
+         const char * cs = command.c_str();
+         system(cs);
+     } else if (i.toStdString() == "1080x1920") {
+         string command2;
+-        command2 = "./tools/adb shell input swipe 722 1390 1340 1390";
++        command2 = "adb shell input swipe 722 1390 1340 1390";
+         const char * cs2 = command2.c_str();
+         system(cs2);
+     } else if (i.toStdString() == "768x1280") {
+         string command3;
+-        command3 = "./tools/adb shell input swipe 300 900 720 900";
++        command3 = "adb shell input swipe 300 900 720 900";
+         const char * cs3 = command3.c_str();
+         system(cs3);
+     } else if (i.toStdString() == "720x1280") {
+         string command4;
+-        command4 = "./tools/adb shell input swipe 359 907 660 907";
++        command4 = "adb shell input swipe 359 907 660 907";
+         const char * cs4 = command4.c_str();
+         system(cs4);
+     } else if (i.toStdString() == "540x960") {
+         string command5;
+-        command5 = "./tools/adb shell input swipe 270 680 509 676";
++        command5 = "adb shell input swipe 270 680 509 676";
+         const char * cs5 = command5.c_str();
+         system(cs5);
+     } else if (i.toStdString() == "480x800") {
+         string command6;
+-        command6 = "./tools/adb shell input swipe 240 570 560 570";
++        command6 = "adb shell input swipe 240 570 560 570";
+         const char * cs6 = command6.c_str();
+         system(cs6);
+     } else if (i.toStdString() == "240x320") {
+         string command7;
+-        command7 = "./tools/adb shell input swipe 120 230 213 230";
++        command7 = "adb shell input swipe 120 230 213 230";
+         const char * cs7 = command7.c_str();
+         system(cs7);
+     }
+diff -ur TouchControl-for-Android-1.0/touchcontrol.qrc TouchControl-for-Android-1.0-r1/touchcontrol.qrc
+--- TouchControl-for-Android-1.0/touchcontrol.qrc	2014-07-06 13:38:40.000000000 +0400
++++ TouchControl-for-Android-1.0-r1/touchcontrol.qrc	2015-10-01 14:01:16.125480892 +0300
+@@ -3,8 +3,6 @@
+         <file>img/back.png</file>
+         <file>img/apps.png</file>
+         <file>img/home.png</file>
+-        <file>tools/droidAtScreen.jar</file>
+-        <file>tools/adb</file>
+         <file>img/phone.png</file>
+     </qresource>
+ </RCC>
