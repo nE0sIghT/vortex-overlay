@@ -4,11 +4,11 @@
 
 EAPI=5
 
-inherit java-pkg-2
+inherit java-pkg-2 java-pkg-simple
 
 DESCRIPTION="APIs for talking with Dalvik VM"
 HOMEPAGE="http://tools.android.com/"
-SRC_URI="http://central.maven.org/maven2/com/google/android/tools/${PN}/r${PV}/${PN}-r${PV}.jar"
+SRC_URI="https://android.googlesource.com/platform/sdk/+archive/tools_r${PV}/ddms/libs/${PN}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -21,9 +21,4 @@ RDEPEND="${DEPEND}
 "
 
 S="${WORKDIR}"
-
-src_unpack() { :; }
-
-src_install() {
-	java-pkg_newjar "${DISTDIR}/${PN}-r${PV}.jar"
-}
+JAVA_SRC_DIR="src"
