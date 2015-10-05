@@ -3,8 +3,9 @@
 # $Id$
 
 EAPI=5
+MY_NAME="Droid@Screen"
 
-inherit git-r3 java-pkg-2 java-pkg-simple
+inherit eutils git-r3 java-pkg-2 java-pkg-simple
 
 DESCRIPTION="Java program that show the device screen of an Android phone at a computer"
 HOMEPAGE="http://droid-at-screen.org"
@@ -38,15 +39,27 @@ JAVA_GENTOO_CLASSPATH="ddmlib,log4j"
 java_prepare() {
 	# Easier to use java-pkg-simple.
 	rm -v pom.xml || die
+
+	# Filter properties
+	sed \
+		-e "s/\${project.name}/${MY_NAME}/g" \
+		-e "s/\${project.version}/${PV}/g" \
+		-i src/main/resources/app.properties || die
 }
 
 src_compile() {
-	mkdir -p target/classes/META-INF || die
-	# Ugly. Rewrite
-	echo Class-Path: /usr/share/log4j/lib/log4j.jar /usr/share/ddmlib/lib/ddmlib.jar > target/classes/META-INF/MANIFEST.MF
-	cat src/main/etc/META-INF/MANIFEST.MF >> target/classes/META-INF/MANIFEST.MF || die
-
-	cp -r src/main/resources/* target/classes/ || die
-
 	java-pkg-simple_src_compile
+}
+
+src_install() {
+	insinto /etc/"${PN}"
+	doins src/main/resources/*.properties
+	rm src/main/resources/*.properties || die
+
+	insinto /usr/share/"${PN}"
+	doins -r target/classes/
+	doins -r src/main/resources/
+
+	dobin "${FILESDIR}"/${PN}
+	make_desktop_entry "${PN}" "${MY_NAME}"
 }
