@@ -1,7 +1,7 @@
 #!/bin/bash
 
-APP_PATH=/usr/share/droid-at-screen
-CONFIG_PATH=/etc/droid-at-screen
+APP_PATH=/usr/share/droid-at-screen-ng
+CONFIG_PATH=/etc/droid-at-screen-ng
 MAIN_CLASS=com.ribomation.droidAtScreen.DroidAtScreenApplication
 
 classpath=$(java-config --classpath=log4j,ddmlib)

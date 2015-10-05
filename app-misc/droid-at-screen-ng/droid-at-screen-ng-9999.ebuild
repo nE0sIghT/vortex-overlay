@@ -8,9 +8,9 @@ MY_NAME="Droid@Screen"
 inherit eutils git-r3 java-pkg-2 java-pkg-simple
 
 DESCRIPTION="Java program that show the device screen of an Android phone at a computer"
-HOMEPAGE="http://droid-at-screen.org"
+HOMEPAGE="https://github.com/nE0sIghT/DroidAtScreen-NG"
 #SRC_URI="ftp://foo.example.org/${P}.tar.gz"
-EGIT_REPO_URI="https://github.com/ribomation/DroidAtScreen1.git"
+EGIT_REPO_URI="https://github.com/nE0sIghT/DroidAtScreen-NG.git"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -24,11 +24,11 @@ COMMON_DEPEND="
 
 RDEPEND="${COMMON_DEPEND}
 
-	>=virtual/jre-1.6
+	>=virtual/jre-1.7
 "
 DEPEND="${COMMON_DEPEND}
 
-	>=virtual/jdk-1.6
+	>=virtual/jdk-1.7
 "
 
 S="${WORKDIR}/${P}"
@@ -45,6 +45,10 @@ java_prepare() {
 		-e "s/\${project.name}/${MY_NAME}/g" \
 		-e "s/\${project.version}/${PV}/g" \
 		-i src/main/resources/app.properties || die
+
+	sed \
+		-e "s/rootLogger=DEBUG/rootLogger=WARN/g" \
+		-i src/main/resources/log4j.properties
 }
 
 src_compile() {
