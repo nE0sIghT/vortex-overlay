@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-plugins/audacious-plugins/audacious-plugins-3.6.2.ebuild,v 1.1 2015/08/04 23:32:58 chainsaw Exp $
+# $Id$
 
 EAPI=5
 inherit eutils
@@ -14,7 +14,7 @@ SRC_URI="!gtk3? ( http://distfiles.audacious-media-player.org/${MY_P}.tar.bz2 )
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~hppa ~ppc64 ~x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux"
+KEYWORDS="alpha amd64 ~arm ~hppa ppc ppc64 x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux"
 IUSE="aac adplug alsa bs2b cdda cue ffmpeg flac fluidsynth gnome http gtk3 jack
 lame libnotify libsamplerate lirc mms mp3 nls pulseaudio qt5 scrobbler sdl sid sndfile vorbis wavpack"
 REQUIRED_USE="|| ( alsa flac lame jack pulseaudio qt5 sdl )"
@@ -102,8 +102,8 @@ src_configure() {
 	econf \
 		${ffmpeg} \
 		--enable-modplug \
-		--disable-soxr \
 		--enable-statusicon \
+		--disable-soxr \
 		$(use_enable adplug) \
 		$(use_enable aac) \
 		$(use_enable alsa) \
