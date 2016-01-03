@@ -4,19 +4,17 @@
 
 EAPI=5
 PLOCALES="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
+MY_PV="${PV/_/-}"
 
-inherit cmake-utils git-r3 l10n multilib toolchain-funcs wxwidgets
+inherit cmake-utils l10n multilib toolchain-funcs wxwidgets
 
 DESCRIPTION="A PlayStation 2 emulator"
 HOMEPAGE="http://www.pcsx2.net"
-EGIT_REPO_URI=(
-	"https://github.com/PCSX2/pcsx2.git"
-	"git://github.com/PCSX2/pcsx2.git"
-)
+SRC_URI="https://github.com/PCSX2/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="-* ~amd64 ~x86"
 IUSE=""
 
 RDEPEND="
@@ -43,6 +41,8 @@ DEPEND="${RDEPEND}
 	dev-cpp/pngpp
 	>=dev-cpp/sparsehash-1.5
 "
+
+S="${WORKDIR}/${PN}-${MY_PV}"
 
 clean_locale() {
 	rm -R "${S}"/locales/"${1}" || die
