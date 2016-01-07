@@ -30,3 +30,11 @@ src_configure() {
 	local mycmakeargs=( -DBUILD_EXTENSION=OFF )
 	cmake-utils_src_configure
 }
+
+pkg_postinst() {
+	echo
+	elog "You must install Gnome-shell integration extension from"
+	elog "Google Chrome store https://chrome.google.com/webstore/detail/gnome-shell-integration-f/gphhapmejobijbbhgpjhcjognlahblep"
+	elog "to work with Gnome-shell extensions repository at https://extensions.gnome.org"
+	echo
+}
