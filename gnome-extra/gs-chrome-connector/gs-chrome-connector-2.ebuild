@@ -23,6 +23,8 @@ RDEPEND="
 DEPEND="${RDEPEND}
 "
 
+S="${WORKDIR}/chrome-gnome-shell-${PV}"
+
 src_configure() {
 	local mycmakeargs=( -DBUILD_EXTENSION=OFF )
 	cmake-utils_src_configure
