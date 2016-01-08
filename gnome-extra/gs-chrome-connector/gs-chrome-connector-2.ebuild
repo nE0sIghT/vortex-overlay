@@ -5,18 +5,15 @@
 EAPI=5
 PYTHON_COMPAT=( python2_7 )
 
-inherit cmake-utils git-r3 python-single-r1
+inherit cmake-utils python-single-r1
 
 DESCRIPTION="Native Google Chrome browser connector that provides integration with gnome-shell"
 HOMEPAGE="https://github.com/nE0sIghT/chrome-gnome-shell"
-EGIT_REPO_URI=(
-	"https://github.com/nE0sIghT/chrome-gnome-shell.git"
-	"git://github.com/nE0sIghT/chrome-gnome-shell.git"
-)
+SRC_URI="https://github.com/nE0sIghT/chrome-gnome-shell/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~x86"
 IUSE=""
 
 RDEPEND="
