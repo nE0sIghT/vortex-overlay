@@ -1,7 +1,7 @@
-From fea284f4124780a5e393b1e487c005d5c6b28fd0 Mon Sep 17 00:00:00 2001
+From ae4ec80995263362e6ed99ffd88eb10991ab3ad6 Mon Sep 17 00:00:00 2001
 From: Julian Ospald <hasufell@gentoo.org>
-Date: Tue, 22 Sep 2015 10:46:19 +0300
-Subject: [PATCH 1/3] make build system gentoo-compatible provide options for
+Date: Sun, 31 Jan 2016 22:55:13 +0300
+Subject: [PATCH 1/2] make build system gentoo-compatible provide options for
  SDL and GLFW video drivers
 
 ---
@@ -15,10 +15,10 @@ Subject: [PATCH 1/3] make build system gentoo-compatible provide options for
  7 files changed, 25 insertions(+), 47 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index d79eedf..d50b826 100644
+index 503668f..e9031a1 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -106,6 +106,15 @@ ENDIF ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+@@ -144,6 +144,15 @@ ENDIF ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
  
  ################################################################################
  
@@ -31,10 +31,10 @@ index d79eedf..d50b826 100644
 +       ENDIF (NOT BUILD_SDL_DRIVER AND NOT BUILD_GLFW_DRIVER)
 +ENDIF (UNIX)
 +
- IF ("${PREFIX}" STREQUAL "")
+ IF ("${RTTR_PREFIX}" STREQUAL "")
      IF ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-         SET(PREFIX .)
-@@ -208,40 +217,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version.h.cmake"
+         SET(RTTR_PREFIX .)
+@@ -248,10 +257,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version.h.cmake"
  			   build_version.h)
  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version_defines.h.cmake"
  			   build_version_defines.h)
@@ -42,9 +42,13 @@ index d79eedf..d50b826 100644
 -			   preinstall.sh @ONLY)
 -CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build/postinstall.sh.cmake"
 -			   postinstall.sh @ONLY)
--
--################################################################################
--
+ 
+ ################################################################################
+ # Create symlinks
+@@ -283,36 +288,6 @@ ENDIF()
+ 
+ ################################################################################
+ 
 -ADD_SUBDIRECTORY(version)
 -
 -ADD_CUSTOM_TARGET(updateversion ALL
@@ -72,10 +76,13 @@ index d79eedf..d50b826 100644
 -	# preinstall script
 -	INSTALL(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/preinstall.cmake")
 -ENDIF()
- 
- ################################################################################
- 
-@@ -252,7 +227,6 @@ ADD_SUBDIRECTORY(libsiedler2)
+-
+-################################################################################
+-
+ ADD_SUBDIRECTORY(driver)
+ ADD_SUBDIRECTORY(libendian)
+ ADD_SUBDIRECTORY(mygettext)
+@@ -320,7 +295,6 @@ ADD_SUBDIRECTORY(libsiedler2)
  ADD_SUBDIRECTORY(libutil)
  ADD_SUBDIRECTORY(liblobby)
  ADD_SUBDIRECTORY(s-c)
@@ -83,7 +90,7 @@ index d79eedf..d50b826 100644
  ADD_SUBDIRECTORY(src)
  
  ################################################################################
-@@ -261,7 +235,6 @@ ADD_SUBDIRECTORY(src)
+@@ -329,7 +303,6 @@ ADD_SUBDIRECTORY(src)
  INSTALL(CODE "INCLUDE(driver/cmake_install.cmake)")
  INSTALL(CODE "INCLUDE(libsiedler2/cmake_install.cmake)")
  INSTALL(CODE "INCLUDE(s-c/cmake_install.cmake)")
@@ -92,17 +99,17 @@ index d79eedf..d50b826 100644
  
  # and then dont let him install anything
 diff --git a/build_paths.h.cmake b/build_paths.h.cmake
-index b35105e..38469b9 100644
+index 529bbcc..d348954 100644
 --- a/build_paths.h.cmake
 +++ b/build_paths.h.cmake
 @@ -41,6 +41,7 @@
  
  //	set game directory (normal $(datadir)/s25rttr/S2)
- //#define GAMEDIR DATADIR"/S2"
-+#cmakedefine GAMEDIR "${GAMEDIR}"
+ //#define RTTR_GAMEDIR RTTR_DATADIR"/S2"
++#cmakedefine RTTR_GAMEDIR "${RTTR_GAMEDIR}"
  
  //	set driver directory (normal $(libdir)/driver)
- //#define DRIVERDIR LIBDIR"/driver"
+ //#define RTTR_DRIVERDIR RTTR_LIBDIR"/driver"
 diff --git a/cmake/linux.cmake b/cmake/linux.cmake
 index a025e39..9ab448c 100644
 --- a/cmake/linux.cmake
@@ -119,19 +126,19 @@ index a025e39..9ab448c 100644
  IF(${PLATFORM_ARCH} STREQUAL "i386")
      FORCE_ADD_FLAGS(CMAKE_C_FLAGS -malign-double)
 diff --git a/driver/audio/SDL/src/CMakeLists.txt b/driver/audio/SDL/src/CMakeLists.txt
-index c18f8ba..94542ed 100644
+index 6487d99..d1429c2 100644
 --- a/driver/audio/SDL/src/CMakeLists.txt
 +++ b/driver/audio/SDL/src/CMakeLists.txt
-@@ -48,9 +48,9 @@ IF (SDL_FOUND)
+@@ -49,9 +49,9 @@ IF (SDL_FOUND)
          ENDIF()
  
          INSTALL(TARGETS audioSDL 
--            RUNTIME DESTINATION ${LIBDIR}/driver/audio 
--            LIBRARY DESTINATION ${LIBDIR}/driver/audio
--            ARCHIVE DESTINATION ${LIBDIR}/driver/audio
-+            RUNTIME DESTINATION ${LIBDIR}
-+            LIBRARY DESTINATION ${LIBDIR}
-+            ARCHIVE DESTINATION ${LIBDIR}
+-            RUNTIME DESTINATION ${RTTR_DRIVERDIR}/audio 
+-            LIBRARY DESTINATION ${RTTR_DRIVERDIR}/audio
+-            ARCHIVE DESTINATION ${RTTR_DRIVERDIR}/audio
++            RUNTIME DESTINATION ${RTTR_LIBDIR}
++            LIBRARY DESTINATION ${RTTR_LIBDIR}
++            ARCHIVE DESTINATION ${RTTR_LIBDIR}
          )
      ELSE (SDLMIXER_FOUND)
          MESSAGE(WARNING ": SDL_mixer library not found: Not building SDL audiodriver")
@@ -153,7 +160,7 @@ index bcc8e10..d8e7119 100644
  
  #################################################################################
 diff --git a/driver/video/GLFW/src/CMakeLists.txt b/driver/video/GLFW/src/CMakeLists.txt
-index 07fb6f1..81dc236 100644
+index 00435fb..45e4014 100644
 --- a/driver/video/GLFW/src/CMakeLists.txt
 +++ b/driver/video/GLFW/src/CMakeLists.txt
 @@ -1,5 +1,5 @@
@@ -164,22 +171,22 @@ index 07fb6f1..81dc236 100644
  	
  	IF (GLFW_LIBRARY)
 diff --git a/driver/video/SDL/src/CMakeLists.txt b/driver/video/SDL/src/CMakeLists.txt
-index 1c30050..7605f1f 100644
+index 8bd6983..bd0ab5d 100644
 --- a/driver/video/SDL/src/CMakeLists.txt
 +++ b/driver/video/SDL/src/CMakeLists.txt
-@@ -39,9 +39,9 @@ IF (SDL_FOUND)
+@@ -40,9 +40,9 @@ IF (SDL_FOUND)
  	ENDIF()
  	
  	INSTALL(TARGETS videoSDL 
--		RUNTIME DESTINATION ${LIBDIR}/driver/video 
--		LIBRARY DESTINATION ${LIBDIR}/driver/video
--		ARCHIVE DESTINATION ${LIBDIR}/driver/video
-+		RUNTIME DESTINATION ${LIBDIR}
-+		LIBRARY DESTINATION ${LIBDIR}
-+		ARCHIVE DESTINATION ${LIBDIR}
+-		RUNTIME DESTINATION ${RTTR_DRIVERDIR}/video 
+-		LIBRARY DESTINATION ${RTTR_DRIVERDIR}/video
+-		ARCHIVE DESTINATION ${RTTR_DRIVERDIR}/video
++		RUNTIME DESTINATION ${RTTR_LIBDIR}
++		LIBRARY DESTINATION ${RTTR_LIBDIR}
++		ARCHIVE DESTINATION ${RTTR_LIBDIR}
  	)
  ELSE (SDL_FOUND)
  	MESSAGE(WARNING ": SDL library not found: Not building SDL videodriver")
 -- 
-2.5.3
+2.4.10
 

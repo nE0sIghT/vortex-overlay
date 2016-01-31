@@ -31,9 +31,9 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
         "${FILESDIR}"/${P}-cmake.patch
-        "${FILESDIR}"/${P}-soundconverter.patch
+        "${FILESDIR}"/${P}-libutil.patch
         "${FILESDIR}"/${P}-liblua.patch
-        "${FILESDIR}"/${P}-boost.patch
+#        "${FILESDIR}"/${P}-boost.patch
 )
 
 src_prepare() {
@@ -60,12 +60,12 @@ src_configure() {
 		-DCOMPILEFOR="linux"
 		-DCOMPILEARCH="${arch}"
 		-DCMAKE_SKIP_RPATH=YES
-		-DPREFIX="${GAMES_PREFIX}"
-		-DBINDIR="${GAMES_BINDIR}"
-		-DDATADIR="${GAMES_DATADIR}"
-		-DLIBDIR="$(games_get_libdir)/${PN}"
-		-DDRIVERDIR="$(games_get_libdir)/${PN}"
-		-DGAMEDIR="~/.${PN}/S2"
+		-DRTTR_PREFIX="${GAMES_PREFIX}"
+		-DRTTR_BINDIR="${GAMES_BINDIR}"
+		-DRTTR_DATADIR="${GAMES_DATADIR}"
+		-DRTTR_LIBDIR="$(games_get_libdir)/${PN}"
+		-DRTTR_DRIVERDIR="$(games_get_libdir)/${PN}"
+		-DRTTR_GAMEDIR="~/.${PN}/S2"
 		$(cmake-utils_use_build glfw GLFW_DRIVER)
 	)
 

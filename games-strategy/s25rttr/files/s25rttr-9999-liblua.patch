@@ -1,17 +1,17 @@
-From 9fcc6a5968d4fd3ad2d3f9479c53a0a805df3798 Mon Sep 17 00:00:00 2001
+From 26b953cfc73de1bf6686bed5fd4d424d82e743a9 Mon Sep 17 00:00:00 2001
 From: nE0sIghT <ykonotopov@gmail.com>
 Date: Tue, 22 Sep 2015 10:05:22 +0300
-Subject: [PATCH 2/3] Use system liblua and link dynamically against it.
+Subject: [PATCH 2/2] Use system liblua and link dynamically against it.
 
 ---
  src/CMakeLists.txt | 8 +++-----
  1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 42d7cdc..8c3ad41 100644
+index edd3a94..a028df4 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -137,11 +137,9 @@ IF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+@@ -139,11 +139,9 @@ IF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
  ENDIF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
  
  IF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
@@ -27,5 +27,5 @@ index 42d7cdc..8c3ad41 100644
  
  ### XXX Add FindLua52
 -- 
-2.5.3
+2.4.10
 
