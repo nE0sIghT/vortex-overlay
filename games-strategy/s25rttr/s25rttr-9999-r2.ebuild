@@ -26,7 +26,7 @@ RDEPEND="app-arch/bzip2
 	virtual/opengl
 	glfw? ( <media-libs/glfw-3 )"
 DEPEND="${RDEPEND}
-	>=dev-libs/boost-1.58.0:0=
+	>=dev-libs/boost-1.56.0:0=
 	sys-devel/gettext"
 
 PATCHES=(
@@ -38,7 +38,13 @@ PATCHES=(
 
 src_prepare() {
 	# Ensure no bundled libraries are used
-	rm -r contrib/ || die
+	for file in $(ls ${S}/contrib/); do
+		# Preserve boost backports
+		if [ "${file}" != "backport" ]; then
+			rm -r contrib/"${file}" || die
+		fi
+	done
+
 	# Prevent installation of git stuff
 	rm -r RTTR/languages/.git/ || die
 	rm RTTR/languages/.gitignore || die
