@@ -1,0 +1,2 @@
+move dev-java/droid-at-screen app-misc/droid-at-screen-ng
+move gnome-extra/gs-chrome-connector gnome-extra/chrome-gnome-shell
