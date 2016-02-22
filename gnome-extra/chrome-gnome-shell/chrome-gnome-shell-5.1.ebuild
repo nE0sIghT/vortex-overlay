@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 PYTHON_COMPAT=( python2_7 )
 
 inherit cmake-utils python-single-r1
@@ -21,6 +21,10 @@ RDEPEND="
 	gnome-base/gnome-shell
 "
 DEPEND=""
+
+PATCHES=(
+	"${FILESDIR}"/${P}-depend.patch
+)
 
 src_configure() {
 	local mycmakeargs=( -DBUILD_EXTENSION=OFF )
