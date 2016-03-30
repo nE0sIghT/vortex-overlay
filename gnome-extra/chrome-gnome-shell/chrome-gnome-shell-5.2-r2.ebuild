@@ -22,6 +22,11 @@ RDEPEND="
 "
 DEPEND=""
 
+src_prepare() {
+	cmake-utils_src_prepare
+	python_fix_shebang ${S}/connector
+}
+
 src_configure() {
 	local mycmakeargs=( -DBUILD_EXTENSION=OFF )
 	cmake-utils_src_configure
