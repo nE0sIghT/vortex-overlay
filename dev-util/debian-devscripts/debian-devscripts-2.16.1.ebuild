@@ -20,7 +20,9 @@ DEPEND="dev-lang/perl
 	>=dev-lang/python-3:="
 
 RDEPEND="${DEPEND}
-	app-arch/dpkg"
+	app-arch/dpkg
+	dev-util/debhelper
+	sys-apps/fakeroot"
 
 IUSE=""
 
