@@ -27,6 +27,8 @@ pkg_setup() {
 }
 
 src_prepare() {
+	default
+
 	# Remove pid setting because we can't leave it user configurable and
 	# reliably setup the environment for the init script to stop ${PN}
 	ebegin "Removing PID setting from ${PN}.conf"
