@@ -58,7 +58,7 @@ SRC_URI="
 LICENSE="Apache-1.1 Apache-2.0 GPL-1 GPL-2 GPL-2-with-linking-exception LGPL-2 MPL-1.0 MPL-1.1 public-domain W3C"
 KEYWORDS="~amd64 ~arm ~ppc64 ~x86"
 
-IUSE="+alsa cacao cjk +cups debug doc examples +gtk headless-awt
+IUSE="+alsa cacao cjk +cups debug doc examples +gtk headless-awt infinality
 	jamvm +jbootstrap libressl nsplugin pax_kernel
 	pulseaudio sctp selinux smartcard +source +sunec test +webstart zero"
 
@@ -93,7 +93,7 @@ COMMON_DEP="
 	>=dev-libs/glib-2.26:2
 	>=dev-util/systemtap-1
 	media-libs/fontconfig
-	>=media-libs/freetype-2.5.3:2=
+	>=media-libs/freetype-2.5.3:2=[infinality?]
 	>=media-libs/lcms-2.5
 	>=sys-libs/zlib-1.2.3:=
 	virtual/jpeg:0=
@@ -269,6 +269,12 @@ src_configure() {
 	# https://bugs.openjdk.java.net/browse/JDK-8067132
 	export DISTRIBUTION_PATCHES="${SLOT}-ccache.patch"
 	ln -snf "${FILESDIR}"/${SLOT}-ccache.patch . || die
+
+	if use infinality; then
+		export OPENJDK_PATCHES="${SLOT}-fontconfig.patch ${SLOT}-infinality.patch"
+		ln -snf "${FILESDIR}/${SLOT}-fontconfig.patch" . || die
+		ln -snf "${FILESDIR}/${SLOT}-infinality.patch" . || die
+	fi
 
 	# IcedTea itself doesn't handle ccache yet.
 	if has ccache ${FEATURES}; then
