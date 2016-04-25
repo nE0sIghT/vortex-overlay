@@ -6,7 +6,7 @@ EAPI=5
 
 JAVA_PKG_IUSE="doc source test"
 
-inherit eutils java-pkg-2 java-ant-2 prefix user
+inherit eutils java-pkg-2 java-ant-2 prefix systemd user
 
 MY_P="apache-${P}-src"
 
@@ -28,6 +28,7 @@ COMMON_DEP="dev-java/eclipse-ecj:${ECJ_SLOT}
 	dev-java/tomcat-servlet-api:${SAPI_SLOT}"
 RDEPEND="${COMMON_DEP}
 	!<dev-java/tomcat-native-1.1.24
+	sys-apps/gentoo-functions
 	>=virtual/jre-1.7"
 DEPEND="${COMMON_DEP}
 	app-admin/pwgen
@@ -70,7 +71,7 @@ EANT_EXTRA_ARGS="-Dversion=${PV}-gentoo -Dversion.number=${PV} -Dcompile.debug=f
 
 # revisions of the scripts
 IM_REV="-r2"
-INIT_REV="-r1"
+INIT_REV="-r2"
 
 src_compile() {
 	EANT_GENTOO_CLASSPATH_EXTRA+=":$(java-pkg_getjar --build-only ant-core ant.jar)"
@@ -123,32 +124,43 @@ src_install() {
 	# prepend gentoo.classpath to common.loader, see #453212
 	sed -i -e 's/^common\.loader=/\0${gentoo.classpath},/' output/build/conf/catalina.properties || die
 
-	insinto "${dest}"
-	doins -r output/build/conf
-
 	### rc ###
 
-	cp "${FILESDIR}"/tomcat{.conf,${INIT_REV}.init,-instance-manager${IM_REV}.bash} "${T}" || die
-	eprefixify "${T}"/tomcat{.conf,${INIT_REV}.init,-instance-manager${IM_REV}.bash}
-	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/tomcat{.conf,${INIT_REV}.init,-instance-manager${IM_REV}.bash} || die
+	cp "${FILESDIR}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,-${SLOT}.service,-named-${SLOT}.service} "${T}" || die
+	eprefixify "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,-${SLOT}.service,-named-${SLOT}.service}
+	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,-${SLOT}.service,-named-${SLOT}.service} || die
 
-	insinto "${dest}"/gentoo
+	insinto "/etc/tomcat-${SLOT}"
+	doins -r output/build/conf/*
 	doins "${T}"/tomcat.conf
-	exeinto "${dest}"/gentoo
-	newexe "${T}"/tomcat${INIT_REV}.init tomcat.init
-	newexe "${T}"/tomcat-instance-manager${IM_REV}.bash tomcat-instance-manager.bash
+	dosym /etc/tomcat-${SLOT} "${dest}"/conf
+
+	newinitd "${T}"/tomcat${INIT_REV}.init tomcat-${SLOT}.init
+
+	exeinto /usr/libexec/tomcat
+	newexe "${T}"/tomcat-server server-${SLOT}
+
+	dodir /var/lib/tomcats
+	fowners tomcat:tomcat /var/lib/tomcats
+	dodir /var/lib/tomcats/${PN}-${SLOT}
+
+	systemd_newunit "${T}"/${PN}-${SLOT}.service ${PN}-${SLOT}.service
+	systemd_newunit "${T}"/${PN}-named-${SLOT}.service ${PN}-${SLOT}@.service
+	systemd_newtmpfilesd "${T}"/${PN}-tmpfiles.d ${PN}-${SLOT}.conf
 }
 
 pkg_postinst() {
 	elog "New ebuilds of Tomcat support running multiple instances. If you used prior version"
-	elog "of Tomcat (<7.0.32), you have to migrate your existing instance to work with new Tomcat."
+	elog "of Tomcat (<8.0.33-r1), you have to migrate your existing instance to work with new Tomcat."
 	elog "You can find more information at https://wiki.gentoo.org/wiki/Apache_Tomcat"
+	echo
 
-	elog "To manage Tomcat instances, run:"
-	elog "  ${EPREFIX}/usr/share/${PN}-${SLOT}/gentoo/tomcat-instance-manager.bash --help"
+	elog "To create temp directories you must restart system."
+	elog "Alternatively for systemd you can run"
+	elog "        systemd-tmpfiles --create"
+	elog "without reboot."
+	echo
 
 	ewarn "tomcat-dbcp.jar is not built at this time. Please fetch jar"
 	ewarn "from upstream binary if you need it. Gentoo Bug # 144276"
-
-#	einfo "Please read https://www.gentoo.org/proj/en/java/tomcat6-guide.xml for more information."
 }
