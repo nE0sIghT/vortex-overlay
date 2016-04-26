@@ -159,8 +159,4 @@ pkg_postinst() {
 	elog "Alternatively for systemd you can run"
 	elog "        systemd-tmpfiles --create"
 	elog "without reboot."
-	echo
-
-	ewarn "tomcat-dbcp.jar is not built at this time. Please fetch jar"
-	ewarn "from upstream binary if you need it. Gentoo Bug # 144276"
 }
