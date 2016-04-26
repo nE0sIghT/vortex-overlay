@@ -124,9 +124,9 @@ src_install() {
 
 	### rc ###
 
-	cp "${FILESDIR}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service} "${T}" || die
-	eprefixify "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service}
-	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service} || die
+	cp "${FILESDIR}"/${PN}{-r1.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service} "${T}" || die
+	eprefixify "${T}"/${PN}{-r1.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service}
+	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/${PN}{-r1.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service} || die
 
 	insinto /etc/"${PN}"-"${SLOT}"
 	doins -r output/build/conf/*
@@ -136,7 +136,7 @@ src_install() {
 	dosym /var/cache/"${PN}-"${SLOT}""/temp "${dest}"/temp
 	dosym /var/logs/"${PN}"-"${SLOT}" "${dest}"/logs
 
-	newconfd "${T}"/"${PN}".conf "${PN}"-"${SLOT}"
+	newconfd "${T}"/"${PN}"-r1.conf "${PN}"-"${SLOT}"
 	newinitd "${T}"/tomcat${INIT_REV}.init "${PN}"-${SLOT}.init
 
 	systemd_newunit "${T}"/${PN}.service ${PN}-${SLOT}.service
