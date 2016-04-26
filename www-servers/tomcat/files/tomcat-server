@@ -60,6 +60,7 @@ if [ "$1" = "start" ]; then
 
 	${JAVA_HOME}/bin/${cmd} \
 		${JAVA_OPTS} \
+		${JAVA_INSTANCE_OPTS} \
 		${args} \
 		-Dcatalina.base="${CATALINA_BASE}" \
 		-Dcatalina.home="${CATALINA_HOME}" \
@@ -72,10 +73,13 @@ if [ "$1" = "start" ]; then
 elif [ "$1" = "stop" ]; then
 	${JAVA_HOME}/bin/java \
 		${JAVA_OPTS} \
+		${JAVA_INSTANCE_OPTS} \
 		-Dcatalina.base="${CATALINA_BASE}" \
 		-Dcatalina.home="${CATALINA_HOME}" \
+		-Djava.io.tmpdir="${CATALINA_TMPDIR}" \
+		-Dgentoo.classpath="" \
 		-classpath "${CLASSPATH}" \
 		org.apache.catalina.startup.Bootstrap \
 		${CATALINA_OPTS} \
-		stop ${STD_OUT}
+		stop
 fi

@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 JAVA_PKG_IUSE="doc source test"
 
@@ -36,9 +36,18 @@ DEPEND="${COMMON_DEP}
 	test? (
 		>=dev-java/ant-junit-1.9:0
 		dev-java/easymock:3.2
-	)"
+	)
+"
 
 S=${WORKDIR}/${MY_P}
+
+pkg_pretend() {
+	local dest="/usr/share/${PN}-${SLOT}"
+
+	if [[ -d "${dest}"/logs && ! -L "${dest}"/logs ]]; then
+		die "${dest}/logs directory found. Please move it to /var/logs/${PN}-${SLOT}."
+	fi
+}
 
 pkg_setup() {
 	java-pkg-2_pkg_setup
@@ -47,6 +56,8 @@ pkg_setup() {
 }
 
 java_prepare() {
+	default
+
 	find -name '*.jar' -type f -delete -print || die
 
 	# Remove bundled servlet-api
@@ -110,12 +121,11 @@ src_install() {
 	doins -r output/build/webapps/{host-manager,manager,ROOT}
 	use extra-webapps && doins -r output/build/webapps/{docs,examples}
 
-	### Config ###
-
 	# create "logs" directory in $CATALINA_BASE
 	# and set correct perms, see #458890
-	dodir "${dest}"/logs
-	fperms 0750 "${dest}"/logs
+	dodir /var/logs/"${PN}"-"${SLOT}"
+	fperms 0750 /var/logs/"${PN}"-"${SLOT}"
+	fowners tomcat:tomcat /var/logs/"${PN}"-"${SLOT}"
 
 	# replace the default pw with a random one, see #92281
 	local randpw="$(pwgen -s -B 15 1)"
@@ -130,23 +140,26 @@ src_install() {
 	eprefixify "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,-${SLOT}.service,-named-${SLOT}.service}
 	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,-${SLOT}.service,-named-${SLOT}.service} || die
 
-	insinto "/etc/tomcat-${SLOT}"
+	insinto /etc/"${PN}"-"${SLOT}"
 	doins -r output/build/conf/*
-	doins "${T}"/tomcat.conf
-	dosym /etc/tomcat-${SLOT} "${dest}"/conf
 
-	newinitd "${T}"/tomcat${INIT_REV}.init tomcat-${SLOT}.init
+	dosym /etc/"${PN}"-"${SLOT}" "${dest}"/conf
+	dosym /var/cache/"${PN}-"${SLOT}""/work "${dest}"/work
+	dosym /var/cache/"${PN}-"${SLOT}""/temp "${dest}"/temp
+	dosym /var/logs/"${PN}"-"${SLOT}" "${dest}"/logs
 
-	exeinto /usr/libexec/tomcat
-	newexe "${T}"/tomcat-server server-${SLOT}
-
-	dodir /var/lib/tomcats
-	fowners tomcat:tomcat /var/lib/tomcats
-	dodir /var/lib/tomcats/${PN}-${SLOT}
+	newconfd "${T}"/"${PN}".conf "${PN}"-"${SLOT}"
+	newinitd "${T}"/tomcat${INIT_REV}.init "${PN}"-${SLOT}.init
 
 	systemd_newunit "${T}"/${PN}-${SLOT}.service ${PN}-${SLOT}.service
 	systemd_newunit "${T}"/${PN}-named-${SLOT}.service ${PN}-${SLOT}@.service
 	systemd_newtmpfilesd "${T}"/${PN}-tmpfiles.d ${PN}-${SLOT}.conf
+
+	exeinto /usr/libexec/"${PN}"
+	newexe "${T}"/"${PN}"-server server-${SLOT}
+
+	dodir /var/lib/tomcats
+	fowners tomcat:tomcat /var/lib/tomcats
 }
 
 pkg_postinst() {

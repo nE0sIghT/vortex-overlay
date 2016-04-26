@@ -12,14 +12,14 @@ After=syslog.target network.target
 
 [Service]
 Type=simple
-EnvironmentFile=/etc/tomcat-@SLOT@/tomcat.conf
 Environment="CATALINA_INSTANCE=%i"
-EnvironmentFile=-/etc/conf.d/tomcat-@SLOT@@%I
+EnvironmentFile=/etc/conf.d/tomcat-@SLOT@
+EnvironmentFile=-/etc/conf.d/tomcat-@SLOT@.%I
 ExecStart=/usr/libexec/tomcat/server-@SLOT@ start
 ExecStop=/usr/libexec/tomcat/server-@SLOT@ stop
 SuccessExitStatus=143
-User=tomcat
-Group=tomcat
+User=%I
+Group=%I
 
 [Install]
 WantedBy=multi-user.target
