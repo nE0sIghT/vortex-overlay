@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 JAVA_PKG_IUSE="doc source test"
 
-inherit eutils java-pkg-2 java-ant-2 prefix user
+inherit eutils java-pkg-2 java-ant-2 prefix systemd user
 
 MY_P="apache-${P}-src"
 
@@ -37,6 +37,15 @@ DEPEND="${COMMON_DEP}
 
 S=${WORKDIR}/${MY_P}
 
+pkg_pretend() {
+	local dest="/usr/share/${PN}-${SLOT}"
+
+	if [[ -d "${dest}"/logs && ! -L "${dest}"/logs ]]; then
+		die "${dest}/logs directory found. Please move it to /var/logs/${PN}-${SLOT}."
+	fi
+}
+
+
 pkg_setup() {
 	java-pkg-2_pkg_setup
 	enewgroup tomcat 265
@@ -44,6 +53,8 @@ pkg_setup() {
 }
 
 java_prepare() {
+	default
+
 	# Remove bundled servlet-api
 	rm -rv java/javax/{el,servlet} || die
 
@@ -66,8 +77,7 @@ EANT_NEEDS_TOOLS="true"
 EANT_EXTRA_ARGS="-Dversion=${PV}-gentoo -Dversion.number=${PV} -Dcompile.debug=false"
 
 # revisions of the scripts
-IM_REV="-r1"
-INIT_REV="-r1"
+INIT_REV="-r2"
 
 src_compile() {
 	use websockets && EANT_EXTRA_ARGS+=" -Djava.7.home=${JAVA_HOME}"
@@ -100,12 +110,11 @@ src_install() {
 	doins -r output/build/webapps/{host-manager,manager,ROOT}
 	use extra-webapps && doins -r output/build/webapps/{docs,examples}
 
-	### Config ###
-
 	# create "logs" directory in $CATALINA_BASE
 	# and set correct perms, see #458890
-	dodir "${dest}"/logs
-	fperms 0750 "${dest}"/logs
+	dodir /var/logs/"${PN}"-"${SLOT}"
+	fperms 0750 /var/logs/"${PN}"-"${SLOT}"
+	fowners tomcat:tomcat /var/logs/"${PN}"-"${SLOT}"
 
 	# replace the default pw with a random one, see #92281
 	local randpw=$(echo ${RANDOM}|md5sum|cut -c 1-15)
@@ -114,32 +123,45 @@ src_install() {
 	# prepend gentoo.classpath to common.loader, see #453212
 	sed -i -e 's/^common\.loader=/\0${gentoo.classpath},/' output/build/conf/catalina.properties || die
 
-	insinto "${dest}"
-	doins -r output/build/conf
-
 	### rc ###
 
-	cp "${FILESDIR}"/tomcat{.conf,${INIT_REV}.init,-instance-manager${IM_REV}.bash} "${T}" || die
-	eprefixify "${T}"/tomcat{.conf,${INIT_REV}.init,-instance-manager${IM_REV}.bash}
-	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/tomcat{.conf,${INIT_REV}.init,-instance-manager${IM_REV}.bash} || die
+	cp "${FILESDIR}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service} "${T}" || die
+	eprefixify "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service}
+	sed -i -e "s|@SLOT@|${SLOT}|g" "${T}"/${PN}{.conf,${INIT_REV}.init,-server,-tmpfiles.d,.service,-named.service} || die
 
-	insinto "${dest}"/gentoo
-	doins "${T}"/tomcat.conf
-	exeinto "${dest}"/gentoo
-	newexe "${T}"/tomcat${INIT_REV}.init tomcat.init
-	newexe "${T}"/tomcat-instance-manager${IM_REV}.bash tomcat-instance-manager.bash
+	insinto /etc/"${PN}"-"${SLOT}"
+	doins -r output/build/conf/*
+
+	dosym /etc/"${PN}"-"${SLOT}" "${dest}"/conf
+	dosym /var/cache/"${PN}-"${SLOT}""/work "${dest}"/work
+	dosym /var/cache/"${PN}-"${SLOT}""/temp "${dest}"/temp
+	dosym /var/logs/"${PN}"-"${SLOT}" "${dest}"/logs
+
+	newconfd "${T}"/"${PN}".conf "${PN}"-"${SLOT}"
+	newinitd "${T}"/tomcat${INIT_REV}.init "${PN}"-${SLOT}.init
+
+	systemd_newunit "${T}"/${PN}.service ${PN}-${SLOT}.service
+	systemd_newunit "${T}"/${PN}-named.service ${PN}-${SLOT}@.service
+	systemd_newtmpfilesd "${T}"/${PN}-tmpfiles.d ${PN}-${SLOT}.conf
+
+	exeinto /usr/libexec/"${PN}"
+	newexe "${T}"/"${PN}"-server server-${SLOT}
+
+	dodir /var/lib/tomcats
+	fowners tomcat:tomcat /var/lib/tomcats
 }
 
 pkg_postinst() {
 	elog "New ebuilds of Tomcat support running multiple instances. If you used prior version"
-	elog "of Tomcat (<7.0.32), you have to migrate your existing instance to work with new Tomcat."
+	elog "of Tomcat (<7.0.69-r1), you have to migrate your existing instance to work with new Tomcat."
 	elog "You can find more information at https://wiki.gentoo.org/wiki/Apache_Tomcat"
+	echo
 
-	elog "To manage Tomcat instances, run:"
-	elog "  ${EPREFIX}/usr/share/${PN}-${SLOT}/gentoo/tomcat-instance-manager.bash --help"
+	elog "To create temp directories you must restart system."
+	elog "Alternatively for systemd you can run"
+	elog "        systemd-tmpfiles --create"
+	elog "without reboot."
 
 	ewarn "tomcat-dbcp.jar is not built at this time. Please fetch jar"
 	ewarn "from upstream binary if you need it. Gentoo Bug # 144276"
-
-#	einfo "Please read https://www.gentoo.org/proj/en/java/tomcat6-guide.xml for more information."
 }
