@@ -36,8 +36,7 @@ DEPEND="${COMMON_DEP}
 	test? (
 		>=dev-java/ant-junit-1.9:0
 		dev-java/easymock:3.2
-	)
-"
+	)"
 
 S=${WORKDIR}/${MY_P}
 

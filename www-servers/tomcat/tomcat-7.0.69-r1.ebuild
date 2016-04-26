@@ -45,7 +45,6 @@ pkg_pretend() {
 	fi
 }
 
-
 pkg_setup() {
 	java-pkg-2_pkg_setup
 	enewgroup tomcat 265
