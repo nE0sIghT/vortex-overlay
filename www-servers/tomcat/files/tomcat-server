@@ -4,7 +4,6 @@
 
 source /lib/gentoo/functions.sh
 
-: ${CATALINA_INSTANCE:=tomcat-@SLOT@}
 : ${CATALINA_HOME:=/@GENTOO_PORTAGE_EPREFIX@usr/share/tomcat-@SLOT@}
 : ${TOMCATS_BASE:=/@GENTOO_PORTAGE_EPREFIX@var/lib/tomcats/}
 : ${CATALINA_TMPDIR:=/@GENTOO_PORTAGE_EPREFIX@var/cache/tomcat-@SLOT@/tmp}
@@ -16,7 +15,11 @@ source /lib/gentoo/functions.sh
 : ${JPDA_OPTS="-Xdebug -Xrunjdwp:transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=n"}
 
 if [ -z "${CATALINA_BASE}" ]; then
-	CATALINA_BASE="${TOMCATS_BASE}${CATALINA_INSTANCE}"
+	if [ -z "${CATALINA_INSTANCE}" ]; then
+		CATALINA_BASE="${CATALINA_HOME}"
+	else
+		CATALINA_BASE="${TOMCATS_BASE}${CATALINA_INSTANCE}"
+	fi
 fi
 
 if [ -z "${CATALINA_WORKDIR}" ]; then
