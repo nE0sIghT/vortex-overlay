@@ -1,0 +1,23 @@
+From ff7bb0b2251afbf8458ab08ba0483bb22f806a7e Mon Sep 17 00:00:00 2001
+From: nE0sIghT <ykonotopov@gmail.com>
+Date: Thu, 12 May 2016 22:40:04 +0300
+Subject: [PATCH 3/3] corelib: add boost_filesystem link
+
+---
+ corelib/corelib/corelib.pro | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/corelib/corelib/corelib.pro b/corelib/corelib/corelib.pro
+index aff1956..c2a8ce5 100644
+--- a/corelib/corelib/corelib.pro
++++ b/corelib/corelib/corelib.pro
+@@ -318,4 +318,6 @@ DEFINES += STRIP_VOIP
+ 
+ QMAKE_CXXFLAGS += -std=c++0x
+ 
++QMAKE_LIBS += -lboost_filesystem
++
+ INCLUDEPATH += ../../core ../../external/rapidjson-master/include
+-- 
+2.7.3
+

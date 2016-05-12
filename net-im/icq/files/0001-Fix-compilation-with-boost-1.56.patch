@@ -1,0 +1,94 @@
+From f739c7998b0be4aa87c791de6e5cad72b9a3fcbc Mon Sep 17 00:00:00 2001
+From: nE0sIghT <ykonotopov@gmail.com>
+Date: Thu, 12 May 2016 20:20:12 +0300
+Subject: [PATCH] Fix compilation with boost-1.56
+
+---
+ core/connections/wim/packets/send_feedback.cpp | 6 +++---
+ core/log/log.cpp                               | 2 +-
+ core/network_log.cpp                           | 4 ++--
+ core/utils.cpp                                 | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/core/connections/wim/packets/send_feedback.cpp b/core/connections/wim/packets/send_feedback.cpp
+index adb7a13..d55e8e3 100644
+--- a/core/connections/wim/packets/send_feedback.cpp
++++ b/core/connections/wim/packets/send_feedback.cpp
+@@ -37,7 +37,7 @@ int32_t send_feedback::init_request(std::shared_ptr<core::http_request_simple> _
+     auto fromCurr = boost::filesystem::wpath(g_core->get_network_log().file_names_history().second);
+     if (boost::filesystem::exists(fromCurr))
+     {
+-        auto tempCurr = fromCurr.parent_path().append(L"feedback_log_current.tmp");
++        auto tempCurr = fromCurr.parent_path().append(L"feedback_log_current.tmp", boost::filesystem::path::codecvt());
+         boost::filesystem::copy_file(fromCurr, tempCurr, boost::filesystem::copy_option::overwrite_if_exists);
+         const long sizeCurr = boost::filesystem::file_size(tempCurr);
+         {
+@@ -61,7 +61,7 @@ int32_t send_feedback::init_request(std::shared_ptr<core::http_request_simple> _
+         auto fromPrev = boost::filesystem::wpath(g_core->get_network_log().file_names_history().first);
+         if (boost::filesystem::exists(fromPrev))
+         {
+-            auto tempPrev = fromPrev.parent_path().append(L"feedback_log_previous.tmp");
++            auto tempPrev = fromPrev.parent_path().append(L"feedback_log_previous.tmp", boost::filesystem::path::codecvt());
+             boost::filesystem::copy_file(fromPrev, tempPrev, boost::filesystem::copy_option::overwrite_if_exists);
+             const long sizePrev = boost::filesystem::file_size(tempPrev);
+             {
+@@ -79,7 +79,7 @@ int32_t send_feedback::init_request(std::shared_ptr<core::http_request_simple> _
+         }
+     }
+ 
+-    log_ = fromCurr.parent_path().append("feedbacklog.txt").wstring();
++    log_ = fromCurr.parent_path().append("feedbacklog.txt", boost::filesystem::path::codecvt()).wstring();
+ 
+     auto to = boost::filesystem::wpath(log_);
+     if (boost::filesystem::exists(to))
+diff --git a/core/log/log.cpp b/core/log/log.cpp
+index 7f5d02d..a2b8406 100644
+--- a/core/log/log.cpp
++++ b/core/log/log.cpp
+@@ -410,7 +410,7 @@ namespace
+         area_filename % log_file_index_ % w_area % log_files_ext_;
+ 
+         fs::wpath path = logs_dir_;
+-        path.append(area_filename.str());
++        path.append(area_filename.str(), boost::filesystem::path::codecvt());
+ 
+         return path;
+     }
+diff --git a/core/network_log.cpp b/core/network_log.cpp
+index c644a51..7f3c4a0 100644
+--- a/core/network_log.cpp
++++ b/core/network_log.cpp
+@@ -69,7 +69,7 @@ namespace core
+         area_filename % _index % L"net" % L"txt";
+ 
+         boost::filesystem::wpath path = _logs_directory;
+-        path.append(area_filename.str());
++        path.append(area_filename.str(), boost::filesystem::path::codecvt());
+ 
+         return path;
+     }
+@@ -112,7 +112,7 @@ namespace core
+         for (auto iter = files.rbegin(); iter != files.rend(); ++iter)
+         {
+             boost::filesystem::wpath file_path = _logs_directory;
+-            file_path.append(tools::from_utf8(iter->second));
++            file_path.append(tools::from_utf8(iter->second), boost::filesystem::path::codecvt());
+ 
+             if (boost::filesystem::exists(file_path))
+             {
+diff --git a/core/utils.cpp b/core/utils.cpp
+index 93d8035..6e53990 100644
+--- a/core/utils.cpp
++++ b/core/utils.cpp
+@@ -84,7 +84,7 @@ namespace core
+         {
+             boost::filesystem::wpath logs_dir(get_product_data_path());
+ 
+-            logs_dir.append(L"logs");
++            logs_dir.append(L"logs", boost::filesystem::path::codecvt());
+ 
+             return logs_dir;
+         }
+-- 
+2.7.3
+
