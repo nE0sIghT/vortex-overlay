@@ -26,20 +26,34 @@ RDEPEND="${DEPEND}
 "
 
 src_prepare() {
-	sed -i "/cd python && python/d" Makefile || die
-	sed -i "/\$(VENDOR)/d" Makefile || die
-	sed -i "/VENDOR ?=/d" Makefile || die
-
 	default
+
+	if use python ;then
+		cd "${S}"/python || die
+		distutils-r1_src_prepare
+	fi
+
+	sed -i "/cd python && python/d" "${S}"/Makefile || die
+	sed -i "/\$(VENDOR)/d" "${S}"/Makefile || die
+	sed -i "/VENDOR ?=/d" "${S}"/Makefile || die
 }
 
 src_configure() {
+	default
+
 	if use python ;then
 		cd "${S}"/python || die
 		distutils-r1_src_configure
 	fi
+}
 
+src_compile() {
 	default
+
+	if use python ;then
+		cd "${S}"/python || die
+		distutils-r1_src_compile
+	fi
 }
 
 src_install() {
