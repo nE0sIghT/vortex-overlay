@@ -18,12 +18,11 @@ KEYWORDS="~amd64 ~x86"
 
 DEPEND="
 	app-text/asciidoc
-	>=dev-lang/python-3:=
-	dev-python/python-debian
+	dev-python/python-debian[${PYTHON_USEDEP}]
 "
 
 RDEPEND="${DEPEND}
-	dev-python/paramiko
+	dev-python/paramiko[${PYTHON_USEDEP}]
 	dev-util/distro-info[python,${PYTHON_USEDEP}]
 "
 
