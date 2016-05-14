@@ -24,6 +24,7 @@ DEPEND="
 
 RDEPEND="${DEPEND}
 	dev-python/paramiko
+	dev-util/distro-info[python,${PYTHON_USEDEP}]
 "
 
 IUSE=""
@@ -42,12 +43,12 @@ DPUT_ETC=(
 )
 
 DPUT_SHARE=(
-	hooks
-	commands
-	interfaces
-	uploaders
-	schemas
 	codenames
+	commands
+	hooks
+	interfaces
+	schemas
+	uploaders
 )
 
 src_compile() {
@@ -76,7 +77,7 @@ src_install() {
 	done
 
 	insinto /usr/share/"${PN}"
-	for dir in ${DPUT_ETC[@]}; do
+	for dir in ${DPUT_SHARE[@]}; do
 		doins -r "${S}/skel/${dir}"
 	done
 
