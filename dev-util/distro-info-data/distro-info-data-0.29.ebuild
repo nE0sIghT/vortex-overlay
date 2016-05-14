@@ -4,8 +4,6 @@
 
 EAPI=6
 
-inherit eutils
-
 DESCRIPTION="Information about the Debian distributions' releases (data files)"
 HOMEPAGE="https://debian.org/"
 SRC_URI="mirror://debian/pool/main/d/${PN}/${PN}_${PV}.tar.xz"
