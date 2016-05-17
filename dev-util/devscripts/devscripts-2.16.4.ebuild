@@ -16,18 +16,27 @@ SRC_URI="mirror://debian/pool/main/d/${PN}/${PN}_${PV}.tar.xz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="python"
+IUSE="python test"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 DEPEND="
 	dev-lang/perl
 	python? ( ${PYTHON_DEPS} )
+	test? (
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-util/distro-info
+		dev-util/shunit2
+	)
 "
 RDEPEND="${DEPEND}
 	app-arch/dpkg
+	app-text/wdiff
 	dev-util/debhelper
-	sys-apps/fakeroot"
+	sys-apps/fakeroot
+"
+
+DISTUTILS_S="${S}"/scripts
 
 src_prepare() {
 	default
@@ -36,20 +45,30 @@ src_prepare() {
 	sed -i \
 		-e 's#stylesheet/xsl/nwalsh#xsl-stylesheets#g' \
 		"${S}"/po4a/Makefile \
-		"${S}"/scripts/Makefile \
-		"${S}"/scripts/deb-reversion.dbk || die
+		"${DISTUTILS_S}"/Makefile \
+		"${DISTUTILS_S}"/deb-reversion.dbk || die
 
-	sed -i "/python3 setup.py/d" "${S}"/scripts/Makefile || die
+	# distutils-r1 eclass will be used instead
+	sed -i -e "/python3 setup.py/d" \
+		-e "/python3 -m flake8/d" \
+		-e "/py3versions/d" \
+		"${DISTUTILS_S}"/Makefile || die
 
 	# Avoid file collision with app-shells/bash-completion
-	rm "${S}"/scripts/bts.bash_completion || die
+	rm "${DISTUTILS_S}"/bts.bash_completion || die
+
+	# It's not possible to use all Debian stuff in Gentoo.
+	# Remove known failing tests for now.
+	sed -i -e "s/dd-list//g" \
+		-e "s/package_lifecycle//g" \
+		"${S}"/test/Makefile || die
 }
 
 src_configure() {
 	default
 
 	if use python; then
-		pushd "${S}"/scripts > /dev/null || die
+		pushd "${DISTUTILS_S}" > /dev/null || die
 		distutils-r1_src_configure
 		popd > /dev/null || die
 	fi
@@ -59,7 +78,7 @@ src_compile() {
 	default
 
 	if use python; then
-		pushd "${S}"/scripts > /dev/null || die
+		pushd "${DISTUTILS_S}" > /dev/null || die
 		distutils-r1_src_compile
 		popd > /dev/null || die
 	fi
@@ -70,8 +89,18 @@ src_install() {
 	default
 
 	if use python ;then
-		pushd "${S}"/scripts > /dev/null || die
+		pushd "${DISTUTILS_S}" > /dev/null || die
 		distutils-r1_src_install
+		popd > /dev/null || die
+	fi
+}
+
+src_test() {
+	default
+
+	if use python; then
+		pushd "${DISTUTILS_S}" > /dev/null || die
+		distutils-r1_src_test
 		popd > /dev/null || die
 	fi
 }
