@@ -22,45 +22,52 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 DEPEND="python? ( ${PYTHON_DEPS} )"
 RDEPEND="${DEPEND}
+	dev-lang/perl:=
 	dev-util/distro-info-data
 "
 
 src_prepare() {
 	default
 
-	if use python ;then
-		cd "${S}"/python || die
-		distutils-r1_src_prepare
-	fi
-
-	sed -i "/cd python && python/d" "${S}"/Makefile || die
-	sed -i "/\$(VENDOR)/d" "${S}"/Makefile || die
-	sed -i "/VENDOR ?=/d" "${S}"/Makefile || die
+	# 1. Gentoo do not provides dpkg vendor information
+	# 2. Strip *FLAGS
+	# 3. Strip predefined CFLAGS
+	# 4. Point to correct perl's vendorlib
+	sed -e "/cd python && python/d" \
+		-e "/VENDOR/d" \
+		-e "/dpkg-buildflags/d" \
+		-e "s/-g -O2//g" \
+		-e "s:\$(PREFIX)/share/perl5/Debian:\$(PERL_VENDORLIB)/Debian:g" \
+		-i "${S}"/Makefile || die
 }
 
 src_configure() {
 	default
 
-	if use python ;then
-		cd "${S}"/python || die
+	if use python; then
+		pushd "${S}"/python > /dev/null || die
 		distutils-r1_src_configure
+		popd > /dev/null || die
 	fi
 }
 
 src_compile() {
 	default
 
-	if use python ;then
-		cd "${S}"/python || die
+	if use python; then
+		pushd "${S}"/python > /dev/null || die
 		distutils-r1_src_compile
+		popd > /dev/null || die
 	fi
 }
 
 src_install() {
-	default
+	emake PERL_VENDORLIB=$(perl -e 'require Config; print "$Config::Config{'vendorlib'}\n";') \
+		DESTDIR="${D}" install
 
-	if use python ;then
-		cd "${S}"/python || die
+	if use python; then
+		pushd "${S}"/python > /dev/null || die
 		distutils-r1_src_install
+		popd > /dev/null || die
 	fi
 }
