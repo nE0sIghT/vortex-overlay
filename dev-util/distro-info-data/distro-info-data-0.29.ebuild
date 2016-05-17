@@ -13,3 +13,7 @@ SLOT="0"
 
 KEYWORDS="~amd64 ~x86"
 IUSE=""
+
+# Package provides only csv data
+# Test script written in Python, disable it
+src_test() { :; }

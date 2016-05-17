@@ -20,10 +20,11 @@ IUSE="python test"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-DEPEND="dev-lang/perl:=
-	python? ( ${PYTHON_DEPS} )
+CDEPEND="dev-lang/perl:=
+	python? ( ${PYTHON_DEPS} )"
+DEPEND="${CDEPEND}
 	test? ( dev-util/shunit2 )"
-RDEPEND="${DEPEND}
+RDEPEND="${CDEPEND}
 	dev-util/distro-info-data"
 
 src_prepare() {
@@ -33,7 +34,7 @@ src_prepare() {
 	# 2. Strip *FLAGS
 	# 3. Strip predefined CFLAGS
 	# 4. Point to correct perl's vendorlib
-	# 5. Remove python tests - distutils-r1 eclass will be used instead
+	# 5. Remove python tests - python eclass will be used instead
 	sed -e "/cd python && python/d" \
 		-e "/VENDOR/d" \
 		-e "/dpkg-buildflags/d" \
@@ -47,7 +48,7 @@ src_configure() {
 	default
 
 	if use python; then
-		pushd "${S}"/python > /dev/null || die
+		pushd ./python > /dev/null || die
 		distutils-r1_src_configure
 		popd > /dev/null || die
 	fi
@@ -57,7 +58,7 @@ src_compile() {
 	default
 
 	if use python; then
-		pushd "${S}"/python > /dev/null || die
+		pushd ./python > /dev/null || die
 		distutils-r1_src_compile
 		popd > /dev/null || die
 	fi
@@ -68,7 +69,7 @@ src_install() {
 		DESTDIR="${D}" install
 
 	if use python; then
-		pushd "${S}"/python > /dev/null || die
+		pushd ./python > /dev/null || die
 		distutils-r1_src_install
 		popd > /dev/null || die
 	fi
@@ -82,7 +83,7 @@ src_test() {
 			"${PYTHON}" setup.py test
 		}
 
-		pushd "${S}"/python > /dev/null || die
+		pushd ./python > /dev/null || die
 		python_foreach_impl python_test
 		popd > /dev/null || die
 	fi
