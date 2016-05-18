@@ -20,16 +20,23 @@ IUSE="python test"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-DEPEND="
+CDEPEND="
 	dev-lang/perl
+	dev-perl/File-DesktopEntry
+	dev-perl/libwww-perl
+	dev-util/distro-info
 	python? ( ${PYTHON_DEPS} )
-	test? (
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-util/distro-info
-		dev-util/shunit2
-	)
 "
-RDEPEND="${DEPEND}
+DEPEND="${CDEPEND}
+	app-shells/bash-completion
+	virtual/pkgconfig
+	test? (
+		dev-perl/Software-License
+		dev-perl/UNIVERSAL-require
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-util/shunit2
+	)"
+RDEPEND="${CDEPEND}
 	app-arch/dpkg
 	app-text/wdiff
 	dev-util/debhelper
