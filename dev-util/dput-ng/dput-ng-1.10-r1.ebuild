@@ -15,7 +15,10 @@ SRC_URI="mirror://debian/pool/main/d/${PN}/${PN}_${PV}.tar.xz"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="test"
+# test_configs.py failing
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=824652
+RESTRICT="test"
 
 RDEPEND="
 	dev-python/python-debian[${PYTHON_USEDEP}]
@@ -23,7 +26,11 @@ RDEPEND="
 	dev-util/distro-info[python,${PYTHON_USEDEP}]
 "
 DEPEND="${RDEPEND}
-	app-text/asciidoc"
+	app-text/asciidoc
+	test? (
+		dev-python/nose[${PYTHON_USEDEP}]
+		dev-python/python-debian
+	)"
 
 S="${WORKDIR}/${PN/-/}"
 
@@ -75,4 +82,8 @@ src_install() {
 	done
 
 	newbashcomp debian/"${PN}".bash-completion dput
+}
+
+python_test() {
+	nosetests || die "Tests failed under ${EPYTHON}"
 }
