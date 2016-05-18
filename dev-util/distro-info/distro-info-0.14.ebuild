@@ -23,7 +23,11 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 CDEPEND="dev-lang/perl:=
 	python? ( ${PYTHON_DEPS} )"
 DEPEND="${CDEPEND}
-	test? ( dev-util/shunit2 )"
+	python? ( dev-python/setuptools[${PYTHON_USEDEP}] )
+	test? (
+		dev-util/shunit2
+		dev-python/pylint[${PYTHON_USEDEP}]
+	)"
 RDEPEND="${CDEPEND}
 	dev-util/distro-info-data"
 
@@ -80,11 +84,11 @@ src_test() {
 
 	if use python; then
 		python_test() {
-			"${PYTHON}" setup.py test
+			esetup.py test
 		}
 
 		pushd ./python > /dev/null || die
-		python_foreach_impl python_test
+		distutils-r1_src_test
 		popd > /dev/null || die
 	fi
 }
