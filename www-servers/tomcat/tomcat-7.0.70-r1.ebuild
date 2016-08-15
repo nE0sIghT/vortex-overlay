@@ -152,7 +152,7 @@ src_install() {
 
 pkg_postinst() {
 	elog "New ebuilds of Tomcat support running multiple instances. If you used prior version"
-	elog "of Tomcat (<7.0.69-r1), you have to migrate your existing instance to work with new Tomcat."
+	elog "of Tomcat (<7.0.70-r1), you have to migrate your existing instance to work with new Tomcat."
 	elog "You can find more information at https://wiki.gentoo.org/wiki/Apache_Tomcat"
 	echo
 
