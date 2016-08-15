@@ -2,7 +2,10 @@
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-source /lib/gentoo/functions.sh
+# Check for OpenRC and include gentoo-functions if needed
+if [ -z "${RC_SVCNAME}" ]; then
+	source @GENTOO_PORTAGE_EPREFIX@/lib/gentoo/functions.sh
+fi
 
 : ${CATALINA_HOME:=@GENTOO_PORTAGE_EPREFIX@/usr/share/tomcat-@SLOT@}
 : ${TOMCATS_BASE:=@GENTOO_PORTAGE_EPREFIX@/var/lib/tomcats/}
