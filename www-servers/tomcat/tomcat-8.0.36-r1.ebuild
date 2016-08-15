@@ -10,7 +10,7 @@ inherit eutils java-pkg-2 java-ant-2 prefix systemd user
 
 MY_P="apache-${P}-src"
 
-DESCRIPTION="Tomcat Servlet-3.1/JSP-2.3 Container"
+DESCRIPTION="Tomcat Servlet-3.1/JSP-2.3/EL-3.0/WebSocket-1.1 Container"
 HOMEPAGE="http://tomcat.apache.org/"
 SRC_URI="mirror://apache/${PN}/tomcat-8/v${PV}/src/${MY_P}.tar.gz"
 
