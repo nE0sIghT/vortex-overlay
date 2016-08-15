@@ -4,9 +4,9 @@
 
 source /lib/gentoo/functions.sh
 
-: ${CATALINA_HOME:=/@GENTOO_PORTAGE_EPREFIX@usr/share/tomcat-@SLOT@}
-: ${TOMCATS_BASE:=/@GENTOO_PORTAGE_EPREFIX@var/lib/tomcats/}
-: ${CATALINA_TMPDIR:=/@GENTOO_PORTAGE_EPREFIX@var/cache/tomcat-@SLOT@/tmp}
+: ${CATALINA_HOME:=@GENTOO_PORTAGE_EPREFIX@/usr/share/tomcat-@SLOT@}
+: ${TOMCATS_BASE:=@GENTOO_PORTAGE_EPREFIX@/var/lib/tomcats/}
+: ${CATALINA_TMPDIR:=@GENTOO_PORTAGE_EPREFIX@/var/cache/tomcat-@SLOT@/tmp}
 
 : ${TOMCAT_START:=start}
 

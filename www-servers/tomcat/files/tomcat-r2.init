@@ -1,15 +1,15 @@
-#!/@GENTOO_PORTAGE_EPREFIX@sbin/runscript
+#!@GENTOO_PORTAGE_EPREFIX@/sbin/runscript
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 extra_commands="forcestop"
 
-PIDFILE=/@GENTOO_PORTAGE_EPREFIX@var/run/${RC_SVCNAME}.pid
+PIDFILE=@GENTOO_PORTAGE_EPREFIX@/var/run/${RC_SVCNAME}.pid
 
 : ${CATALINA_INSTANCE:=${RC_SVCNAME##*.}}
 : ${CATALINA_USER:=tomcat}
 : ${CATALINA_GROUP:=tomcat}
-: ${CATALINA_TMPDIR:=/@GENTOO_PORTAGE_EPREFIX@var/cache/tomcat-@SLOT@/tmp}
+: ${CATALINA_TMPDIR:=@GENTOO_PORTAGE_EPREFIX@/var/cache/tomcat-@SLOT@/tmp}
 
 depend() {
 	use dns logger net
@@ -23,7 +23,7 @@ start()	{
 		--chdir "${CATALINA_TMPDIR}" \
 		--user ${CATALINA_USER}:${CATALINA_GROUP} \
 		--make-pidfile --pidfile ${PIDFILE} \
-		--exec /@GENTOO_PORTAGE_EPREFIX@usr/libexec/tomcat/server-@SLOT@ -- start
+		--exec @GENTOO_PORTAGE_EPREFIX@/usr/libexec/tomcat/server-@SLOT@ -- start
 
 	eend $?
 }
@@ -34,7 +34,7 @@ stop()	{
 	start-stop-daemon --stop \
 		--quiet --retry=60 \
 		--pidfile ${PIDFILE} \
-		--exec /@GENTOO_PORTAGE_EPREFIX@usr/libexec/tomcat/server-@SLOT@ -- stop
+		--exec @GENTOO_PORTAGE_EPREFIX@/usr/libexec/tomcat/server-@SLOT@ -- stop
 
 	eend $?
 }
