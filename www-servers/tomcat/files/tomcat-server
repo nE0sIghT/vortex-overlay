@@ -34,13 +34,8 @@ export CLASSPATH="${CATALINA_HOME}/bin/bootstrap.jar:${CATALINA_HOME}/bin/tomcat
 
 if [ "$1" = "start" ]; then
 	if [ ! -e "${CATALINA_TMPDIR}" ]; then
-		CONFIGURATION="@GENTOO_PORTAGE_EPREFIX@/etc/conf.d/tomcat-@SLOT@"
-		if [ -n "${CATALINA_INSTANCE}" ]; then
-			CONFIGURATION="${CONFIGURATION}.${CATALINA_INSTANCE//\//-}"
-		fi
-
 		eerror "CATALINA_TMPDIR does not exist. Unable to start tomcat."
-		eerror "Please see ${CONFIGURATION} for more information."
+		eerror "Please see @GENTOO_PORTAGE_EPREFIX@/etc/conf.d/tomcat-@SLOT@ for more information."
 		exit 1
 	fi
 
