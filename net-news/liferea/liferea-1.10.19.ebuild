@@ -20,18 +20,17 @@ KEYWORDS="~amd64 ~arm ~ppc ~x86"
 
 IUSE="ayatana libnotify"
 
-RDEPEND="x11-libs/gtk+:3
-	>=dev-libs/glib-2.26.0:2
+RDEPEND=">=dev-db/sqlite-3.7.0:3
+	>=dev-libs/glib-2.28.0:2
+	dev-libs/gobject-introspection
 	dev-libs/json-glib
 	>=dev-libs/libpeas-1.0.0[gtk]
-	>=net-libs/libsoup-2.28.2:2.4
-	dev-libs/libunique:3
 	>=dev-libs/libxml2-2.6.27:2
 	>=dev-libs/libxslt-1.1.19
-	>=dev-db/sqlite-3.7.0:3
-	>=gnome-base/gconf-1.1.9:2
 	gnome-base/gsettings-desktop-schemas
+	>=net-libs/libsoup-2.28.2:2.4
 	>=net-libs/webkit-gtk-1.6.1:3
+	x11-libs/gtk+:3
 	>=x11-libs/pango-1.4.0
 	ayatana? ( dev-libs/libindicate )
 	libnotify? ( >=x11-libs/libnotify-0.3.2 )"

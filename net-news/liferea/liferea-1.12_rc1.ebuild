@@ -21,8 +21,7 @@ KEYWORDS="~amd64 ~arm ~ppc ~x86"
 
 IUSE=""
 
-RDEPEND="
-	>=dev-db/sqlite-3.7.0:3
+RDEPEND=">=dev-db/sqlite-3.7.0:3
 	>=dev-libs/glib-2.28.0:2
 	dev-libs/gobject-introspection
 	dev-libs/json-glib
