@@ -3,8 +3,9 @@
 # $Id$
 
 EAPI="6"
+PYTHON_COMPAT=( python3_{4,5} )
 
-inherit autotools eutils gnome2 pax-utils
+inherit autotools eutils gnome2 pax-utils python-r1
 
 MY_P=${P/_/-}a
 MY_PV=${PV/_/-}
@@ -20,12 +21,13 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~ppc ~x86"
 
 IUSE=""
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND=">=dev-db/sqlite-3.7.0:3
 	>=dev-libs/glib-2.28.0:2
 	dev-libs/gobject-introspection
 	dev-libs/json-glib
-	>=dev-libs/libpeas-1.0.0[gtk]
+	>=dev-libs/libpeas-1.0.0[gtk,python,${PYTHON_USEDEP}]
 	>=dev-libs/libxml2-2.6.27:2
 	>=dev-libs/libxslt-1.1.19
 	gnome-base/gsettings-desktop-schemas
