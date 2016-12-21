@@ -1,28 +1,25 @@
-From ae4ec80995263362e6ed99ffd88eb10991ab3ad6 Mon Sep 17 00:00:00 2001
-From: Julian Ospald <hasufell@gentoo.org>
-Date: Sun, 31 Jan 2016 22:55:13 +0300
-Subject: [PATCH 1/2] make build system gentoo-compatible provide options for
- SDL and GLFW video drivers
+From 7610d0eb2f5ba1b04d79d1a4cf1ed5b36d9facef Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gmail.com>
+Date: Sun, 4 Dec 2016 22:32:40 +0400
+Subject: [PATCH] Make build system Gentoo-compatible
 
 ---
- CMakeLists.txt                       | 45 ++++++++----------------------------
- build_paths.h.cmake                  |  1 +
- cmake/linux.cmake                    |  4 ++--
- driver/audio/SDL/src/CMakeLists.txt  |  6 ++---
- driver/video/CMakeLists.txt          |  8 +++++--
- driver/video/GLFW/src/CMakeLists.txt |  2 +-
- driver/video/SDL/src/CMakeLists.txt  |  6 ++---
- 7 files changed, 25 insertions(+), 47 deletions(-)
+ CMakeLists.txt              | 47 +++++++++++++++++----------------------------
+ cmake/c.linux.cmake         |  4 ----
+ driver/video/CMakeLists.txt |  8 ++++++--
+ 3 files changed, 24 insertions(+), 35 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 503668f..e9031a1 100644
+index 72b12be..49eed6a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -144,6 +144,15 @@ ENDIF ("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+@@ -161,6 +161,17 @@ ELSE()
+ ENDIF()
+ UNSET(TMP_BOOST_VERSION)
  
- ################################################################################
- 
-+# options
++################################################################################
++# Drivers options
++
 +OPTION(BUILD_GLFW_DRIVER "Build the GLFW video driver" 0)
 +OPTION(BUILD_SDL_DRIVER "Build the sdl video driver" 1)
 +IF (UNIX)
@@ -31,24 +28,53 @@ index 503668f..e9031a1 100644
 +       ENDIF (NOT BUILD_SDL_DRIVER AND NOT BUILD_GLFW_DRIVER)
 +ENDIF (UNIX)
 +
- IF ("${RTTR_PREFIX}" STREQUAL "")
-     IF ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-         SET(RTTR_PREFIX .)
-@@ -248,10 +257,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version.h.cmake"
- 			   build_version.h)
- CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build_version_defines.h.cmake"
- 			   build_version_defines.h)
--CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build/preinstall.sh.cmake"
--			   preinstall.sh @ONLY)
--CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/build/postinstall.sh.cmake"
--			   postinstall.sh @ONLY)
+ ################################################################################
+ # Set paths
+ # All paths are relative to the install-prefix.
+@@ -201,7 +212,7 @@ ELSE()
+ 	SET(RTTR_DRIVERDIR "${DEFAULT_DRIVERDIR}" CACHE STRING "Directory for driver objects")
+ ENDIF()
+ # Ensure relative paths
+-foreach(curDirVar RTTR_BINDIR RTTR_DATADIR RTTR_GAMEDIR RTTR_LIBDIR RTTR_DOCDIR RTTR_DRIVERDIR)
++foreach(curDirVar RTTR_BINDIR RTTR_DATADIR RTTR_LIBDIR RTTR_DOCDIR RTTR_DRIVERDIR)
+ 	if(IS_ABSOLUTE ${${curDirVar}})
+ 		message(FATAL_ERROR "All RTTR_*DIR variables must be relative paths. ${curDirVar} is absolute: ${${curDirVar}}")
+ 	endif()
+@@ -333,22 +344,12 @@ MACRO(symlinkFolder dst symLinkPath)
+ 	ENDIF()
+ ENDMACRO(symlinkFolder)
+ 
+-IF(NOT ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
+-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${RTTR_DATADIR}")
+-	symlinkFolder("${CMAKE_SOURCE_DIR}/RTTR" "${CMAKE_BINARY_DIR}/${RTTR_DATADIR}/RTTR")
+-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${RTTR_LIBDIR}/RTTR")
+-	if(NOT EXISTS "${CMAKE_SOURCE_DIR}/S2")
+-		file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/S2")
+-	endif()
+-	symlinkFolder("${CMAKE_SOURCE_DIR}/S2" "${CMAKE_BINARY_DIR}/${RTTR_GAMEDIR}")
+-ELSE()
+-	message(STATUS "Host system is ${CMAKE_HOST_SYSTEM_NAME}. Will use copies instead of symlinks")
+-	file(COPY "${CMAKE_SOURCE_DIR}/RTTR" DESTINATION "${CMAKE_BINARY_DIR}"
+-		 PATTERN "*.po" EXCLUDE
+-		 PATTERN "*.pot" EXCLUDE
+-		 PATTERN ".*" EXCLUDE
+-	)
+-ENDIF()
++message(STATUS "Host system is ${CMAKE_HOST_SYSTEM_NAME}. Will use copies instead of symlinks")
++file(COPY "${CMAKE_SOURCE_DIR}/RTTR" DESTINATION "${CMAKE_BINARY_DIR}"
++	 PATTERN "*.po" EXCLUDE
++	 PATTERN "*.pot" EXCLUDE
++	 PATTERN ".*" EXCLUDE
++)
  
  ################################################################################
- # Create symlinks
-@@ -283,36 +288,6 @@ ENDIF()
+ # Configure files
+@@ -382,17 +383,6 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+ enable_testing()
  
  ################################################################################
- 
+-# Add version generater first
+-
 -ADD_SUBDIRECTORY(version)
 -
 -ADD_CUSTOM_TARGET(updateversion ALL
@@ -57,93 +83,30 @@ index 503668f..e9031a1 100644
 -				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
 -)
 -	
--IF(NOT ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
--	ADD_CUSTOM_TARGET(mrproper
--					  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/build/cleanup.sh"
--					  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
--	)
--
--	ADD_CUSTOM_TARGET(create_nightly
--					  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/release/create_release.sh" "nightly" "${CMAKE_SOURCE_DIR}"
--					  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
--	)
--
--	ADD_CUSTOM_TARGET(create_stable
--					  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/release/create_release.sh" "stable" "${CMAKE_SOURCE_DIR}"
--					  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
--	)
--
--	# preinstall script
--	INSTALL(SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/preinstall.cmake")
--ENDIF()
--
 -################################################################################
--
+ # Then add all other dependencies
+ 
  ADD_SUBDIRECTORY(driver)
- ADD_SUBDIRECTORY(libendian)
- ADD_SUBDIRECTORY(mygettext)
-@@ -320,7 +295,6 @@ ADD_SUBDIRECTORY(libsiedler2)
- ADD_SUBDIRECTORY(libutil)
+@@ -404,7 +394,6 @@ ADD_SUBDIRECTORY(libutil)
+ SET(LOBBY_C TRUE)
  ADD_SUBDIRECTORY(liblobby)
  ADD_SUBDIRECTORY(s-c)
 -ADD_SUBDIRECTORY(s25update)
  ADD_SUBDIRECTORY(src)
  
  ################################################################################
-@@ -329,7 +303,6 @@ ADD_SUBDIRECTORY(src)
- INSTALL(CODE "INCLUDE(driver/cmake_install.cmake)")
- INSTALL(CODE "INCLUDE(libsiedler2/cmake_install.cmake)")
- INSTALL(CODE "INCLUDE(s-c/cmake_install.cmake)")
--INSTALL(CODE "INCLUDE(s25update/cmake_install.cmake)")
- INSTALL(CODE "INCLUDE(src/cmake_install.cmake)")
- 
- # and then dont let him install anything
-diff --git a/build_paths.h.cmake b/build_paths.h.cmake
-index 529bbcc..d348954 100644
---- a/build_paths.h.cmake
-+++ b/build_paths.h.cmake
-@@ -41,6 +41,7 @@
- 
- //	set game directory (normal $(datadir)/s25rttr/S2)
- //#define RTTR_GAMEDIR RTTR_DATADIR"/S2"
-+#cmakedefine RTTR_GAMEDIR "${RTTR_GAMEDIR}"
- 
- //	set driver directory (normal $(libdir)/driver)
- //#define RTTR_DRIVERDIR RTTR_LIBDIR"/driver"
-diff --git a/cmake/linux.cmake b/cmake/linux.cmake
-index a025e39..9ab448c 100644
---- a/cmake/linux.cmake
-+++ b/cmake/linux.cmake
-@@ -10,8 +10,8 @@ if(CCACHE_FOUND)
- endif(CCACHE_FOUND)
- 
- # set compiler flags
--FORCE_ADD_FLAGS(CMAKE_C_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
--FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
-+#FORCE_ADD_FLAGS(CMAKE_C_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
-+#FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -ffast-math -mmmx -msse -mfpmath=sse -ggdb)
- 
- IF(${PLATFORM_ARCH} STREQUAL "i386")
-     FORCE_ADD_FLAGS(CMAKE_C_FLAGS -malign-double)
-diff --git a/driver/audio/SDL/src/CMakeLists.txt b/driver/audio/SDL/src/CMakeLists.txt
-index 6487d99..d1429c2 100644
---- a/driver/audio/SDL/src/CMakeLists.txt
-+++ b/driver/audio/SDL/src/CMakeLists.txt
-@@ -49,9 +49,9 @@ IF (SDL_FOUND)
-         ENDIF()
- 
-         INSTALL(TARGETS audioSDL 
--            RUNTIME DESTINATION ${RTTR_DRIVERDIR}/audio 
--            LIBRARY DESTINATION ${RTTR_DRIVERDIR}/audio
--            ARCHIVE DESTINATION ${RTTR_DRIVERDIR}/audio
-+            RUNTIME DESTINATION ${RTTR_LIBDIR}
-+            LIBRARY DESTINATION ${RTTR_LIBDIR}
-+            ARCHIVE DESTINATION ${RTTR_LIBDIR}
-         )
-     ELSE (SDLMIXER_FOUND)
-         MESSAGE(WARNING ": SDL_mixer library not found: Not building SDL audiodriver")
+diff --git a/cmake/c.linux.cmake b/cmake/c.linux.cmake
+index f8c2297..3e84607e 100644
+--- a/cmake/c.linux.cmake
++++ b/cmake/c.linux.cmake
+@@ -1,5 +1 @@
+ SET(Boost_COMPILER "-gcc44")
+-
+-# set compiler flags
+-FORCE_ADD_FLAGS(CMAKE_C_FLAGS -mtune=generic -mno-align-double)
+-FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -mtune=generic -mno-align-double)
 diff --git a/driver/video/CMakeLists.txt b/driver/video/CMakeLists.txt
-index bcc8e10..d8e7119 100644
+index bcc8e10..f32d85b 100644
 --- a/driver/video/CMakeLists.txt
 +++ b/driver/video/CMakeLists.txt
 @@ -1,6 +1,10 @@
@@ -152,41 +115,13 @@ index bcc8e10..d8e7119 100644
 -ADD_SUBDIRECTORY( GLFW )
 -ADD_SUBDIRECTORY( SDL )
 +IF(BUILD_GLFW_DRIVER)
-+       ADD_SUBDIRECTORY( GLFW )
++	ADD_SUBDIRECTORY( GLFW )
 +ENDIF(BUILD_GLFW_DRIVER)
 +IF(BUILD_SDL_DRIVER)
-+       ADD_SUBDIRECTORY( SDL )
++	ADD_SUBDIRECTORY( SDL )
 +ENDIF(BUILD_SDL_DRIVER)
  
  #################################################################################
-diff --git a/driver/video/GLFW/src/CMakeLists.txt b/driver/video/GLFW/src/CMakeLists.txt
-index 00435fb..45e4014 100644
---- a/driver/video/GLFW/src/CMakeLists.txt
-+++ b/driver/video/GLFW/src/CMakeLists.txt
-@@ -1,5 +1,5 @@
- 
--IF (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND ${PLATFORM_ARCH} STREQUAL "i386")
-+IF ("${COMPILEFOR}" STREQUAL "linux")
- 	FIND_LIBRARY(GLFW_LIBRARY glfw) 
- 	
- 	IF (GLFW_LIBRARY)
-diff --git a/driver/video/SDL/src/CMakeLists.txt b/driver/video/SDL/src/CMakeLists.txt
-index 8bd6983..bd0ab5d 100644
---- a/driver/video/SDL/src/CMakeLists.txt
-+++ b/driver/video/SDL/src/CMakeLists.txt
-@@ -40,9 +40,9 @@ IF (SDL_FOUND)
- 	ENDIF()
- 	
- 	INSTALL(TARGETS videoSDL 
--		RUNTIME DESTINATION ${RTTR_DRIVERDIR}/video 
--		LIBRARY DESTINATION ${RTTR_DRIVERDIR}/video
--		ARCHIVE DESTINATION ${RTTR_DRIVERDIR}/video
-+		RUNTIME DESTINATION ${RTTR_LIBDIR}
-+		LIBRARY DESTINATION ${RTTR_LIBDIR}
-+		ARCHIVE DESTINATION ${RTTR_LIBDIR}
- 	)
- ELSE (SDL_FOUND)
- 	MESSAGE(WARNING ": SDL library not found: Not building SDL videodriver")
 -- 
-2.4.10
+2.10.2
 
