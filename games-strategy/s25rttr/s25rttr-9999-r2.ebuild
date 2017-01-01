@@ -30,7 +30,8 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-        "${FILESDIR}"/${P}-cmake.patch
+	"${FILESDIR}"/${P}-cmake.patch
+	"${FILESDIR}"/${P}-restore-buildid.patch
 )
 
 src_prepare() {
