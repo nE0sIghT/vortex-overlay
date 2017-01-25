@@ -15,6 +15,8 @@ SLOT="0"
 KEYWORDS=""
 IUSE="glfw"
 
+CMAKE_MIN_VERSION="3.7.1"
+
 RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2
 	media-libs/libsamplerate
