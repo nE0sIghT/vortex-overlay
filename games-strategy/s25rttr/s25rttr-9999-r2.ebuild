@@ -3,6 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/games-strategy/s25rttr/s25rttr-0.8.1.ebuild,v 1.1 2013/12/23 13:45:08 hasufell Exp $
 
 EAPI=6
+CMAKE_MIN_VERSION="3.7.1"
 inherit eutils cmake-utils gnome2-utils git-r3
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
@@ -14,8 +15,6 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS=""
 IUSE="glfw"
-
-CMAKE_MIN_VERSION="3.7.1"
 
 RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2
