@@ -10,6 +10,7 @@ DESCRIPTION="Open Source remake of The Settlers II game (needs original game fil
 HOMEPAGE="http://www.siedler25.org/"
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+EGIT_COMMIT="3b3bfdd4171270572949d0c3f9b179be7d5bbf24"
 
 LICENSE="GPL-3"
 SLOT="0"
