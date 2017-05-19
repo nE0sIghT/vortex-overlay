@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 47274c7..08be040 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -383,6 +383,17 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+ enable_testing()
+ 
+ ################################################################################
++# Add version generater first
++
++ADD_SUBDIRECTORY(version)
++
++ADD_CUSTOM_TARGET(updateversion ALL
++				  COMMAND "$<TARGET_FILE:version>" "${CMAKE_SOURCE_DIR}"
++				  DEPENDS version
++				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
++)
++	
++################################################################################
+ # Then add all other dependencies
+ 
+ ADD_SUBDIRECTORY(driver)

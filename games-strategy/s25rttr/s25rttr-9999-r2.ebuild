@@ -3,12 +3,14 @@
 # $Header: /var/cvsroot/gentoo-x86/games-strategy/s25rttr/s25rttr-0.8.1.ebuild,v 1.1 2013/12/23 13:45:08 hasufell Exp $
 
 EAPI=6
+CMAKE_MIN_VERSION="3.7.1"
 inherit eutils cmake-utils gnome2-utils git-r3
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/"
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+EGIT_COMMIT="3b3bfdd4171270572949d0c3f9b179be7d5bbf24"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -30,7 +32,8 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-        "${FILESDIR}"/${P}-cmake.patch
+	"${FILESDIR}"/${P}-cmake.patch
+	"${FILESDIR}"/${P}-restore-buildid.patch
 )
 
 src_prepare() {
