@@ -1,19 +1,18 @@
-From 7610d0eb2f5ba1b04d79d1a4cf1ed5b36d9facef Mon Sep 17 00:00:00 2001
-From: Yuri Konotopov <ykonotopov@gmail.com>
-Date: Sun, 4 Dec 2016 22:32:40 +0400
+From 9350d9a19e4df9a00151bd4a2321fabf86ad947d Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Sat, 20 May 2017 00:26:45 +0400
 Subject: [PATCH] Make build system Gentoo-compatible
 
 ---
- CMakeLists.txt              | 47 +++++++++++++++++----------------------------
- cmake/c.linux.cmake         |  4 ----
+ CMakeLists.txt              | 36 ++++++++++++++++++------------------
  driver/video/CMakeLists.txt |  8 ++++++--
- 3 files changed, 24 insertions(+), 35 deletions(-)
+ 2 files changed, 24 insertions(+), 20 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 72b12be..49eed6a 100644
+index 3c9ddbb..bc4a826 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -161,6 +161,17 @@ ELSE()
+@@ -148,6 +148,17 @@ ELSE()
  ENDIF()
  UNSET(TMP_BOOST_VERSION)
  
@@ -31,7 +30,7 @@ index 72b12be..49eed6a 100644
  ################################################################################
  # Set paths
  # All paths are relative to the install-prefix.
-@@ -201,7 +212,7 @@ ELSE()
+@@ -188,7 +199,7 @@ ELSE()
  	SET(RTTR_DRIVERDIR "${DEFAULT_DRIVERDIR}" CACHE STRING "Directory for driver objects")
  ENDIF()
  # Ensure relative paths
@@ -40,7 +39,7 @@ index 72b12be..49eed6a 100644
  	if(IS_ABSOLUTE ${${curDirVar}})
  		message(FATAL_ERROR "All RTTR_*DIR variables must be relative paths. ${curDirVar} is absolute: ${${curDirVar}}")
  	endif()
-@@ -333,22 +344,12 @@ MACRO(symlinkFolder dst symLinkPath)
+@@ -330,22 +341,12 @@ MACRO(symlinkFolder dst symLinkPath)
  	ENDIF()
  ENDMACRO(symlinkFolder)
  
@@ -69,25 +68,7 @@ index 72b12be..49eed6a 100644
  
  ################################################################################
  # Configure files
-@@ -382,17 +383,6 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
- enable_testing()
- 
- ################################################################################
--# Add version generater first
--
--ADD_SUBDIRECTORY(version)
--
--ADD_CUSTOM_TARGET(updateversion ALL
--				  COMMAND "$<TARGET_FILE:version>" "${CMAKE_SOURCE_DIR}"
--				  DEPENDS version
--				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
--)
--	
--################################################################################
- # Then add all other dependencies
- 
- ADD_SUBDIRECTORY(driver)
-@@ -404,7 +394,6 @@ ADD_SUBDIRECTORY(libutil)
+@@ -401,7 +402,6 @@ ADD_SUBDIRECTORY(libutil)
  SET(LOBBY_C TRUE)
  ADD_SUBDIRECTORY(liblobby)
  ADD_SUBDIRECTORY(s-c)
@@ -95,16 +76,6 @@ index 72b12be..49eed6a 100644
  ADD_SUBDIRECTORY(src)
  
  ################################################################################
-diff --git a/cmake/c.linux.cmake b/cmake/c.linux.cmake
-index f8c2297..3e84607e 100644
---- a/cmake/c.linux.cmake
-+++ b/cmake/c.linux.cmake
-@@ -1,5 +1 @@
- SET(Boost_COMPILER "-gcc44")
--
--# set compiler flags
--FORCE_ADD_FLAGS(CMAKE_C_FLAGS -mtune=generic -mno-align-double)
--FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -mtune=generic -mno-align-double)
 diff --git a/driver/video/CMakeLists.txt b/driver/video/CMakeLists.txt
 index bcc8e10..f32d85b 100644
 --- a/driver/video/CMakeLists.txt
