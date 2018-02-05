@@ -1,5 +1,5 @@
 # Systemd unit file for tomcat instances.
-# 
+#
 # To create clones of this service:
 # 0. systemctl enable tomcat@name.service
 # 1. create catalina.base directory structure in

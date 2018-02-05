@@ -1,5 +1,5 @@
 # Systemd unit file for default tomcat
-# 
+#
 # To create clones of this service:
 # DO NOTHING, use tomcat@.service instead.
 
