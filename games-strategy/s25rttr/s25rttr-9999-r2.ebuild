@@ -30,7 +30,7 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-        "${FILESDIR}"/${P}-cmake.patch
+#	"${FILESDIR}"/${P}-cmake.patch
 )
 
 src_prepare() {
@@ -62,9 +62,9 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=ON
 		-DENABLE_OPTIMIZATIONS=OFF
-		-DRTTR_INSTALL_PREFIX=/usr
+		-DRTTR_INSTALL_PREFIX=/usr/
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
-		-DRTTR_GAMEDIR="~/.${PN}/S2"
+		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
 		-DCOMPILEFOR="linux"
 		-DCOMPILEARCH="${arch}"
@@ -86,20 +86,20 @@ src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
 	exeinto /usr/"$(get_libdir)"/${PN}
-	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
+	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
-	doexe driver/video/SDL/src/libvideoSDL.so
+	doexe lib64/s25rttr/video/libvideoSDL.so
 	use glfw && doexe driver/video/GLFW/src/libvideoGLFW.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
-	doexe driver/audio/SDL/src/libaudioSDL.so
+	doexe lib64/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
 	doins -r "${CMAKE_USE_DIR}"/RTTR
 
 	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
-	dobin src/s25client
+	dobin bin/s25client
+	dobin bin/s25edit
 	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
-	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
 }
 
 pkg_preinst() {
