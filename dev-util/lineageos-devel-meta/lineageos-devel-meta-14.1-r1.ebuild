@@ -14,7 +14,7 @@ IUSE=""
 RDEPEND="
 	app-arch/lz4
 	app-arch/lzop
-	=dev-util/aosp-devel-meta-7
+	=dev-util/aosp-devel-meta-7-r1
 	media-gfx/imagemagick
 	media-gfx/pngcrush
 "
