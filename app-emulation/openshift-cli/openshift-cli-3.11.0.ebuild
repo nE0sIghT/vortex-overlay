@@ -19,7 +19,9 @@ IUSE="bash-completion"
 RDEPEND="bash-completion? ( >=app-shells/bash-completion-2.3-r1 )"
 
 src_compile() {
-	EGO_PN="${EGO_PN}/cmd/oc" golang-build_src_compile
+	EGO_PN="${EGO_PN}/cmd/oc" \
+	EGO_BUILD_FLAGS="-linkshared" \
+	golang-build_src_compile
 }
 
 src_install() {
