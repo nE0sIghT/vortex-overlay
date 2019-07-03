@@ -5,7 +5,22 @@
 #
 
 source /lib/gentoo/functions.sh
-source /usr/$(get_libdir)/vortex-build/vortex-functions.sh
+source /usr/@libdir@/vortex-build/vortex-functions.sh
+
+MENUCONFIG=0
+while [[ $# != 0 ]]; do
+	case $1 in
+		-m|--menuconfig)
+			MENUCONFIG=1
+		;;
+		--) shift; break;;
+		*)
+			ewarn Unknown option provided: "${1}"
+		;;
+	esac
+
+	shift
+done
 
 CONFIG=/etc/default/vortex-build
 
@@ -43,6 +58,13 @@ if [ $boot_mounted != 0 ]; then
 fi
 
 pushd /usr/src/linux > /dev/null
+
+if [ "${MENUCONFIG}" -eq "1" ]; then
+	ebegin "Configuring kernel"
+	make "${MAKEOPTS}" O="${BUILD_PATH}" menuconfig
+	exit_code=$?
+	eend $exit_code
+fi
 
 ebegin "Building kernel"
 make "${MAKEOPTS}" O="${BUILD_PATH}"

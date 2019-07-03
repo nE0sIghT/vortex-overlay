@@ -5,7 +5,7 @@
 #
 
 source /lib/gentoo/functions.sh
-source /usr/$(get_libdir)/vortex-build/vortex-functions.sh
+source /usr/@libdir@/vortex-build/vortex-functions.sh
 
 if [ -z "${BUILD_PATH}" ]; then
 	eerror "BUILD_PATH variable is empty. Exiting."

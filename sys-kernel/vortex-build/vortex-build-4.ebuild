@@ -1,8 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
+EAPI=7
 
 inherit eutils
 
@@ -14,7 +13,7 @@ SRC_URI=""
 LICENSE="GPL-3"
 
 SLOT="0"
-KEYWORDS="*"
+KEYWORDS="amd64 x86"
 
 RDEPEND="
 	app-admin/eselect
@@ -33,8 +32,9 @@ CONFIG_CHECK="~IKCONFIG_PROC"
 
 src_install() {
 	exeinto /usr/bin
-	for exe in {build_kernel-r1,prepare_kernel}; do
-		newexe "${FILESDIR}/${exe}" "${exe%-*}"
+	for exe in {build_kernel-r2,prepare_kernel-r1}; do
+		sed -e "s#@libdir@#$(get_libdir)#g" "${FILESDIR}/${exe}" > "${T}/${exe%-*}" || die
+		doexe "${T}/${exe%-*}"
 	done
 
 	insinto /usr/$(get_libdir)/${PN}
