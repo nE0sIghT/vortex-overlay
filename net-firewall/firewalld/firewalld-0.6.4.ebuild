@@ -1,10 +1,10 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
+PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} )
 
-inherit autotools gnome2-utils linux-info python-r1 systemd bash-completion-r1
+inherit autotools gnome2-utils linux-info python-single-r1 systemd bash-completion-r1
 
 DESCRIPTION="A firewall daemon with D-BUS interface providing a dynamic firewall"
 HOMEPAGE="http://www.firewalld.org/"
@@ -12,7 +12,7 @@ SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="amd64 ~arm64 ~x86"
 IUSE="gui"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
@@ -25,6 +25,7 @@ RDEPEND="${PYTHON_DEPS}
 	net-firewall/ebtables
 	net-firewall/iptables[ipv6]
 	net-firewall/ipset
+	net-firewall/nftables
 	|| ( >=sys-apps/openrc-0.11.5 sys-apps/systemd )
 	gui? (
 		x11-libs/gtk+:3
@@ -36,8 +37,6 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 RESTRICT="test" # bug 650760
-
-PATCHES=( "${FILESDIR}/${P}"-systemd.patch)
 
 pkg_setup() {
 	local CONFIG_CHECK="~NF_CONNTRACK ~NF_CONNTRACK_IPV4 ~NF_CONNTRACK_IPV6 ~NETFILTER_XT_MATCH_CONNTRACK"
@@ -60,36 +59,26 @@ src_configure() {
 		--with-ip6tables_restore="${EPREFIX}/sbin/ip6tables-restore" \
 		--with-ebtables="${EPREFIX}/sbin/ebtables" \
 		--with-ebtables_restore="${EPREFIX}/sbin/ebtables-restore" \
+		--with-nft="${EPREFIX}/sbin/nft" \
 		--with-systemd-unitdir="$(systemd_get_systemunitdir)" \
 		--with-bashcompletiondir="$(get_bashcompdir)"
 }
 
 src_install() {
-	# manually split up the installation to avoid "file already exists" errors
-	emake -C config DESTDIR="${D}" install
-	emake -C po DESTDIR="${D}" install
-	emake -C shell-completion DESTDIR="${D}" install
-	emake -C doc DESTDIR="${D}" install
-
-	install_python() {
-		emake -C src DESTDIR="${D}" pythondir="$(python_get_sitedir)" install
-		python_optimize
-	}
-	python_foreach_impl install_python
-
-	python_replicate_script "${D}"/usr/bin/firewall-{offline-cmd,cmd,applet,config}
-	python_replicate_script "${D}/usr/sbin/firewalld"
+	default
+	python_optimize
 
 	# Get rid of junk
-	rm -r "${D}/etc/sysconfig/" || die
+	rm -rf "${D}/etc/rc.d/" || die
+	rm -rf "${D}/etc/sysconfig/" || die
 
 	# For non-gui installs we need to remove GUI bits
 	if ! use gui; then
-		rm -r "${D}/etc/xdg/autostart" || die
+		rm -rf "${D}/etc/xdg/autostart" || die
 		rm -f "${D}/usr/bin/firewall-applet" || die
 		rm -f "${D}/usr/bin/firewall-config" || die
-		rm -r "${D}/usr/share/applications" || die
-		rm -r "${D}/usr/share/icons" || die
+		rm -rf "${D}/usr/share/applications" || die
+		rm -rf "${D}/usr/share/icons" || die
 	fi
 
 	newinitd "${FILESDIR}"/firewalld.init firewalld
