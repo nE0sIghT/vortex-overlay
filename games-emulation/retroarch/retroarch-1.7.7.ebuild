@@ -20,8 +20,8 @@ KEYWORDS="~amd64 ~x86"
 
 IUSE="alsa cg cpu_flags_x86_sse dbus egl ffmpeg flac freetype gles gles3 kms
 	libcaca libusb materialui miniupnpc openal +opengl +ozone pulseaudio
-	python qt rgui sdl sdl2 sixel subtitles ssl stripes systemd tinyalsa udev
-	vulkan X xrandr xmb xv wayland zlib"
+	python qt rgui sdl +sdl2 sixel subtitles ssl stripes systemd tinyalsa udev
+	vulkan X xrandr xmb xv wayland +zlib"
 
 MENU_REQUIRED_USE="|| ( gles opengl vulkan )"
 REQUIRED_USE="
@@ -46,6 +46,10 @@ REQUIRED_USE="
 "
 
 RDEPEND="
+	games-emulation/libretro-database
+	games-emulation/libretro-info
+	games-emulation/retroarch-assets
+
 	alsa? ( media-libs/alsa-lib )
 	cg? ( media-gfx/nvidia-cg-toolkit )
 	gles? ( media-libs/mesa:0=[gles2] )
@@ -93,7 +97,8 @@ RDEPEND="
 	zlib? ( sys-libs/zlib )
 "
 DEPEND="${RDEPEND}
-	vulkan? ( dev-util/vulkan-headers )"
+	vulkan? ( dev-util/vulkan-headers )
+	virtual/pkgconfig"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -103,8 +108,22 @@ src_prepare() {
 	# RetroArch's configure is shell script, not autoconf one
 	# However it tryes to mimic autoconf configure options
 	sed -i -e \
-		's#'') : ;;#''|--infodir=*|--datadir=*|--localstatedir=*|--libdir=*) : ;;#g' \
+		's#\(''\))\( : ;;\)#\1|--infodir=*|--datadir=*|--localstatedir=*|--libdir=*)\2#g' \
 		qb/qb.params.sh || die
+
+	local LIBRETRO_LIB_DIR="${EPREFIX}/usr/$(get_libdir)/libretro"
+	local LIBRETRO_DATA_DIR="${EPREFIX}/usr/share/libretro"
+	local RETROARCH_DATA_DIR="${EPREFIX}/usr/share/${PN}"
+	sed -i \
+		-e "s:# \(assets_directory =\):\1 ${RETROARCH_DATA_DIR}/assets:g" \
+		-e "s:# \(joypad_autoconfig_dir =\):\1 ${RETROARCH_DATA_DIR}/autoconfig:g" \
+		-e "s:# \(cheat_database_path =\):\1 ${LIBRETRO_DATA_DIR}/database/cht:g" \
+		-e "s:# \(content_database_path =\):\1 ${LIBRETRO_DATA_DIR}/database/rdb:g" \
+		-e "s:# \(cursor_directory =\):\1 ${LIBRETRO_DATA_DIR}/database/cursors:g" \
+		-e "s:# \(libretro_directory =\):\1 ${LIBRETRO_LIB_DIR}:g" \
+		-e "s:# \(libretro_info_path =\):\1 ${LIBRETRO_DATA_DIR}/info:g" \
+		-e "s:# \(video_shader_dir =\):\1 ${LIBRETRO_DATA_DIR}/shaders:g" \
+		retroarch.cfg || die
 }
 
 src_configure() {
@@ -114,10 +133,9 @@ src_configure() {
 	fi
 
 	econf \
-		--enable-threads \
 		--enable-mmap \
 		--enable-networking \
-		--enable-zlib \
+		--enable-threads \
 		--disable-audioio \
 		--disable-builtinflac \
 		--disable-builtinmbedtls \
@@ -163,4 +181,14 @@ src_configure() {
 		$(use_enable xrandr) \
 		$(use_enable xv xvideo) \
 		$(use_enable zlib)
+}
+
+pkg_postinst() {
+	elog "Look to games-emulation/libretro-* packages for libretro cores"
+	elog ""
+
+	elog "You may want to install shader files via:"
+	elog "\tlibretro-common-shaders for Nvidia Cg shaders"
+	elog "\tlibretro-glsl-shaders for GLSL shaders"
+	elog "\tlibretro-slang-shaders for Vulkan shaders"
 }
