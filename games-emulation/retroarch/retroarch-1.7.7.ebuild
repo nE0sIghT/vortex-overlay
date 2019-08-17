@@ -46,6 +46,7 @@ REQUIRED_USE="
 "
 
 RDEPEND="
+	games-emulation/libretro-common-overlays
 	games-emulation/libretro-database
 	games-emulation/libretro-info
 	games-emulation/retroarch-assets
@@ -122,6 +123,7 @@ src_prepare() {
 		-e "s:# \(cursor_directory =\):\1 \"${LIBRETRO_DATA_DIR}/database/cursors\":g" \
 		-e "s:# \(libretro_directory =\):\1 \"${LIBRETRO_LIB_DIR}\":g" \
 		-e "s:# \(libretro_info_path =\):\1 \"${LIBRETRO_DATA_DIR}/info\":g" \
+		-e "s:# \(overlay_directory =\):\1 \"${RETROARCH_DATA_DIR}/overlay\":g" \
 		-e "s:# \(video_shader_dir =\):\1 \"${LIBRETRO_DATA_DIR}/shaders\":g" \
 		retroarch.cfg || die
 }
