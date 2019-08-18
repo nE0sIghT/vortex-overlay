@@ -15,8 +15,3 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 S="${S}/libretro"
-
-src_prepare() {
-	default
-	sed -i -e 's/-O2//g' Makefile || die
-}
