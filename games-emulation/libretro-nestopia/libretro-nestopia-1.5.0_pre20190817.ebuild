@@ -20,8 +20,3 @@ src_prepare() {
 	default
 	sed -i -e 's/-O2//g' Makefile || die
 }
-
-src_install() {
-	LIBRETRO_CORE_LIB_FILE="${S}/${LIBRETRO_CORE_NAME}_libretro.so"
-	libretro-core_src_install
-}
