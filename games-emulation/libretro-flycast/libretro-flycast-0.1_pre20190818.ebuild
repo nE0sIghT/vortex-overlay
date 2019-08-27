@@ -14,6 +14,9 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
+RDEPEND="virtual/opengl"
+DEPEND="${RDEPEND}"
+
 src_compile() {
 	local ARCH=$(tc-arch)
 	if [[ "${ARCH}" == "amd64" ]]; then
