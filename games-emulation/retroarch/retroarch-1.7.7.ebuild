@@ -65,6 +65,7 @@ RDEPEND="
 	libusb? ( virtual/libusb:= )
 	miniupnpc? ( net-libs/miniupnpc )
 	openal? ( media-libs/openal )
+	opengl? ( virtual/opengl )
 	pulseaudio? ( media-sound/pulseaudio )
 	python? ( ${PYTHON_DEPS} )
 	qt? (
