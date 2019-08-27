@@ -14,7 +14,8 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-DEPEND="
+RDEPEND="virtual/opengl"
+DEPEND="${RDEPEND}
 	>=net-libs/libpcap-1.8.1-r2
 "
 
