@@ -13,6 +13,8 @@ DESCRIPTION="Libretro fork of bsnes"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+# No tests provided
+RESTRICT="test"
 
 BSNES_PROFILES=(
 	accuracy
