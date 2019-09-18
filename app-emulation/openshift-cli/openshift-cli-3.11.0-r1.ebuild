@@ -22,6 +22,14 @@ src_compile() {
 	EGO_PN="${EGO_PN}/cmd/oc" \
 	EGO_BUILD_FLAGS="-linkshared" \
 	golang-build_src_compile
+
+	OS_GIT_VERSION='' \
+		OS_GIT_COMMIT='' \
+		OS_GIT_MAJOR='' \
+		OS_GIT_MINOR='' \
+		OS_GIT_TREE_STATE='' \
+		src/${EGO_PN}/hack/generate-docs.sh || die
+
 }
 
 src_install() {
