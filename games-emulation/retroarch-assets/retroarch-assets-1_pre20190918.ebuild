@@ -39,10 +39,6 @@ src_prepare() {
 
 	sed -i -e "s/libretro/retroarch/g" Makefile || die
 
-	if ! use materialui; then
-		rm -r glui || die
-	fi
-
 	declare -A FLAGS=( [materialui]=glui [ozone]= [rgui]= [xmb]= )
 	for flag in "${!FLAGS[@]}"; do
 		if ! use "${flag}"; then
