@@ -15,5 +15,5 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 src_configure() {
-	:
+	: 
 }
