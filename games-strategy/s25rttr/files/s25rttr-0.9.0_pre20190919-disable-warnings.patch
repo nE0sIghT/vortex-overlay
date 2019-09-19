@@ -1,0 +1,12 @@
+diff -ur a/cmake/EnableWarnings.cmake b/cmake/EnableWarnings.cmake
+--- a/cmake/EnableWarnings.cmake	2019-09-19 16:33:55.770738755 +0400
++++ b/cmake/EnableWarnings.cmake	2019-09-19 16:34:56.561984959 +0400
+@@ -28,7 +28,7 @@
+     if(RTTR_ENABLE_WERROR)
+       target_compile_options(${target} ${visibility} /WX) # warning = error
+     endif()
+-  else()
++  elseif(NOT PACKAGE_MODE)
+     target_compile_options(${target} ${visibility} -Wall -pedantic -Wextra)
+     if(RTTR_ENABLE_WERROR)
+       target_compile_options(${target} ${visibility} -Werror)
