@@ -1,17 +1,17 @@
-From 431c02ce5e534514e3f43a4b7d628bd570b11844 Mon Sep 17 00:00:00 2001
+From 5233ccba67e20f35cd8a00851d51136d9c94960d Mon Sep 17 00:00:00 2001
 From: Yuri Konotopov <ykonotopov@gnome.org>
 Date: Thu, 19 Sep 2019 12:39:12 +0400
-Subject: [PATCH 1/2] Added PACKAGE_MODE cmake option to simplify build for
- distro packaging
+Subject: [PATCH] Added PACKAGE_MODE cmake option to simplify build for distro
+ packaging
 
 ---
- CMakeLists.txt                     | 20 ++++++++++-----
+ CMakeLists.txt                     | 14 ++++++++---
  extras/videoDrivers/CMakeLists.txt |  8 ++++--
  libs/libGamedata/CMakeLists.txt    | 40 ++++++++++++++++--------------
- 3 files changed, 42 insertions(+), 26 deletions(-)
+ 3 files changed, 38 insertions(+), 24 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index db954012..9ea37c95 100644
+index db954012..b368a527 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.8)
@@ -46,19 +46,6 @@ index db954012..9ea37c95 100644
      include(GetGitRevisionDescription)
      # Get git commit hash. Note: CMake will reconfigure if the git hash changes
      get_git_head_revision(RTTR_GIT_REF RTTR_REVISION)
-@@ -336,8 +342,10 @@ if(NOT WIN32)
-     install(DIRECTORY "data/RTTR/texte/" DESTINATION "${RTTR_DOCDIR}" FILES_MATCHING PATTERN "*.txt")
- endif()
- 
--# Placeholder for S2 installation
--install(FILES "${RTTR_S2_PLACEHOLDER_PATH}" DESTINATION "${RTTR_GAMEDIR}")
-+if(NOT PACKAGE_MODE)
-+    # Placeholder for S2 installation
-+    install(FILES "${RTTR_S2_PLACEHOLDER_PATH}" DESTINATION "${RTTR_GAMEDIR}")
-+endif(NOT PACKAGE_MODE)
- 
- ################################################################################
- # Postbuild
 diff --git a/extras/videoDrivers/CMakeLists.txt b/extras/videoDrivers/CMakeLists.txt
 index baaeb9d8..90d5a0f1 100644
 --- a/extras/videoDrivers/CMakeLists.txt

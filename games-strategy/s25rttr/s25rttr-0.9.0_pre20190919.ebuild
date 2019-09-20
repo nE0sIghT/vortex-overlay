@@ -50,7 +50,6 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/"${P}"-package-mode.patch
-	"${FILESDIR}"/"${P}"-build-fix.patch
 )
 
 src_prepare() {
