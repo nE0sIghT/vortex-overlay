@@ -1,24 +1,17 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
+EAPI=7
 
-inherit cmake-utils games
-if [[ ${PV} == "9999" ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="git://github.com/vcmi/vcmi.git"
-else
-	KEYWORDS="~amd64 ~x86"
-	SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-fi
+inherit cmake-utils xdg
 
 DESCRIPTION="VCMI is work-in-progress attempt to recreate engine for Heroes III."
 HOMEPAGE="http://vcmi.eu"
+SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-
+KEYWORDS="~amd64 ~x86"
 IUSE="editor erm +launcher"
 
 RDEPEND="
@@ -38,42 +31,28 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
-
-	>=dev-libs/boost-1.48
-	>=sys-devel/gcc-4.6:*
+	dev-libs/boost[nls]
 	virtual/pkgconfig
 "
 
 src_prepare() {
 	cmake-utils_src_prepare
-	epatch_user
 }
 
 src_configure() {
 	local mycmakeargs=(
-		-DBIN_DIR="${GAMES_BINDIR#/usr/}"
-		-DDATA_DIR="${GAMES_DATADIR#/usr/}"/"${PN}"
-		-DLIB_DIR="${GAMES_PREFIX#/usr/}"/$(get_libdir)/"${PN}"
 		-DENABLE_PCH=OFF # Do not works with NDEBUG set
 		-DENABLE_TEST=OFF
-		$(cmake-utils_use_enable editor)
-		$(cmake-utils_use_enable erm)
-		$(cmake-utils_use_enable launcher)
+		-DENABLE_EDITOR=$(usex editor)
+		-DENABLE_ERM=$(usex erm)
+		-DENABLE_LAUNCHER=$(usex launcher)
 	)
 
 	cmake-utils_src_configure
 }
 
-src_compile() {
-	cmake-utils_src_compile
-}
-
-src_install() {
-	cmake-utils_src_install
-	prepgamesdirs
-
-	dodir /etc/ld.so.conf.d/
-	echo "$(games_get_libdir)/${PN}" > ${ED}/etc/ld.so.conf.d/10${PN}.conf || die
+pkg_postinst() {
+	xdg_pkg_postinst
 
 	elog "In order to play VCMI you must install:"
 	elog "- Heroes III: Shadow of Death or Complete edition;"
