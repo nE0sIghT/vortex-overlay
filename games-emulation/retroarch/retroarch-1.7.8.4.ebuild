@@ -204,6 +204,7 @@ pkg_postinst() {
 	elog "Sega Genesis / Mega Drive, CD, MS, GG:"
 	elog "\tgames-emulation/libretro-genesis-plus-gx"
 	elog "Sega Saturn:"
+	elog "\tgames-emulation/libretro-yabause"
 	elog "\tgames-emulation/libretro-mednafen-saturn"
 	elog "Sega Dreamcast:"
 	elog "\tgames-emulation/libretro-flycast"
