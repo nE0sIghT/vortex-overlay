@@ -33,7 +33,6 @@
 		<flag name="opengl">Build OpenGL 2.0 video driver</flag>
 		<flag name="ozone">Enable Ozone menu</flag>
 		<flag name="pulseaudio">Build PulseAudio audio driver</flag>
-		<flag name="python">Enable Python 3 support for shaders</flag>
 		<flag name="qt">Enable Qt companion support</flag>
 		<flag name="rgui">Enable RGUI menu</flag>
 		<flag name="sdl">Enable SDL suppoer</flag>
