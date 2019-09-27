@@ -208,6 +208,8 @@ pkg_postinst() {
 	elog "\tgames-emulation/libretro-mednafen-saturn"
 	elog "Sega Dreamcast:"
 	elog "\tgames-emulation/libretro-flycast"
+	elog "Sony Playstation:"
+	elog "\tgames-emulation/libretro-mednafen-psx"
 	elog "NEC PC-FX:"
 	elog "\tgames-emulation/libretro-mednafen-pcfx"
 	elog ""
