@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/nestopia"
-LIBRETRO_COMMIT_SHA="e7b2f6428f3ea80c33b3c9923204f6c2ae4be8ab"
+LIBRETRO_COMMIT_SHA="7f48c211c281880d122981da119a4455a9bebbde"
 
 inherit libretro-core
 
