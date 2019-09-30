@@ -18,6 +18,7 @@ PACKAGES=(
 	libretro-glsl-shaders
 	libretro-info
 	libretro-mednafen-pcfx
+	libretro-mednafen-psx
 	libretro-mednafen-saturn
 	libretro-mgba
 	libretro-mupen64plus-next
@@ -26,6 +27,7 @@ PACKAGES=(
 	libretro-sameboy
 	libretro-slang-shaders
 	libretro-vbam
+	libretro-yabause
 	retroarch-assets
 	retroarch-joypad-autoconfig
 )
