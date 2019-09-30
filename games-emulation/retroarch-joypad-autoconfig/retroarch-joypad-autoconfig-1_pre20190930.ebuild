@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="4b44318f363a2261b1ef8827f0e4f80e6c536c35"
+LIBRETRO_COMMIT_SHA="6f51ce8a46cc4d96e1b675e002dcf13004f6be67"
 
 DESCRIPTION="RetroArch joypad autoconfig files"
 HOMEPAGE="https://github.com/libretro/retroarch-joypad-autoconfig"
