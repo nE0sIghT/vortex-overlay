@@ -3,7 +3,7 @@
 
 EAPI=7
 
-LIBRETRO_COMMIT_SHA="4904f5c9c8ed46b186a19cef6d863445c4b8caae"
+LIBRETRO_COMMIT_SHA="6b5d35f951f71b80df167d54fe03311298c22526"
 
 DESCRIPTION="Vulkan GLSL RetroArch shaders"
 HOMEPAGE="https://github.com/libretro/slang-shaders"
