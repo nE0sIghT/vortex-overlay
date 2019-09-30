@@ -3,7 +3,7 @@
 
 EAPI=7
 
-LIBRETRO_COMMIT_SHA="6a088293482e0a1b0e11774a6ebce1c7d450ebda"
+LIBRETRO_COMMIT_SHA="504f84321852bbc6174699f69718658668e92890"
 
 DESCRIPTION="Cheatcode files, content data files and etc. stuff for RetroArch"
 HOMEPAGE="https://github.com/libretro/libretro-database"
