@@ -3,7 +3,7 @@
 
 EAPI=7
 
-LIBRETRO_COMMIT_SHA="38b09e4e202ba7aea1384724adcc993ead236f7d"
+LIBRETRO_COMMIT_SHA="09e2942efbab2f51b60ff0b93b7761b0b0570910"
 
 DESCRIPTION="Glsl shaders converted by hand from libretro's glsl-shaders repo"
 HOMEPAGE="https://github.com/libretro/glsl-shaders"
