@@ -203,6 +203,7 @@ pkg_postinst() {
 	elog "\tgames-emulation/libretro-desmume"
 	elog "Sega Genesis / Mega Drive, CD, MS, GG:"
 	elog "\tgames-emulation/libretro-genesis-plus-gx"
+	elog "\tgames-emulation/libretro-picodrive"
 	elog "Sega Saturn:"
 	elog "\tgames-emulation/libretro-yabause"
 	elog "\tgames-emulation/libretro-mednafen-saturn"
