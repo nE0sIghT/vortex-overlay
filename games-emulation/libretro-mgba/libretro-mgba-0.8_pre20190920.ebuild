@@ -10,7 +10,7 @@ inherit libretro-core
 
 DESCRIPTION="mGBA Game Boy Advance Emulator"
 
-LICENSE="MPL-2"
+LICENSE="MPL-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
