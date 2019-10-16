@@ -19,6 +19,6 @@ DEPEND="sys-devel/rgbds"
 S="${S}/libretro"
 
 src_install() {
-	LIBRETRO_CORE_LIB_FILE:="${S}/../build/bin${LIBRETRO_CORE_NAME}_libretro.so" \
+	LIBRETRO_CORE_LIB_FILE="${S}/../build/bin/${LIBRETRO_CORE_NAME}_libretro.so" \
 		libretro-core_src_install
 }
