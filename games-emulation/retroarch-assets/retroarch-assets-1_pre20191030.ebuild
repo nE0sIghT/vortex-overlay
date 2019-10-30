@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="5aa0c9f9edb33181d34d1ca32a65d417e3ad1dfd"
+LIBRETRO_COMMIT_SHA="5f6d9fc69109a8e18ce9b846ef7f679fd974035a"
 
 DESCRIPTION="Assets needed for RetroArch. Also contains the official branding."
 HOMEPAGE="https://github.com/libretro/retroarch-assets"
@@ -25,9 +25,25 @@ fi
 LICENSE="CC-BY-4.0"
 SLOT="0"
 
+IUSE="materialui ozone rgui xmb"
+
+RDEPEND="
+	materialui? ( !!<games-emulation/retroarch-1.7.8 )
+	ozone? ( !!<games-emulation/retroarch-1.7.8 )
+	rgui? ( !!<games-emulation/retroarch-1.7.8 )
+	xmb? ( !!<games-emulation/retroarch-1.7.8 )
+"
+
 src_prepare() {
 	default
 
 	sed -i -e "s/libretro/retroarch/g" Makefile || die
-	rm -r {glui,ozone,rgui,xmb} || die
+
+	declare -A FLAGS=( [materialui]=glui [ozone]= [rgui]= [xmb]= )
+	for flag in "${!FLAGS[@]}"; do
+		if ! use "${flag}"; then
+			local folder="${FLAGS[$flag]:-$flag}"
+			rm -r "${folder}" || die
+		fi
+	done
 }
