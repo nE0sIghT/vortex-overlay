@@ -31,7 +31,7 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
-	dev-libs/boost[nls]
+	dev-libs/boost:=[nls]
 	virtual/pkgconfig
 "
 
