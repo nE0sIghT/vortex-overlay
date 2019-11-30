@@ -3,36 +3,20 @@
 
 EAPI=7
 
+inherit vcs-snapshot
+
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="2a8bef8b99b8456e91dd1343fe912578f0acae74"
+LIBRETRO_COMMIT_SHA="c2bbf234195bbad91c827337a2fb2b5bc727407b"
 
 DESCRIPTION="Assets needed for RetroArch. Also contains the official branding."
 HOMEPAGE="https://github.com/libretro/retroarch-assets"
-
-if [[ ${PV} == *9999 ]]; then
-	SRC_URI=""
-	EGIT_REPO_URI="https://github.com/${LIBRETRO_REPO_NAME}.git"
-
-	inherit git-r3
-else
-	inherit vcs-snapshot
-
-	SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
-
-	KEYWORDS="~amd64 ~x86"
-fi
+SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="CC-BY-4.0"
 SLOT="0"
+KEYWORDS="~amd64 ~x86"
 
 IUSE="materialui ozone rgui xmb"
-
-RDEPEND="
-	materialui? ( !!<games-emulation/retroarch-1.7.8 )
-	ozone? ( !!<games-emulation/retroarch-1.7.8 )
-	rgui? ( !!<games-emulation/retroarch-1.7.8 )
-	xmb? ( !!<games-emulation/retroarch-1.7.8 )
-"
 
 src_prepare() {
 	default
