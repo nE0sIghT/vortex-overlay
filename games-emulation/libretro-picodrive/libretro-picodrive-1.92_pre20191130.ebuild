@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/picodrive"
-LIBRETRO_COMMIT_SHA="a9f220a890c5a0edad44fcf0ed2e03e1200cbd3f"
+LIBRETRO_COMMIT_SHA="48e1bf20adbafd6238e78d6cf56c99db5d3b889d"
 
 inherit libretro-core
 
@@ -15,5 +15,5 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 src_configure() {
-	: 
+	:
 }
