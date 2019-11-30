@@ -3,27 +3,18 @@
 
 EAPI=7
 
+inherit vcs-snapshot
+
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="3304c5ddcdcda9afa6cd0755dddacedd4a50dee7"
+LIBRETRO_COMMIT_SHA="ab19cf782ac59628a255f3ea7de653c1f10891b7"
 
 DESCRIPTION="RetroArch joypad autoconfig files"
 HOMEPAGE="https://github.com/libretro/retroarch-joypad-autoconfig"
-
-if [[ ${PV} == *9999 ]]; then
-	SRC_URI=""
-	EGIT_REPO_URI="https://github.com/${LIBRETRO_REPO_NAME}.git"
-
-	inherit git-r3
-else
-	inherit vcs-snapshot
-
-	SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
-
-	KEYWORDS="~amd64 ~x86"
-fi
+SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="CC-BY-4.0"
 SLOT="0"
+KEYWORDS="~amd64 ~x86"
 
 src_prepare() {
 	default
