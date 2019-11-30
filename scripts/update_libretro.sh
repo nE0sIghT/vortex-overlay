@@ -78,6 +78,9 @@ function update_package() {
 
 		sed -i -e "s#${EBUILD_COMMIT}#${LATEST_COMMIT}#g" "${PACKAGE_FOLDER}/${NEW_EBUILD}" || \
 			die "Unable to replace commit '${EBUILD_COMMIT}' to '${LATEST_COMMIT}' in '${PACKAGE_FOLDER}/${NEW_EBUILD}'"
+
+		ebuild "${PACKAGE_FOLDER}/${NEW_EBUILD}" digest || \
+			die "Unable to create digests for '${PACKAGE_FOLDER}/${NEW_EBUILD}'"
 	else
 		einfo "${1} is up to date"
 	fi
