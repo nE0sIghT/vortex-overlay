@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/yabause"
-LIBRETRO_COMMIT_SHA="08d09cb88a69ee4c2986693fb813e0eb58d71481"
+LIBRETRO_COMMIT_SHA="3ded989b9abca3f978e3a36a8ca03de9cc827278"
 
 inherit libretro-core
 
