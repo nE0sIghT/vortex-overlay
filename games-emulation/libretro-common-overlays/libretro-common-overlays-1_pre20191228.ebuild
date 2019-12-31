@@ -3,26 +3,17 @@
 
 EAPI=7
 
-LIBRETRO_COMMIT_SHA="c648ade231b7882e95d34e0eec5fd92c9045b696"
+LIBRETRO_COMMIT_SHA="a1f4176ab2ac1d258a4d4fccfce8ab32339dcc68"
+
+inherit vcs-snapshot
 
 DESCRIPTION="Collection of overlay files for use with RetroArch"
 HOMEPAGE="https://github.com/libretro/common-overlays"
-
-if [[ ${PV} == *9999 ]]; then
-	SRC_URI=""
-	EGIT_REPO_URI="https://github.com/libretro/common-overlays.git"
-
-	inherit git-r3
-else
-	inherit vcs-snapshot
-
-	SRC_URI="https://github.com/libretro/common-overlays/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
-
-	KEYWORDS="~amd64 ~x86"
-fi
+SRC_URI="https://github.com/libretro/common-overlays/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
+KEYWORDS="~amd64 ~x86"
 
 src_compile() {
 	:
