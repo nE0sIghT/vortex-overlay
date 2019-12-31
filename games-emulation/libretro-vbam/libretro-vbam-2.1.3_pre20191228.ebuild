@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/vbam-libretro"
-LIBRETRO_COMMIT_SHA="6bdd6d1b22e40cfe715f05bc6653936eae40658f"
+LIBRETRO_COMMIT_SHA="2622db116c05662c3b7902229dfb1123c4ac3e1d"
 
 inherit libretro-core
 
