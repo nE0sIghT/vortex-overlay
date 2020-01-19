@@ -15,7 +15,6 @@ RDEPEND="
 	app-crypt/gnupg
 	app-arch/zip[-natspec]
 	app-arch/unzip
-	>=dev-java/icedtea-3.4.0:8
 	dev-libs/libxslt
 	dev-libs/libxml2
 	dev-util/android-tools

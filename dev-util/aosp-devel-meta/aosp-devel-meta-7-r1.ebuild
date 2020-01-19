@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -8,7 +8,7 @@ HOMEPAGE="https://source.android.com/source/initializing"
 
 LICENSE="metapackage"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~x86"
 IUSE=""
 
 RDEPEND="
@@ -30,7 +30,7 @@ RDEPEND="
 	sys-devel/bison
 	sys-devel/flex
 	sys-devel/gcc[cxx]
-	sys-libs/ncurses:5[abi_x86_32]
+	sys-libs/ncurses-compat:5=[abi_x86_32,tinfo]
 	sys-libs/readline[abi_x86_32]
 	sys-libs/zlib[abi_x86_32]
 	sys-process/schedtool
