@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -6,7 +6,7 @@ EAPI=7
 inherit vcs-snapshot
 
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="ab19cf782ac59628a255f3ea7de653c1f10891b7"
+LIBRETRO_COMMIT_SHA="c6e13bf211a8868497509903bb4731c8a952eebe"
 
 DESCRIPTION="RetroArch joypad autoconfig files"
 HOMEPAGE="https://github.com/libretro/retroarch-joypad-autoconfig"
