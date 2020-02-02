@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/mgba"
-LIBRETRO_COMMIT_SHA="4865aaabc2a46c635f218f7b51f8fc5cc2c4c8ac"
+LIBRETRO_COMMIT_SHA="66c2ec7fbec29fe9b878339135bb7c8dd6c856a8"
 
 inherit libretro-core
 
