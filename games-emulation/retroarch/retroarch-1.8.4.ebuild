@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -78,7 +78,7 @@ RDEPEND="
 	sdl? ( media-libs/libsdl )
 	sdl2? ( media-libs/libsdl2 )
 	sixel? ( media-libs/libsixel )
-	ssl? ( net-libs/mbedtls )
+	ssl? ( <net-libs/mbedtls-2.18:= )
 	subtitles? ( media-libs/libass )
 	systemd? ( sys-apps/systemd )
 	udev? ( virtual/udev )
