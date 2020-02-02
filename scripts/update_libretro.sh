@@ -24,6 +24,7 @@ PACKAGES=(
 	libretro-mupen64plus-next
 	libretro-nestopia
 	libretro-picodrive
+	libretro-pcsx-rearmed
 	libretro-sameboy
 	libretro-slang-shaders
 	libretro-vbam
