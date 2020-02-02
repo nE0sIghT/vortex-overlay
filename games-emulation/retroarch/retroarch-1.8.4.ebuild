@@ -211,6 +211,7 @@ pkg_postinst() {
 	elog "\tgames-emulation/libretro-flycast"
 	elog "Sony Playstation:"
 	elog "\tgames-emulation/libretro-mednafen-psx"
+	elog "\tgames-emulation/libretro-pcsx-rearmed"
 	elog "NEC PC-FX:"
 	elog "\tgames-emulation/libretro-mednafen-pcfx"
 	elog ""
