@@ -1,17 +1,17 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-COMMIT_SHA="3af7f7c76b9f46e1c4c0a1d7f853b904c170b97a"
+COMMIT_SHA="8db1ea0d143637fc7ef0647f989850329fc0a295"
 KAGUYA_COMMIT_SHA="38ca7e1d894c138e454bbe5c89048bdd5091545a"
 LANGUAGES_COMMIT_SHA="b1978170473bbf39a24254814e1b1f967a51ef4c"
-LIBENDIAN_COMMIT_SHA="0454261d3ed1a3d8c4ce6cb019d87f53fd5b66e0"
-LIBLOBBY_COMMIT_SHA="a0b8c64cfab315be0334c7b33c4776bc7bb7827c"
-LIBSIEDLER2_COMMIT_SHA="457dc4ed00af6afe523b139cf6c5941d46b0bf61"
-LIBUTIL_COMMIT_SHA="540088d2d83c39dbfa8a19a807b959eadfe5a953"
-MYGETTEXT_COMMIT_SHA="19e8cdd32f2d2fc89bdafa69f4da788d448f8429"
-S25EDIT_COMMIT_SHA="4d8503cbe81e62dd8708b5efaca5075112fbfef8"
+LIBENDIAN_COMMIT_SHA="dd2c11498f679247530b6b7cf7bd5964f539ddfd"
+LIBLOBBY_COMMIT_SHA="7d85ec40f03af619a6734f20edb28d991b3d61f2"
+LIBSIEDLER2_COMMIT_SHA="fcccb9327577edcb08f562728504d0cf7a09895b"
+LIBUTIL_COMMIT_SHA="f47edf58a89aecec9438b65b47347629f9b02afd"
+MYGETTEXT_COMMIT_SHA="7e46bbb3e24891348f5629887efb0173690e83b8"
+S25EDIT_COMMIT_SHA="213729b770dc99b8f6878f6c57dcc2ffc4831f3e"
 
 inherit cmake-utils desktop vcs-snapshot xdg
 
@@ -48,7 +48,7 @@ DEPEND="${RDEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}"/"${P}"-package-mode.patch
+	"${FILESDIR}"/"${PN}-0.9.0_pre20191013"-package-mode.patch
 )
 
 src_prepare() {
@@ -62,7 +62,7 @@ src_prepare() {
 	rm -r external/{lua,macos,s25update} || die
 
 	pushd "${WORKDIR}"/libutil-"${LIBUTIL_COMMIT_SHA}" > /dev/null || die
-	eapply "${FILESDIR}"/${PN}-0.9.0_pre20190919-disable-warnings.patch
+	eapply "${FILESDIR}"/"${PN}"-0.9.0_pre20190919-disable-warnings.patch
 	pushd > /dev/null || die
 
 	sed -i \
