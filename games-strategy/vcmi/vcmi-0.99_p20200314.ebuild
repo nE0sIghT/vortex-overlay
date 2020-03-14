@@ -1,13 +1,14 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+COMMIT_SHA="dca5d86e7a6d18d2ddac7258f98a0ce08c691a6e"
 
-inherit cmake-utils xdg
+inherit cmake-utils vcs-snapshot xdg
 
 DESCRIPTION="VCMI is work-in-progress attempt to recreate engine for Heroes III."
 HOMEPAGE="http://vcmi.eu"
-SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/${PN}/${PN}/archive/${COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -15,6 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="editor erm +launcher"
 
 RDEPEND="
+	dev-libs/fuzzylite
 	media-libs/libsdl2[video]
 	media-libs/sdl2-image
 	media-libs/sdl2-mixer
@@ -41,11 +43,13 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DENABLE_PCH=OFF # Do not works with NDEBUG set
-		-DENABLE_TEST=OFF
 		-DENABLE_EDITOR=$(usex editor)
 		-DENABLE_ERM=$(usex erm)
+		-DENABLE_GITVERSION=OFF
 		-DENABLE_LAUNCHER=$(usex launcher)
+		-DENABLE_PCH=ON
+		-DENABLE_TEST=OFF
+		-DFORCE_BUNDLED_FL=OFF
 	)
 
 	cmake-utils_src_configure
