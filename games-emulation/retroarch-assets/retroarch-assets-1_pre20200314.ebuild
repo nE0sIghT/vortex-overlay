@@ -1,38 +1,21 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
+inherit vcs-snapshot
+
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="5f6d9fc69109a8e18ce9b846ef7f679fd974035a"
+LIBRETRO_COMMIT_SHA="00dd598cb363838296582147da1c59e428d29068"
 
 DESCRIPTION="Assets needed for RetroArch. Also contains the official branding."
 HOMEPAGE="https://github.com/libretro/retroarch-assets"
-
-if [[ ${PV} == *9999 ]]; then
-	SRC_URI=""
-	EGIT_REPO_URI="https://github.com/${LIBRETRO_REPO_NAME}.git"
-
-	inherit git-r3
-else
-	inherit vcs-snapshot
-
-	SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
-
-	KEYWORDS="~amd64 ~x86"
-fi
+SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/${LIBRETRO_COMMIT_SHA}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="CC-BY-4.0"
 SLOT="0"
-
+KEYWORDS="~amd64 ~x86"
 IUSE="materialui ozone rgui xmb"
-
-RDEPEND="
-	materialui? ( !!<games-emulation/retroarch-1.7.8 )
-	ozone? ( !!<games-emulation/retroarch-1.7.8 )
-	rgui? ( !!<games-emulation/retroarch-1.7.8 )
-	xmb? ( !!<games-emulation/retroarch-1.7.8 )
-"
 
 src_prepare() {
 	default
