@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/flycast"
-LIBRETRO_COMMIT_SHA="60ed83a34ec018f6025c19cccb3b268ed8434b78"
+LIBRETRO_COMMIT_SHA="42984c29b154e77158d3be271f54ec08c09f329d"
 
 inherit libretro-core toolchain-funcs
 
