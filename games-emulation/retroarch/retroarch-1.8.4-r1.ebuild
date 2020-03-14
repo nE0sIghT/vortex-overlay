@@ -78,7 +78,7 @@ RDEPEND="
 	sdl? ( media-libs/libsdl )
 	sdl2? ( media-libs/libsdl2 )
 	sixel? ( media-libs/libsixel )
-	ssl? ( <net-libs/mbedtls-2.18:= )
+	ssl? ( net-libs/mbedtls:= )
 	subtitles? ( media-libs/libass )
 	systemd? ( sys-apps/systemd )
 	udev? ( virtual/udev )
