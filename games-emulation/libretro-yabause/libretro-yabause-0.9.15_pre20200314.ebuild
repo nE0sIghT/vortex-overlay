@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/yabause"
-LIBRETRO_COMMIT_SHA="3ded989b9abca3f978e3a36a8ca03de9cc827278"
+LIBRETRO_COMMIT_SHA="9be109f9032afa793d2a79b837c4cc232cea5929"
 
 inherit libretro-core
 
