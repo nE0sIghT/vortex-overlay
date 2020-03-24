@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -78,7 +78,7 @@ RDEPEND="
 	sdl? ( media-libs/libsdl )
 	sdl2? ( media-libs/libsdl2 )
 	sixel? ( media-libs/libsixel )
-	ssl? ( <net-libs/mbedtls-2.18:= )
+	ssl? ( net-libs/mbedtls:= )
 	subtitles? ( media-libs/libass )
 	systemd? ( sys-apps/systemd )
 	udev? ( virtual/udev )
@@ -211,6 +211,7 @@ pkg_postinst() {
 	elog "\tgames-emulation/libretro-flycast"
 	elog "Sony Playstation:"
 	elog "\tgames-emulation/libretro-mednafen-psx"
+	elog "\tgames-emulation/libretro-pcsx-rearmed"
 	elog "NEC PC-FX:"
 	elog "\tgames-emulation/libretro-mednafen-pcfx"
 	elog ""
