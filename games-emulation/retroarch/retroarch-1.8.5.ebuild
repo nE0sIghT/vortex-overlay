@@ -192,6 +192,8 @@ pkg_postinst() {
 	elog "\tgames-emulation/libretro-nestopia"
 	elog "Super Nintendo / Super Famicom:"
 	elog "\tgames-emulation/libretro-bsnes"
+	elog "Nintendo 3DS:"
+	elog "\tgames-emulation/libretro-citra"
 	elog "Nintendo 64:"
 	elog "\tgames-emulation/libretro-mupen64plus-next"
 	elog "Game Boy / Game Boy Color:"
