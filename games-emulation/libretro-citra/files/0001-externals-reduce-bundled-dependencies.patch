@@ -1,0 +1,126 @@
+From ad947f24f7de34a7d2f1007d6d31af96d61e7c7c Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Wed, 25 Mar 2020 21:51:27 +0400
+Subject: [PATCH] externals: reduce bundled dependencies
+
+---
+ CMakeLists.txt           | 12 ++++++++++++
+ externals/CMakeLists.txt | 16 +++++++++++++++-
+ src/tests/CMakeLists.txt |  7 ++++++-
+ 3 files changed, 33 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 23bcff7e..b1d85f9d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,6 +28,8 @@ option(ENABLE_SCRIPTING "Enables scripting support" OFF)
+ 
+ option(DISABLE_CLANG_TARGET "Disables the Clang format check" ON)
+ 
++option(DISABLE_BUNDLED_DEPENDENCIES "Disables bundled dependencies" OFF)
++
+ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/.git/hooks/pre-commit)
+     message(STATUS "Copying pre-commit hook")
+     file(COPY hooks/pre-commit
+@@ -48,7 +50,9 @@ function(check_submodules_present)
+         endif()
+     endforeach()
+ endfunction()
++if (NOT DISABLE_BUNDLED_DEPENDENCIES)
+ check_submodules_present()
++endif ()
+ 
+ configure_file(${CMAKE_SOURCE_DIR}/dist/compatibility_list/compatibility_list.qrc
+                ${CMAKE_BINARY_DIR}/dist/compatibility_list/compatibility_list.qrc
+@@ -392,6 +396,14 @@ git_branch_name(GIT_BRANCH)
+ get_timestamp(BUILD_DATE)
+ 
+ enable_testing()
++
++if (DISABLE_BUNDLED_DEPENDENCIES)
++	find_package(fmt 6.0 CONFIG REQUIRED)
++	message(STATUS "Using shared fmt ${fmt_VERSION}")
++
++	find_package(Catch2 REQUIRED)
++endif (DISABLE_BUNDLED_DEPENDENCIES)
++
+ add_subdirectory(externals)
+ add_subdirectory(src)
+ add_subdirectory(dist/installer)
+diff --git a/externals/CMakeLists.txt b/externals/CMakeLists.txt
+index 4ea2b634..59470ef8 100644
+--- a/externals/CMakeLists.txt
++++ b/externals/CMakeLists.txt
+@@ -4,6 +4,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
+ include(DownloadExternals)
+ include(ExternalProject)
+ 
++if (NOT DISABLE_BUNDLED_DEPENDENCIES)
++
+ # Catch
+ add_library(catch-single-include INTERFACE)
+ target_include_directories(catch-single-include INTERFACE catch/single_include)
+@@ -24,6 +26,8 @@ endif()
+ add_subdirectory(fmt)
+ add_library(fmt::fmt ALIAS fmt)
+ 
++endif (NOT DISABLE_BUNDLED_DEPENDENCIES)
++
+ # getopt
+ if (MSVC)
+     add_subdirectory(getopt)
+@@ -32,8 +36,10 @@ endif()
+ # Glad
+ add_subdirectory(glad)
+ 
++if (NOT DISABLE_BUNDLED_DEPENDENCIES)
+ # inih
+ add_subdirectory(inih)
++endif (NOT DISABLE_BUNDLED_DEPENDENCIES)
+ 
+ # MicroProfile
+ add_library(microprofile INTERFACE)
+@@ -54,14 +60,22 @@ target_include_directories(SoundTouch INTERFACE ./soundtouch/include)
+ # Xbyak
+ if (ARCHITECTURE_x86_64)
+     # Defined before "dynarmic" above
+-    # add_library(xbyak INTERFACE)
++
++    if (NOT DISABLE_BUNDLED_DEPENDENCIES)
+     target_include_directories(xbyak INTERFACE ./xbyak/xbyak)
++    else ()
++    add_library(xbyak INTERFACE)
++    target_include_directories(xbyak INTERFACE /usr/include/xbyak)
++    endif ()
+     target_compile_definitions(xbyak INTERFACE XBYAK_NO_OP_NAMES)
+ endif()
+ 
++
++if (NOT DISABLE_BUNDLED_DEPENDENCIES)
+ # ENet
+ add_subdirectory(enet)
+ target_include_directories(enet INTERFACE ./enet/include)
++endif ()
+ 
+ # Cubeb
+ if (ENABLE_CUBEB)
+diff --git a/src/tests/CMakeLists.txt b/src/tests/CMakeLists.txt
+index f048714a..3fc9e1fe 100644
+--- a/src/tests/CMakeLists.txt
++++ b/src/tests/CMakeLists.txt
+@@ -21,6 +21,11 @@ endif()
+ create_target_directory_groups(tests)
+ 
+ target_link_libraries(tests PRIVATE common core video_core)
+-target_link_libraries(tests PRIVATE ${PLATFORM_LIBRARIES} catch-single-include nihstro-headers Threads::Threads)
++if (NOT DISABLE_BUNDLED_DEPENDENCIES)
++set (CATCH_DEPENDENCY catch-single-include)
++else (NOT DISABLE_BUNDLED_DEPENDENCIES)
++set (CATCH_DEPENDENCY Catch2::Catch2)
++endif (NOT DISABLE_BUNDLED_DEPENDENCIES)
++target_link_libraries(tests PRIVATE ${PLATFORM_LIBRARIES} ${CATCH_DEPENDENCY} nihstro-headers Threads::Threads)
+ 
+ add_test(NAME tests COMMAND tests)
+-- 
+2.24.1
+
