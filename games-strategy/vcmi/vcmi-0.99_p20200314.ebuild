@@ -53,6 +53,7 @@ src_configure() {
 	)
 
 	cmake-utils_src_configure
+	touch "${BUILD_DIR}/Version.cpp" || die
 }
 
 pkg_postinst() {
