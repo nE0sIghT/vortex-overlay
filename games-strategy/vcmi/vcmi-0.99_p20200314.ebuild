@@ -56,6 +56,12 @@ src_configure() {
 	touch "${BUILD_DIR}/Version.cpp" || die
 }
 
+src_install() {
+	cmake-utils_src_install
+	mv "${D}"/usr/$(get_libdir)/${PN}/lib${PN}.so \
+		"${D}"/usr/$(get_libdir) || die
+}
+
 pkg_postinst() {
 	xdg_pkg_postinst
 
