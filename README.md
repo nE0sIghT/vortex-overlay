@@ -36,3 +36,9 @@ With layman repository must be added first using command:
 Synchronization can be done with command:
 
     layman -s vortex
+
+Donate
+-----------------
+
+* [Liberapay](https://liberapay.com/nE0sIghT/)
+* [Patreon](https://www.patreon.com/nE0sIghT)
