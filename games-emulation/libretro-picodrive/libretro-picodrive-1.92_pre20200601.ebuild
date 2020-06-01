@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/picodrive"
-LIBRETRO_COMMIT_SHA="8cbbdceaf4e080949edcdda2fe9e52bd7f2a3f8a"
+LIBRETRO_COMMIT_SHA="b8fb8f285317632f42ecbbd36cf4fe18ea9189f1"
 
 inherit libretro-core
 
