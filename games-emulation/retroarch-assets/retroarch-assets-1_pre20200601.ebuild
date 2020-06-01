@@ -6,7 +6,7 @@ EAPI=7
 inherit vcs-snapshot
 
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="00dd598cb363838296582147da1c59e428d29068"
+LIBRETRO_COMMIT_SHA="ea38cbc592233095cbe9a1357932eac1ceb2a3cc"
 
 DESCRIPTION="Assets needed for RetroArch. Also contains the official branding."
 HOMEPAGE="https://github.com/libretro/retroarch-assets"
