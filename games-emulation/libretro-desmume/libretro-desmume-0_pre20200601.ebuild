@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/desmume"
-LIBRETRO_COMMIT_SHA="ae862a835bb508f685ae916d463f00624483b569"
+LIBRETRO_COMMIT_SHA="6f520c816303a00a777817dc6a1a8d04ced336ea"
 
 inherit libretro-core
 
