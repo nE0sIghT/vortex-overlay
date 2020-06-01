@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/beetle-saturn-libretro"
-LIBRETRO_COMMIT_SHA="3313cc6760c14cffa9226e0cfd41debc11df8bdd"
+LIBRETRO_COMMIT_SHA="7ba4ff3aed62a60e99e0758a92dbb1924c63d0fa"
 
 inherit libretro-core
 
