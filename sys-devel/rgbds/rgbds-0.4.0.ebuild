@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -6,6 +6,7 @@ EAPI=7
 DESCRIPTION="Rednex Game Boy Development System"
 HOMEPAGE="https://rednex.github.io/rgbds/"
 SRC_URI="https://github.com/rednex/${PN}/releases/download/v${PV}/${P}.tar.gz"
+S="${WORKDIR}/${PN}"
 
 LICENSE="MIT"
 SLOT="0"
