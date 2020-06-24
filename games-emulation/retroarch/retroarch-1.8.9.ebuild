@@ -64,7 +64,7 @@ RDEPEND="
 	miniupnpc? ( net-libs/miniupnpc )
 	openal? ( media-libs/openal )
 	opengl? ( virtual/opengl )
-	ozone? ( games-emulation/retroarch-assets[ozone] )
+	ozone? ( games-emulation/retroarch-assets[ozone,xmb] )
 	pulseaudio? ( media-sound/pulseaudio )
 	qt? (
 		dev-libs/openssl:0=
