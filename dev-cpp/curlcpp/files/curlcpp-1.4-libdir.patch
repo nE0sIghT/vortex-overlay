@@ -1,0 +1,44 @@
+From 4b4158021e1803cea38475c4a4c0479709256fe5 Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Sun, 4 Oct 2020 14:34:31 +0400
+Subject: [PATCH] cmake: don't hardcode libdir value
+
+Signed-off-by: Yuri Konotopov <ykonotopov@gnome.org>
+---
+ CMakeLists.txt     | 5 ++++-
+ src/CMakeLists.txt | 2 +-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6f17593..30a5db6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,7 @@
+ cmake_minimum_required(VERSION 3.11...3.15)
+ 
++include(GNUInstallDirs)
++
+ #if using an older VERSION of curl ocsp stapling can be disabled
+ set(CURL_MIN_VERSION "7.28.0")
+ 
+@@ -38,4 +40,5 @@ add_subdirectory(test)
+ set(CURLCPP_LIB_LOCATION "$<TARGET_FILE:${curlcpp}>")
+ 
+ configure_file(CMake/curlcppConfig.cmake.in
+-  ${CMAKE_INSTALL_PREFIX}/lib/curlcpp/curlcppConfig.cmake @ONLY)
++  ${CMAKE_BINARY_DIR}/curlcppConfig.cmake @ONLY)
++install (FILES ${CMAKE_BINARY_DIR}/curlcppConfig.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/curlcpp)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 1df1583..b6bdc2e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -78,5 +78,5 @@ if(IPO_SUPPORTED AND CMAKE_BUILD_TYPE STREQUAL "Release")
+     set_target_properties(curlcpp PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+ endif()
+ 
+-install (TARGETS curlcpp LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++install (TARGETS curlcpp LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install (FILES ${CURLCPP_HEADER_LIST} DESTINATION include/curlcpp)
+-- 
+2.26.2
+
