@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/mupen64plus-libretro-nx"
-LIBRETRO_COMMIT_SHA="39b555e52bc8821c15f5aa33e366285cd9272630"
+LIBRETRO_COMMIT_SHA="b71c9db03bd18eb09074e8a886f62226eeca3846"
 
 inherit libretro-core toolchain-funcs
 
