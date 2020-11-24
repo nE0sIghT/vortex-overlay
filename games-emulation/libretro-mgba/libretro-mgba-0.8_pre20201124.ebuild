@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/mgba"
-LIBRETRO_COMMIT_SHA="7ad318f5f683b447db7bd8ef4a7a8f3570e8eca9"
+LIBRETRO_COMMIT_SHA="45eeee1cb210fbb5a18af8f155b3929fdacce4b4"
 
 inherit libretro-core
 
