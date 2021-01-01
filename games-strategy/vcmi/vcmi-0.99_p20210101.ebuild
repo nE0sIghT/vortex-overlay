@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-COMMIT_SHA="8871368c5b405d9840c49e61b33a72feeabc19f7"
+COMMIT_SHA="f31c5169b5814336acce04e8912b6632d22555c0"
 
-inherit cmake-utils vcs-snapshot xdg
+inherit cmake vcs-snapshot xdg
 
 DESCRIPTION="VCMI is work-in-progress attempt to recreate engine for Heroes III."
 HOMEPAGE="http://vcmi.eu"
@@ -21,8 +21,8 @@ RDEPEND="
 	media-libs/sdl2-image
 	media-libs/sdl2-mixer
 	media-libs/sdl2-ttf
+	media-video/ffmpeg
 	sys-libs/zlib[minizip]
-	virtual/ffmpeg
 
 	editor? (
 		dev-qt/qtwidgets:5
@@ -38,7 +38,7 @@ DEPEND="${RDEPEND}
 "
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -52,12 +52,12 @@ src_configure() {
 		-DFORCE_BUNDLED_FL=OFF
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 	touch "${BUILD_DIR}/Version.cpp" || die
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	mv "${D}"/usr/$(get_libdir)/${PN}/lib${PN}.so \
 		"${D}"/usr/$(get_libdir) || die
 }
