@@ -1,19 +1,21 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-COMMIT_SHA="25268a76e92ac9f8e2885f18337f3a7c03ac7966"
-KAGUYA_COMMIT_SHA="38ca7e1d894c138e454bbe5c89048bdd5091545a"
-LANGUAGES_COMMIT_SHA="b1978170473bbf39a24254814e1b1f967a51ef4c"
-LIBENDIAN_COMMIT_SHA="dd2c11498f679247530b6b7cf7bd5964f539ddfd"
-LIBLOBBY_COMMIT_SHA="a7ff2df7dd16ce3690688104a34c744839d977f3"
-LIBSIEDLER2_COMMIT_SHA="6e6c88f21ca2bfed679a3ce67f2f4d6562bb5a36"
-LIBUTIL_COMMIT_SHA="027ebf0279cd3e778ac3ec3aaf1056b2cf55c406"
-MYGETTEXT_COMMIT_SHA="19e8cdd32f2d2fc89bdafa69f4da788d448f8429"
-S25EDIT_COMMIT_SHA="f3d7ff1bbe394aaa0096da202fd1a1f063885293"
+LUA_COMPAT=( lua5-{1..3} )
 
-inherit cmake-utils desktop vcs-snapshot xdg
+COMMIT_SHA="d43a21b9b51192e10df60c23f75e1f86b3cbc30d"
+KAGUYA_COMMIT_SHA="38ca7e1d894c138e454bbe5c89048bdd5091545a"
+LANGUAGES_COMMIT_SHA="6f6ac3ba603e89032d0243f5855d2818b5a00606"
+LIBENDIAN_COMMIT_SHA="3911d745bbbae47b188fbdb37e8243dd695a36ba"
+LIBLOBBY_COMMIT_SHA="f34149530eb3f453f3a419c6be5309ff7d232958"
+LIBSIEDLER2_COMMIT_SHA="b042ad023cad5d923de45fa45c641d027a7f0d35"
+LIBUTIL_COMMIT_SHA="03f0ccfe91b68d44b9c02dfc75f405fcd1923c19"
+MYGETTEXT_COMMIT_SHA="0bb6c126c9f617b26b45b3044ecbc95e19f0fd6f"
+S25EDIT_COMMIT_SHA="e1f9eaaa5e57c9598f37d82dc6ba6b886e45dfae"
+
+inherit cmake desktop lua-single vcs-snapshot xdg
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/"
@@ -33,8 +35,9 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-RDEPEND="app-arch/bzip2
-	dev-lang/lua:5.2
+REQUIRED_USE="${LUA_REQUIRED_USE}"
+RDEPEND="${LUA_DEPS}
+	app-arch/bzip2
 	media-libs/libsdl[X,sound,opengl,video]
 	media-libs/libsndfile
 	media-libs/sdl-mixer[vorbis]
@@ -43,13 +46,9 @@ RDEPEND="app-arch/bzip2
 	virtual/opengl
 "
 DEPEND="${RDEPEND}
-	dev-libs/boost:0=[nls]
+	>=dev-libs/boost-1.73:0=[nls]
 	sys-devel/gettext
 "
-
-PATCHES=(
-	"${FILESDIR}"/"${PN}-0.9.0_pre20191013"-package-mode.patch
-)
 
 src_prepare() {
 	local EXTERNAL_PACKAGES=( kaguya languages libendian liblobby libsiedler2 libutil mygettext s25edit )
@@ -59,11 +58,7 @@ src_prepare() {
 		ln -s ../../${package}-${!commit_variable} external/"${package}" || die
 	done
 
-	rm -r external/{lua,macos,s25update} || die
-
-	pushd "${WORKDIR}"/libutil-"${LIBUTIL_COMMIT_SHA}" > /dev/null || die
-	eapply "${FILESDIR}"/"${PN}"-0.9.0_pre20190919-disable-warnings.patch
-	pushd > /dev/null || die
+	rm -r external/s25update || die
 
 	sed -i \
 		-e 's#rttr.sh noupdate#s25client#g' \
@@ -71,34 +66,36 @@ src_prepare() {
 		tools/release/debian/${PN}.desktop || die
 
 	sed -i -e '/RTTR_S2_PLACEHOLDER_PATH/d' CMakeLists.txt || die
+	sed -i -e '/turtle/d' external/CMakeLists.txt || die
 
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
 	local CMAKE_BUILD_TYPE="Release"
 	local mycmakeargs=(
-		-DPACKAGE_MODE=ON
 		-DBUILD_TESTING=OFF
 		-DCMAKE_BUILD_TYPE=Release
 		-DCMAKE_SKIP_RPATH=ON
+		-DLUA_LIBRARY=$(lua_get_shared_lib)
+		-DLUA_INCLUDE_DIR=$(lua_get_include_dir)
 		-DRTTR_BUILD_UPDATER=OFF
+		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_ENABLE_OPTIMIZATIONS=OFF
 		-DRTTR_INSTALL_PREFIX=/usr
-		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_GAMEDIR="~/.${PN}/S2"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
+		-DRTTR_USE_SYSTEM_BOOST_NOWIDE=OFF
+		-DRTTR_USE_SYSTEM_LIBS=ON
 		-DRTTR_VERSION="${PV}"
 		-DRTTR_REVISION="${COMMIT_SHA:0:6}"
-		-DUSE_SDL2=OFF
-		-DRTTR_USE_SYSTEM_SAMPLERATE=ON
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	doicon tools/release/debian/${PN}.png
 	domenu tools/release/debian/${PN}.desktop
