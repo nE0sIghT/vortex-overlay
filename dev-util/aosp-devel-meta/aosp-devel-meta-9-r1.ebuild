@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -15,6 +15,7 @@ RDEPEND="
 	app-crypt/gnupg
 	app-arch/zip[-natspec]
 	app-arch/unzip
+	dev-lang/python:2.7
 	dev-libs/libxslt
 	dev-libs/libxml2
 	dev-util/android-tools
