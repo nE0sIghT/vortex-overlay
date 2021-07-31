@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,6 +17,13 @@ KEYWORDS="~amd64 ~x86"
 DEPEND=">=sys-devel/rgbds-0.4.0"
 
 S="${S}/libretro"
+
+src_prepare() {
+	libretro-core_src_prepare
+	pushd .. > /dev/null || die
+	eapply "${FILESDIR}/${PN}-multithread-make.patch"
+	popd || die
+}
 
 src_compile() {
 	local myemakeargs=(

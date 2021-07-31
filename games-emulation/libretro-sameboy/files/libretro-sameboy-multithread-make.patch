@@ -1,0 +1,11 @@
+diff -ur a/Makefile b/Makefile
+--- a/Makefile	2020-06-29 08:32:01.000000000 +0400
++++ b/Makefile	2020-12-05 23:31:42.299908911 +0400
+@@ -396,6 +396,7 @@
+ 	rgbgfx -h -u -o $@ $<
+ 
+ $(OBJ)/BootROMs/SameBoyLogo.pb12: $(OBJ)/BootROMs/SameBoyLogo.2bpp $(PB12_COMPRESS)
++	touch $@
+ 	$(realpath $(PB12_COMPRESS)) < $< > $@
+ 	
+ $(PB12_COMPRESS): BootROMs/pb12.c
