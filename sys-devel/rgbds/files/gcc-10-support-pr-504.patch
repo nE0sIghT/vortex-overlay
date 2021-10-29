@@ -1,0 +1,64 @@
+From 65121e6d5d2b9cb15283a0d5c46addeb67d20a7b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Trung=20L=C3=AA?= <trung.le@ruby-journal.com>
+Date: Tue, 7 Apr 2020 14:48:30 +1000
+Subject: [PATCH] Fix multiple definitions for GCC10
+
+---
+ include/gfx/main.h | 2 +-
+ src/gfx/gb.c       | 2 +-
+ src/gfx/main.c     | 2 ++
+ src/gfx/makepng.c  | 2 +-
+ 4 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/include/gfx/main.h b/include/gfx/main.h
+index 6884ee4ce..a7c69d0de 100644
+--- a/include/gfx/main.h
++++ b/include/gfx/main.h
+@@ -83,7 +83,7 @@ struct Mapfile {
+ 	int size;
+ };
+ 
+-int depth, colors;
++extern int depth, colors;
+ 
+ #include "gfx/makepng.h"
+ #include "gfx/gb.h"
+diff --git a/src/gfx/gb.c b/src/gfx/gb.c
+index 49bd79d96..19748c4e8 100644
+--- a/src/gfx/gb.c
++++ b/src/gfx/gb.c
+@@ -10,7 +10,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
+-#include "gfx/main.h"
++#include "gfx/gb.h"
+ 
+ void transpose_tiles(struct GBImage *gb, int width)
+ {
+diff --git a/src/gfx/main.c b/src/gfx/main.c
+index c4d877324..703f77534 100644
+--- a/src/gfx/main.c
++++ b/src/gfx/main.c
+@@ -15,6 +15,8 @@
+ #include "extern/getopt.h"
+ #include "version.h"
+ 
++int depth, colors;
++
+ /* Short options */
+ static char const *optstring = "Aa:CDd:Ffhmo:Pp:Tt:uVvx:";
+ 
+diff --git a/src/gfx/makepng.c b/src/gfx/makepng.c
+index f87b9a95c..a1b89e0ac 100644
+--- a/src/gfx/makepng.c
++++ b/src/gfx/makepng.c
+@@ -11,7 +11,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include "gfx/main.h"
++#include "gfx/makepng.h"
+ 
+ static void initialize_png(struct PNGImage *img, FILE * f);
+ static struct RawIndexedImage *indexed_png_to_raw(struct PNGImage *img);
