@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/nestopia"
-LIBRETRO_COMMIT_SHA="357e1463a01fe2ca0dd91941aacaaa9944f95e4d"
+LIBRETRO_COMMIT_SHA="ea6f1c0631bb62bf15ab96493127dd9cfaf74d1c"
 
 inherit libretro-core
 

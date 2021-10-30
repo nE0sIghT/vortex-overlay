@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-LIBRETRO_COMMIT_SHA="7eb7bf107e4aa8e084978676576d9cd9a6b29fba"
+LIBRETRO_COMMIT_SHA="2a49c81b173502c91c30bd933e615fe773d2778c"
 
 inherit vcs-snapshot
 
