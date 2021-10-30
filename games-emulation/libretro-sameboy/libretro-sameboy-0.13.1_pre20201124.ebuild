@@ -28,6 +28,7 @@ src_prepare() {
 src_compile() {
 	local myemakeargs=(
 		"VERSION=${PV}"
+		-j1
 	)
 	libretro-core_src_compile
 }
