@@ -3,7 +3,7 @@
 
 EAPI=7
 
-LIBRETRO_COMMIT_SHA="acee63da057eecbeb1fe733c0cdbd3ac90647e75"
+LIBRETRO_COMMIT_SHA="c3c2c8531299d7cdcee32092803a10cd4c6e72b9"
 
 inherit vcs-snapshot
 

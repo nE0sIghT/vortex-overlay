@@ -1,13 +1,13 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/citra"
-LIBRETRO_COMMIT_SHA="84f31e95160b029e6d614053705054ed6a34bb38"
+LIBRETRO_COMMIT_SHA="b1959d07a340bfd9af65ad464fd19eb6799a96ef"
 SOUNDTOUCH_COMMIT_SHA="060181eaf273180d3a7e87349895bd0cb6ccbf4a"
 
-inherit cmake-utils libretro-core toolchain-funcs
+inherit cmake libretro-core toolchain-funcs
 
 DESCRIPTION="Multiplatform Sega Dreamcast emulator"
 SRC_URI="
@@ -43,7 +43,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	sed -i '/check_submodules_present()/d' CMakeLists.txt || die
 }
 
@@ -55,11 +55,11 @@ src_configure() {
 		-DENABLE_SDL2=OFF
 		-DENABLE_WEB_SERVICE=OFF
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_install() {
