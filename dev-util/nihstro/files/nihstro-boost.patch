@@ -1,0 +1,80 @@
+From 2b9bbbd11c5afa8762ef5095d3d78733044f24b8 Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Thu, 4 Nov 2021 15:18:02 +0400
+Subject: [PATCH 1/2] Fixed compilation with boost 1.76
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+error: ‘ref’ is not a member of ‘phoenix’
+---
+ src/parser_assembly.cpp             | 1 +
+ src/parser_assembly/compare.cpp     | 1 +
+ src/parser_assembly/declaration.cpp | 1 +
+ src/parser_assembly/floatop.cpp     | 1 +
+ src/parser_assembly/flowcontrol.cpp | 1 +
+ 5 files changed, 5 insertions(+)
+
+diff --git a/src/parser_assembly.cpp b/src/parser_assembly.cpp
+index f63a1fa..03279b9 100644
+--- a/src/parser_assembly.cpp
++++ b/src/parser_assembly.cpp
+@@ -30,6 +30,7 @@
+ // #define BOOST_SPIRIT_DEBUG
+ 
+ #include <boost/fusion/include/adapt_struct.hpp>
++#include <boost/phoenix/core/reference.hpp>
+ #include <boost/spirit/include/qi.hpp>
+ 
+ #include "nihstro/parser_assembly.h"
+diff --git a/src/parser_assembly/compare.cpp b/src/parser_assembly/compare.cpp
+index 8e6f6f8..5147c9f 100644
+--- a/src/parser_assembly/compare.cpp
++++ b/src/parser_assembly/compare.cpp
+@@ -30,6 +30,7 @@
+ // #define BOOST_SPIRIT_DEBUG
+ 
+ #include <boost/fusion/include/adapt_struct.hpp>
++#include <boost/phoenix/core/reference.hpp>
+ #include <boost/spirit/include/qi.hpp>
+ 
+ #include "nihstro/parser_assembly.h"
+diff --git a/src/parser_assembly/declaration.cpp b/src/parser_assembly/declaration.cpp
+index bd0a1e8..9622f38 100644
+--- a/src/parser_assembly/declaration.cpp
++++ b/src/parser_assembly/declaration.cpp
+@@ -27,6 +27,7 @@
+ 
+ 
+ #include <boost/fusion/include/adapt_struct.hpp>
++#include <boost/phoenix/core/reference.hpp>
+ #include <boost/spirit/include/qi.hpp>
+ 
+ #include "nihstro/parser_assembly.h"
+diff --git a/src/parser_assembly/floatop.cpp b/src/parser_assembly/floatop.cpp
+index 2c2568f..ac9c569 100644
+--- a/src/parser_assembly/floatop.cpp
++++ b/src/parser_assembly/floatop.cpp
+@@ -30,6 +30,7 @@
+ // #define BOOST_SPIRIT_DEBUG
+ 
+ #include <boost/fusion/include/adapt_struct.hpp>
++#include <boost/phoenix/core/reference.hpp>
+ #include <boost/spirit/include/qi.hpp>
+ 
+ #include "nihstro/parser_assembly.h"
+diff --git a/src/parser_assembly/flowcontrol.cpp b/src/parser_assembly/flowcontrol.cpp
+index 7698ae3..857b97a 100644
+--- a/src/parser_assembly/flowcontrol.cpp
++++ b/src/parser_assembly/flowcontrol.cpp
+@@ -31,6 +31,7 @@
+ 
+ #include <boost/fusion/include/adapt_struct.hpp>
+ #include <boost/fusion/include/swap.hpp>
++#include <boost/phoenix/core/reference.hpp>
+ #include <boost/spirit/include/qi.hpp>
+ 
+ #include "nihstro/parser_assembly.h"
+-- 
+2.32.0
+
