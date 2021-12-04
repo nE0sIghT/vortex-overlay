@@ -6,7 +6,7 @@ EAPI=7
 inherit vcs-snapshot
 
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="e130ef0d937a349545d1ac487a330dd1c04b9f45"
+LIBRETRO_COMMIT_SHA="127e8c2fcc0c707351a4e3e23b1e19cdbcefb3af"
 
 DESCRIPTION="RetroArch joypad autoconfig files"
 HOMEPAGE="https://github.com/libretro/retroarch-joypad-autoconfig"

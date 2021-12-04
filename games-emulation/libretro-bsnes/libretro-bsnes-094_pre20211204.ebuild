@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/bsnes-libretro"
-LIBRETRO_COMMIT_SHA="39e87fff20e1b4677f5bae92466dcf1deae354d1"
+LIBRETRO_COMMIT_SHA="44d97b17d06a10ae17d97a91a48e5acd10ec6db4"
 
 inherit libretro-core
 
@@ -16,7 +16,11 @@ KEYWORDS="~amd64 ~x86"
 # No tests provided
 RESTRICT="test"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-0.14.4-gb_version.patch"
+)
+
 src_compile() {
-	myemakeargs="target=libretro" \
+	myemakeargs="target=libretro binary=library local=false platform=linux" \
 		libretro-core_src_compile
 }
