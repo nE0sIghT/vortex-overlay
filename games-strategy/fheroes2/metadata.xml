@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>ykonotopov@gnome.org</email>
+		<name>Yuri Konotopov</name>
+	</maintainer>
+	<use>
+		<flag name="tools">Enable additional tools</flag>
+	</use>
+</pkgmetadata>
