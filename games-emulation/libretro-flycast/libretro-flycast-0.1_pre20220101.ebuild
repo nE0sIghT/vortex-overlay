@@ -1,10 +1,10 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/flycast"
-LIBRETRO_COMMIT_SHA="6e65f80534cdfe16ccbf835645220a38c4123347"
+LIBRETRO_COMMIT_SHA="1475db72f26abc8321e085ce163aa12298812e7e"
 
 inherit libretro-core toolchain-funcs
 
