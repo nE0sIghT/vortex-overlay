@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>ykonotopov@gmail.com</email>
+		<name>Yuri Konotopov</name>
+	</maintainer>
+	<use>
+		<flag name="cuda">Enable cuda specific code</flag>
+		<flag name="kms">Enable KMS grab if available</flag>
+		<flag name="x11">Enable X11 grab if available</flag>
+	</use>
+</pkgmetadata>

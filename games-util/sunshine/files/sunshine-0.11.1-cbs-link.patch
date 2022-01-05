@@ -1,0 +1,24 @@
+From f8aef390942d27399de8942afa09e0f049cb0bef Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Wed, 5 Jan 2022 18:00:30 +0400
+Subject: [PATCH 2/2] Explicitly link to cbs library statically
+
+---
+ third-party/cbs/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/third-party/cbs/CMakeLists.txt b/third-party/cbs/CMakeLists.txt
+index b30a803..9467c0f 100644
+--- a/third-party/cbs/CMakeLists.txt
++++ b/third-party/cbs/CMakeLists.txt
+@@ -65,5 +65,5 @@ add_compile_definitions(
+     )
+ 
+ 
+-add_library(cbs ${CBS_SOURCE_FILES})
++add_library(cbs STATIC ${CBS_SOURCE_FILES})
+ target_compile_options(cbs PRIVATE -Wall -Wno-incompatible-pointer-types -Wno-maybe-uninitialized -Wno-format -Wno-format-extra-args)
+\ No newline at end of file
+-- 
+2.34.1
+

@@ -1,0 +1,94 @@
+From c4f1d57eeeeff1d525f21be6d004619ad3f82fb3 Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Sun, 19 Dec 2021 17:10:18 +0400
+Subject: [PATCH 1/2] Added PACKAGE_MODE option
+
+1. Allow to build against miniupnpc dynamically
+2. Use dynamic boost libraries
+3. Make optimization CFLAGS optional
+---
+ CMakeLists.txt | 37 ++++++++++++++++++++++++++++---------
+ 1 file changed, 28 insertions(+), 9 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0115a26..2a21af0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0)
+ 
+ project(Sunshine)
+ 
++option(PACKAGE_MODE "Use external dependencies when possible" OFF)
++
+ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ 
+ if(WIN32)
+@@ -14,16 +16,24 @@ endif()
+ add_subdirectory(third-party/moonlight-common-c/enet)
+ add_subdirectory(third-party/Simple-Web-Server)
+ 
+-set(UPNPC_BUILD_SHARED OFF CACHE BOOL "no shared libraries")
+-set(UPNPC_BUILD_TESTS OFF CACHE BOOL "Don't build tests for miniupnpc")
+-set(UPNPC_BUILD_SAMPLE OFF CACHE BOOL "Don't build samples for miniupnpc")
+-set(UPNPC_NO_INSTALL ON CACHE BOOL "Don't install any libraries build for miniupnpc")
+-add_subdirectory(third-party/miniupnp/miniupnpc)
+-include_directories(third-party/miniupnp)
++if(NOT PACKAGE_MODE)
++	set(UPNPC_BUILD_SHARED OFF CACHE BOOL "no shared libraries")
++	set(UPNPC_BUILD_TESTS OFF CACHE BOOL "Don't build tests for miniupnpc")
++	set(UPNPC_BUILD_SAMPLE OFF CACHE BOOL "Don't build samples for miniupnpc")
++	set(UPNPC_NO_INSTALL ON CACHE BOOL "Don't install any libraries build for miniupnpc")
++	add_subdirectory(third-party/miniupnp/miniupnpc)
++	include_directories(third-party/miniupnp)
++else(NOT PACKAGE_MODE)
++	find_library(MINIUPNPC miniupnpc REQUIRED)
++	message(STATUS "Found miniupnpc: ${MINIUPNPC}")
++endif(NOT PACKAGE_MODE)
+ 
+ find_package(Threads REQUIRED)
+ find_package(OpenSSL REQUIRED)
+-set(Boost_USE_STATIC_LIBS ON)
++
++if(NOT PACKAGE_MODE)
++	set(Boost_USE_STATIC_LIBS ON)
++endif(NOT PACKAGE_MODE)
+ find_package(Boost COMPONENTS log filesystem REQUIRED)
+ 
+ list(APPEND SUNSHINE_COMPILE_OPTIONS -Wall -Wno-missing-braces -Wno-maybe-uninitialized -Wno-sign-compare)
+@@ -327,7 +337,9 @@ if("${BUILD_TYPE}" STREQUAL "XDEBUG")
+ 	endif()
+ else()
+ 	add_definitions(-DNDEBUG)
+-	list(APPEND SUNSHINE_COMPILE_OPTIONS -O3)
++	if(NOT PACKAGE_MODE)
++		list(APPEND SUNSHINE_COMPILE_OPTIONS -O3)
++	endif(NOT PACKAGE_MODE)
+ endif()
+ 
+ if(NOT SUNSHINE_ASSETS_DIR)
+@@ -346,7 +358,6 @@ list(APPEND CBS_EXTERNAL_LIBRARIES
+ 	cbs)
+ 
+ list(APPEND SUNSHINE_EXTERNAL_LIBRARIES
+-		libminiupnpc-static
+ 		${CBS_EXTERNAL_LIBRARIES}
+ 		${CMAKE_THREAD_LIBS_INIT}
+ 		stdc++fs
+@@ -357,6 +368,14 @@ list(APPEND SUNSHINE_EXTERNAL_LIBRARIES
+ 		${OPENSSL_LIBRARIES}
+ 		${PLATFORM_LIBRARIES})
+ 
++if(NOT PACKAGE_MODE)
++	list(APPEND SUNSHINE_EXTERNAL_LIBRARIES
++		libminiupnpc-static)
++else(NOT PACKAGE_MODE)
++	list(APPEND SUNSHINE_EXTERNAL_LIBRARIES
++		${MINIUPNPC})
++endif(NOT PACKAGE_MODE)
++
+ if (NOT WIN32)
+ 	list(APPEND SUNSHINE_EXTERNAL_LIBRARIES Boost::log)
+ endif()
+-- 
+2.34.1
+
