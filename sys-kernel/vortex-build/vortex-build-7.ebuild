@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-inherit eutils
+inherit eutils optfeature
 
 DESCRIPTION="Simple Linux kernel build scripts"
 
@@ -32,7 +32,7 @@ CONFIG_CHECK="~IKCONFIG_PROC"
 
 src_install() {
 	exeinto /usr/bin
-	for exe in {build_kernel-r2,prepare_kernel-r1}; do
+	for exe in {build_kernel-r4,prepare_kernel-r1}; do
 		sed -e "s#@libdir@#$(get_libdir)#g" "${FILESDIR}/${exe}" > "${T}/${exe%-*}" || die
 		doexe "${T}/${exe%-*}"
 	done
@@ -41,10 +41,12 @@ src_install() {
 	doins "${FILESDIR}"/vortex-functions.sh
 
 	insinto /etc/default
-	newins "${FILESDIR}"/${PN}-r1 ${PN}
+	newins "${FILESDIR}"/${PN}-r3 ${PN}
 }
 
 pkg_postinst() {
 	elog "Before running build_kernel for the first time,"
 	elog "you will need setup its configuration /etc/default/${PN}."
+
+	optfeature "signing kernel" app-crypt/sbsigntools
 }

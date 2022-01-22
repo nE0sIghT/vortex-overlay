@@ -29,10 +29,22 @@ if [ -f "${CONFIG}" ]; then
 	source "${CONFIG}"
 fi
 
+if [ "${KERNEL_SIGN}" -eq "1" ]; then
+	if ! test -f "${KERNEL_SIGN_CERTIFICATE}" || ! test -f "${KERNEL_SIGN_KEY}"; then
+		eerror "Kernel signing enabled but either signing key or certificate are not found"
+		exit 1
+	fi
+
+	if ! command -v sbsign > /dev/null; then
+		eerror "You must install app-crypt/sbsigntools to be able to sign kernel"
+		exit 1
+	fi
+fi
+
 BOOT_PARTITION=${BOOT_PARTITION:-/boot/efi}
 BUILD_PATH=${BUILD_PATH:-/usr/src/linux-build}
 KERNEL_PATH=${KERNEL_PATH:-/efi/gentoo}
-KERNEL_SUFFIX=${KERNEL_SUFFIX:-.efi}
+test -z ${KERNEL_SUFFIX+x} && KERNEL_SUFFIX=.efi
 CPU_AUTODETECT=${CPU_AUTODETECT:-1}
 
 if [ "${CPU_AUTODETECT}" -eq "1" -a -f /proc/cpuinfo ]; then
@@ -84,18 +96,25 @@ if [ $exit_code -eq 0 ]; then
 	ebegin "Installing kernel"
 
 	if [ "${KERNEL_ONE_NAME}" -eq "1" ]; then
-		kernel_image="${BOOT_PARTITION}${KERNEL_PATH}"/kernel"${KERNEL_SUFFIX}"
+		kernel_image="${BOOT_PARTITION}${KERNEL_PATH}"/"${KERNEL_IMAGE_NAME}${KERNEL_SUFFIX}"
 		if [ -f "${kernel_image}" ]; then
-			mv "${kernel_image}" "${BOOT_PARTITION}${KERNEL_PATH}"/kernel-$(uname -r)"${KERNEL_SUFFIX}"
+			mv "${kernel_image}" "${BOOT_PARTITION}${KERNEL_PATH}/${KERNEL_IMAGE_NAME}-$(uname -r)${KERNEL_SUFFIX}"
 		fi
 	else
-		kernel_image="${BOOT_PARTITION}${KERNEL_PATH}"/kernel-$(get_current_kernel_version)"${KERNEL_SUFFIX}"
+		kernel_image="${BOOT_PARTITION}${KERNEL_PATH}/${KERNEL_IMAGE_NAME}-$(get_current_kernel_version)${KERNEL_SUFFIX}"
 		if [ -f "${kernel_image}" ]; then
 			mv "${kernel_image}" "${kernel_image}".$(date +%Y%m%d%H%M%S)
 		fi
 	fi
 
-	cp "${BUILD_PATH}"/arch/x86/boot/bzImage "${kernel_image}"
+	if [ "${KERNEL_SIGN}" -eq "1" ]; then
+		sbsign --key "${KERNEL_SIGN_KEY}" \
+			   --cert "${KERNEL_SIGN_CERTIFICATE}" \
+			   --output "${kernel_image}" \
+			   "${BUILD_PATH}"/arch/x86/boot/bzImage
+	else
+		cp "${BUILD_PATH}"/arch/x86/boot/bzImage "${kernel_image}"
+	fi
 
 	exit_code=$?
 	eend $exit_code
