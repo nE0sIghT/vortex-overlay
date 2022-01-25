@@ -55,7 +55,7 @@ RDEPEND="
 	flac? ( media-libs/flac )
 	freetype? ( media-libs/freetype )
 	kms? (
-		media-libs/mesa:0=[gbm]
+		media-libs/mesa:0=[gbm(+)]
 		x11-libs/libdrm
 	)
 	libcaca? ( media-libs/libcaca )
