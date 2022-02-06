@@ -1,10 +1,10 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/bsnes-libretro"
-LIBRETRO_COMMIT_SHA="44d97b17d06a10ae17d97a91a48e5acd10ec6db4"
+LIBRETRO_COMMIT_SHA="a4a2c84047f305ee72aea522dcdf5822c00ca7d2"
 
 inherit libretro-core
 
@@ -15,10 +15,6 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 # No tests provided
 RESTRICT="test"
-
-PATCHES=(
-	"${FILESDIR}/${PN}-0.14.4-gb_version.patch"
-)
 
 src_compile() {
 	myemakeargs="target=libretro binary=library local=false platform=linux" \

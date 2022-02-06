@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 IUSE="alsa cg cpu_flags_x86_sse dbus egl ffmpeg flac freetype gles gles3 kms
-	libcaca libusb materialui miniupnpc openal +opengl +ozone pulseaudio
+	libcaca libusb materialui openal +opengl +ozone pulseaudio
 	qt rgui sdl +sdl2 sixel subtitles ssl stripes systemd tinyalsa udev
 	vulkan X xrandr xmb xv wayland +zlib"
 
@@ -55,13 +55,12 @@ RDEPEND="
 	flac? ( media-libs/flac )
 	freetype? ( media-libs/freetype )
 	kms? (
-		media-libs/mesa:0=[gbm]
+		media-libs/mesa:0=[gbm(+)]
 		x11-libs/libdrm
 	)
 	libcaca? ( media-libs/libcaca )
 	libusb? ( virtual/libusb:= )
 	materialui? ( games-emulation/retroarch-assets[materialui] )
-	miniupnpc? ( net-libs/miniupnpc )
 	openal? ( media-libs/openal )
 	opengl? ( virtual/opengl )
 	ozone? ( games-emulation/retroarch-assets[ozone,xmb] )
@@ -142,7 +141,6 @@ src_configure() {
 		--disable-audioio \
 		--disable-builtinflac \
 		--disable-builtinmbedtls \
-		--disable-builtinminiupnpc \
 		--disable-builtinzlib \
 		--disable-coreaudio \
 		--disable-jack \
@@ -164,7 +162,6 @@ src_configure() {
 		$(use_enable libcaca caca) \
 		$(use_enable libusb) \
 		$(use_enable materialui) \
-		$(use_enable miniupnpc) \
 		$(use_enable openal al) \
 		$(use_enable opengl) \
 		$(use_enable ozone) \
