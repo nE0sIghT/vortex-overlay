@@ -28,7 +28,6 @@
 		<flag name="libcaca">Enable Libcaca support</flag>
 		<flag name="libusb">Enable Libusb HID support</flag>
 		<flag name="materialui">Enable MaterialUI menu</flag>
-		<flag name="miniupnpc">Enable Mini UPnP client library (for NAT traversal)</flag>
 		<flag name="openal">Build OpenAL audio driver</flag>
 		<flag name="opengl">Build OpenGL 2.0 video driver</flag>
 		<flag name="ozone">Enable Ozone menu</flag>

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -6,7 +6,7 @@ EAPI=7
 inherit vcs-snapshot
 
 LIBRETRO_REPO_NAME="libretro/${PN}"
-LIBRETRO_COMMIT_SHA="9c22505bed22370d4b81d10429afc9e0d6cc11ff"
+LIBRETRO_COMMIT_SHA="f45dd1351e6bfb9f01e12bee8d358ad22a2bb8f9"
 
 DESCRIPTION="Assets needed for RetroArch. Also contains the official branding."
 HOMEPAGE="https://github.com/libretro/retroarch-assets"
