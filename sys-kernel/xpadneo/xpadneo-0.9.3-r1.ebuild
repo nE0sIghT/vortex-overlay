@@ -35,23 +35,11 @@ src_install() {
 	linux-mod_src_install
 	udev_dorules "${MY_PN}/etc-udev-rules.d/50-${PN}-fixup-steamlink.rules"
 	udev_dorules "${MY_PN}/etc-udev-rules.d/60-${PN}.rules"
-
-	echo "CONFIG_PROTECT_MASK=\"/etc/modprobe.d/99-${PN}-bluetooth.conf\"" > 50${PN}
-	doenvd 50${PN}
-
-	echo "options bluetooth disable_ertm=y" > "99-${PN}-bluetooth.conf"
-	insinto /etc/modprobe.d
-	doins "99-${PN}-bluetooth.conf"
 }
 
 pkg_postinst() {
 	linux-mod_pkg_postinst
 	udev_reload
-
-	DISABLE_ERTM=/sys/module/bluetooth/parameters/disable_ertm
-	if test -e "${DISABLE_ERTM}"; then
-		echo "y" > "${DISABLE_ERTM}"
-	fi
 }
 
 pkg_postrm() {
