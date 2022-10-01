@@ -7,7 +7,7 @@ LIBRETRO_REPO_NAME="libretro/citra"
 LIBRETRO_COMMIT_SHA="b1959d07a340bfd9af65ad464fd19eb6799a96ef"
 SOUNDTOUCH_COMMIT_SHA="060181eaf273180d3a7e87349895bd0cb6ccbf4a"
 
-inherit cmake libretro-core toolchain-funcs
+inherit cmake libretro-core
 
 DESCRIPTION="Multiplatform Sega Dreamcast emulator"
 SRC_URI="

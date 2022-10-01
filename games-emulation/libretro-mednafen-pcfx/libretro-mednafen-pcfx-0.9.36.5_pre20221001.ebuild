@@ -1,10 +1,10 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/beetle-pcfx-libretro"
-LIBRETRO_COMMIT_SHA="a1f1734509dd6acb11269f118d61f480ae8dbacf"
+LIBRETRO_COMMIT_SHA="08632fcbc039f70dbd6da5810db9dcc304d7fbde"
 
 inherit libretro-core
 
