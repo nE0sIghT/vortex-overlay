@@ -17,13 +17,13 @@ KEYWORDS="amd64 x86"
 
 RDEPEND="
 	app-admin/eselect
+	app-alternatives/awk
 	app-arch/gzip
 	sys-apps/coreutils
 	sys-apps/gentoo-functions
 	sys-apps/grep
 	sys-apps/portage
 	sys-apps/util-linux
-	virtual/awk
 "
 
 S="${WORKDIR}"
