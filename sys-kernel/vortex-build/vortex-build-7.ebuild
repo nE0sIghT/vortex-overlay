@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit eutils optfeature
+inherit optfeature
 
 DESCRIPTION="Simple Linux kernel build scripts"
 
