@@ -1,0 +1,28 @@
+From e1f1071263585865bfbe7b139ac9ab1db02eaf2c Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gnome.org>
+Date: Sun, 31 Mar 2024 16:40:56 +0400
+Subject: [PATCH] emerge: add `interactive` property to
+ sys-kernel/gentoo-kernel package
+
+---
+ lib/_emerge/Package.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/_emerge/Package.py b/lib/_emerge/Package.py
+index 79011380d..9ddc62c2a 100644
+--- a/lib/_emerge/Package.py
++++ b/lib/_emerge/Package.py
+@@ -96,6 +96,10 @@ class Package(Task):
+ 
+     def __init__(self, **kwargs):
+         metadata = _PackageMetadataWrapperBase(kwargs.pop("metadata"))
++
++        if kwargs.get('cpv', '').startswith('sys-kernel/gentoo-kernel'):
++            metadata['PROPERTIES'] += " interactive"
++
+         Task.__init__(self, **kwargs)
+         # the SlotObject constructor assigns self.root_config from keyword args
+         # and is an instance of a '_emerge.RootConfig.RootConfig class
+-- 
+2.43.2
+

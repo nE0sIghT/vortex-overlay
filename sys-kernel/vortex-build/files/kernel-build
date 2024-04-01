@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# Author: Yuri <nE0sIghT> Konotopov
+# License: GNU GPL v3 or any later version
+#
+
+source /lib/gentoo/functions.sh
+
+set -eo pipefail
+
+VORTEX_CACHE_DIR="/var/cache/vortex-build"
+
+if [ "$EUID" -ne 0 ]; then
+    exec sudo "${0}" "$@"
+fi
+
+MENUCONFIG=0
+while [[ $# != 0 ]]; do
+	case $1 in
+		-m|--menuconfig)
+			VORTEX_BUILD_DIR="$(mktemp -d)"
+			VORTEX_CONFIG="vortex-$(date "+%s")"
+
+			mkdir -p "${VORTEX_CACHE_DIR}"
+
+			cp -r /usr/src/linux/. "${VORTEX_BUILD_DIR}"
+
+			pushd "${VORTEX_BUILD_DIR}" > /dev/null
+
+			make mrproper
+			zcat /proc/config.gz > .config
+			make menuconfig
+			cp .config "${VORTEX_CACHE_DIR}/${VORTEX_CONFIG}"
+
+			popd > /dev/null
+
+			rm -r "${VORTEX_BUILD_DIR}"
+
+			export VORTEX_MENUCONFIG="${VORTEX_CONFIG}"
+		;;
+		--) shift; break;;
+		*)
+			ewarn Unknown option provided: "${1}"
+		;;
+	esac
+
+	shift
+done
+
+ebegin "Building kernel"
+emerge -1v gentoo-kernel
+eend $?

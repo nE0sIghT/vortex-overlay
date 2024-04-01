@@ -1,0 +1,28 @@
+pre_src_configure() {
+	ebegin "VorteX: Configuring kernel"
+
+	if test -n "${VORTEX_MENUCONFIG}"; then
+		VORTEX_CONFIG="/var/cache/vortex-build/$(basename "${VORTEX_MENUCONFIG}")"
+		if ! test -r "${VORTEX_CONFIG}"; then
+			eerror "Unable to access config file ${VORTEX_CONFIG}"
+			exit 1
+		fi
+		cp "${VORTEX_CONFIG}" .config
+	else
+		KERNEL_CONFIG_TEMP="$(mktemp -d)"
+		cp -r "${S}/." "${KERNEL_CONFIG_TEMP}"
+
+		pushd "${KERNEL_CONFIG_TEMP}" > /dev/null || die
+
+		zcat /proc/config.gz > .config || die
+		ARCH="$(tc-arch-kernel)" make oldconfig || die
+
+		cp .config "${S}/.config"
+
+		popd > /dev/null || die
+
+		rm -r "${KERNEL_CONFIG_TEMP}"
+	fi
+
+	eend 0
+}
