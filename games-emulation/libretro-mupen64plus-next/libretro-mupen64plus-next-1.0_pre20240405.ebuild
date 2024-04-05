@@ -1,10 +1,10 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/mupen64plus-libretro-nx"
-LIBRETRO_COMMIT_SHA="b4024d75597da162bbc7cb693b8cef0d6da75105"
+LIBRETRO_COMMIT_SHA="26fd1edd640ff3db49dd5ebb7e54f0de6600fc45"
 
 inherit libretro-core toolchain-funcs
 
