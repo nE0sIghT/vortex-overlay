@@ -51,8 +51,8 @@ RDEPEND="
 	alsa? ( media-libs/alsa-lib )
 	cg? ( media-gfx/nvidia-cg-toolkit )
 	gles? ( media-libs/mesa:0=[gles2] )
-	ffmpeg? ( media-video/ffmpeg )
-	flac? ( media-libs/flac )
+	ffmpeg? ( media-video/ffmpeg:= )
+	flac? ( media-libs/flac:= )
 	freetype? ( media-libs/freetype )
 	kms? (
 		media-libs/mesa:0=[gbm(+)]
