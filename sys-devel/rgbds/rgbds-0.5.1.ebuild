@@ -18,9 +18,9 @@ RDEPEND="
 	sys-libs/zlib:=
 "
 DEPEND="${RDEPEND}
+	app-alternatives/yacc
 	sys-devel/flex
 	virtual/pkgconfig
-	virtual/yacc
 "
 
 src_prepare() {
