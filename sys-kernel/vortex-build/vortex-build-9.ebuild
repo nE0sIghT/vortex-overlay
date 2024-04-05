@@ -29,7 +29,7 @@ CONFIG_CHECK="~IKCONFIG_PROC"
 
 src_install() {
 	exeinto /usr/bin
-	doexe "${FILESDIR}/kernel-build"
+	newexe "${FILESDIR}/kernel-build-r1" kernel-build
 
 	dosym kernel-build /usr/bin/build_kernel
 
@@ -40,7 +40,7 @@ src_install() {
 	doins "${FILESDIR}/portage-gentoo-kernel-interactive.patch"
 
 	insinto /etc/portage/env/sys-kernel
-	doins "${FILESDIR}/gentoo-kernel"
+	newins "${FILESDIR}/gentoo-kernel-r1" gentoo-kernel
 }
 
 pkg_postinst() {

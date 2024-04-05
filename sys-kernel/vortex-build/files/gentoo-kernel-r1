@@ -1,6 +1,10 @@
 pre_src_configure() {
 	ebegin "VorteX: Configuring kernel"
 
+	if grep -q "CONFIG_MODULE_SIG_KEY=" .config; then
+		VORTEX_MODULE_SIG_KEY="$(grep "CONFIG_MODULE_SIG_KEY=" .config)"
+	fi
+
 	if test -n "${VORTEX_MENUCONFIG}"; then
 		VORTEX_CONFIG="/var/cache/vortex-build/$(basename "${VORTEX_MENUCONFIG}")"
 		if ! test -r "${VORTEX_CONFIG}"; then
@@ -22,6 +26,13 @@ pre_src_configure() {
 		popd > /dev/null || die
 
 		rm -r "${KERNEL_CONFIG_TEMP}"
+	fi
+
+	if test -n "${VORTEX_MODULE_SIG_KEY}"; then
+		echo "${VORTEX_MODULE_SIG_KEY}"
+		sed -i \
+			-e "s#CONFIG_MODULE_SIG_KEY=.*#${VORTEX_MODULE_SIG_KEY}#g" \
+			.config || die
 	fi
 
 	eend 0

@@ -47,6 +47,34 @@ while [[ $# != 0 ]]; do
 	shift
 done
 
+MODULES_DIR="/lib/modules/$(uname -r)"
+TIMESTAMP="$(date "+%s")"
+
+if test -e "${MODULES_DIR}"; then
+	ebegin "Backing up ${MODULES_DIR}"
+	mv "${MODULES_DIR}" "${MODULES_DIR}.${TIMESTAMP}"
+	eend $?
+fi
+
 ebegin "Building kernel"
 emerge -1v gentoo-kernel
 eend $?
+
+ebegin "Rebuilding modules"
+if ! emerge @module-rebuild; then
+	eend 1
+
+	if test -e "${MODULES_DIR}.${TIMESTAMP}"; then
+		ebegin "Reverting backup ${MODULES_DIR}"
+		mv "${MODULES_DIR}.${TIMESTAMP}" "${${MODULES_DIR}}"
+		eend $?
+	fi
+
+	exit 1
+fi
+
+if test -e "${MODULES_DIR}.${TIMESTAMP}"; then
+	ebegin "Dropping modules backup ${MODULES_DIR}"
+	rm -r "${MODULES_DIR}.${TIMESTAMP}"
+	eend $?
+fi
