@@ -3,15 +3,17 @@
 
 EAPI=8
 
+COMPATIBILITY_LIST_COMMIT_SHA="00709ad0aa83f174a09d567ed5a0b3a24d8a6817"
 SIRIT_COMMIT_SHA="ab75463999f4f3291976b079d42d52ee91eebf3f"
 TZDB_TO_NX_COMMIT_SHA="97929690234f2b4add36b33657fe3fe09bd57dfd"
 
 inherit cmake
 
-DESCRIPTION="This is a sample skeleton ebuild file"
-HOMEPAGE="https://foo.example.org/"
+DESCRIPTION="A familiar, open source, and powerful Nintendo Switch emulator"
+HOMEPAGE="https://suyu.dev/"
 SRC_URI="
 	https://git.suyu.dev/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	https://raw.githubusercontent.com/yuzu-mirror/api/${COMPATIBILITY_LIST_COMMIT_SHA}/gamedb/websiteFeed -> ${P}-compatibility_list.json
 	https://git.suyu.dev/suyu/sirit/archive/${SIRIT_COMMIT_SHA}.tar.gz -> ${PN}-sirit.tar.gz
 	https://github.com/lat9nq/tzdb_to_nx/archive/${TZDB_TO_NX_COMMIT_SHA}.tar.gz -> ${PN}-tzdb-to-nx.tar.gz
 "
@@ -80,6 +82,9 @@ src_unpack() {
 		mv "${library_path}"/* \
 			"${S}/${libraries[$library]}/" || die
 	done
+
+	cp "${DISTDIR}"/${P}-compatibility_list.json \
+		"${S}"/dist/compatibility_list/compatibility_list.json || die
 }
 
 src_configure() {
