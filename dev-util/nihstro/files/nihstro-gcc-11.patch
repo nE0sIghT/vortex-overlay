@@ -1,0 +1,29 @@
+From f23d429a0c0854e61d908313b7fd0797d7e40979 Mon Sep 17 00:00:00 2001
+From: nE0sIghT <ykonotopov@gmail.com>
+Date: Thu, 4 Nov 2021 15:21:04 +0400
+Subject: [PATCH 2/2] Fixed compilation with gcc-11
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+include/nihstro/source_tree.h:211:21: error: ‘count’ is not a member of
+‘std’
+---
+ include/nihstro/source_tree.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/nihstro/source_tree.h b/include/nihstro/source_tree.h
+index ed3d960..6bdbcc7 100644
+--- a/include/nihstro/source_tree.h
++++ b/include/nihstro/source_tree.h
+@@ -27,6 +27,7 @@
+ 
+ #pragma once
+ 
++#include <algorithm>
+ #include <list>
+ #include <string>
+ 
+-- 
+2.32.0
+
