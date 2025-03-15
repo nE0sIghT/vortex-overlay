@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/desmume"
-LIBRETRO_COMMIT_SHA="fbd368c8109f95650e1f81bca1facd6d4d8687d7"
+LIBRETRO_COMMIT_SHA="7f05a8d447b00acd9e0798aee97b4f72eb505ef9"
 
 inherit libretro-core
 

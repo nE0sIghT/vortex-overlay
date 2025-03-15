@@ -4,7 +4,7 @@
 EAPI=7
 
 LIBRETRO_REPO_NAME="libretro/beetle-psx-libretro"
-LIBRETRO_COMMIT_SHA="5a24d54d30dd00d817d267cf92fd5b3f4640928f"
+LIBRETRO_COMMIT_SHA="f43eeef180984aa729c699ae3e2afeda8486b4d5"
 
 inherit libretro-core
 
