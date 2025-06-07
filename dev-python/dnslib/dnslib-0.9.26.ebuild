@@ -3,7 +3,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} pypy3 )
+PYTHON_COMPAT=( python3_{11..13} pypy3 )
+DISTUTILS_USE_PEP517=setuptools
 
 inherit distutils-r1
 
@@ -15,6 +16,7 @@ LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 arm64 x86"
 IUSE="test"
+RESTRICT="!test? ( test )"
 
 DEPEND="${RDEPEND}"
 
