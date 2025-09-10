@@ -64,7 +64,7 @@ RDEPEND="
 	openal? ( media-libs/openal )
 	opengl? ( virtual/opengl )
 	ozone? ( games-emulation/retroarch-assets[ozone,xmb] )
-	pulseaudio? ( media-sound/pulseaudio )
+	pulseaudio? ( media-libs/libpulse )
 	qt? (
 		dev-libs/openssl:0=
 		dev-qt/qtconcurrent:5
