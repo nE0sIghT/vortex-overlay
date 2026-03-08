@@ -1,0 +1,13 @@
+diff --git a/libretro-common/formats/libchdr/libchdr_flac.c b/libretro-common/formats/libchdr/libchdr_flac.c
+index 994bdf72e7..dbd1f23106 100644
+--- a/libretro-common/formats/libchdr/libchdr_flac.c
++++ b/libretro-common/formats/libchdr/libchdr_flac.c
+@@ -12,7 +12,7 @@
+ #include <stdbool.h>
+ 
+ #include <libchdr/flac.h>
+-#ifdef HAVE_DR_FLAC
++#ifdef HAVE_FLAC
+ #include <retro_inline.h>
+ #define DR_FLAC_IMPLEMENTATION
+ #define DRFLAC_API static INLINE
