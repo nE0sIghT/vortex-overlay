@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit autotools desktop
 
@@ -11,9 +11,9 @@ LB_THEMES_V="20160512"
 DESCRIPTION="Breakout clone written with the SDL library"
 HOMEPAGE="http://lgames.sourceforge.net/LBreakoutHD/"
 SRC_URI="
-	mirror://sourceforge/lgames/${P}.tar.gz
-	mirror://sourceforge/lgames/add-ons/lbreakout2/lbreakout2-levelsets-${LB_LEVELS_V}.tar.gz
-	themes? ( mirror://sourceforge/lgames/add-ons/lbreakout2/lbreakout2-themes-${LB_LEVELS_V}.tar.gz )"
+	https://downloads.sourceforge.net/lgames/${P}.tar.gz
+	https://downloads.sourceforge.net/lgames/add-ons/lbreakout2/lbreakout2-levelsets-${LB_LEVELS_V}.tar.gz
+	themes? ( https://downloads.sourceforge.net/lgames/add-ons/lbreakout2/lbreakout2-themes-${LB_LEVELS_V}.tar.gz )"
 
 LICENSE="GPL-2+"
 SLOT="0"
