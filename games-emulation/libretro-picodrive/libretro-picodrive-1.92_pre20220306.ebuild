@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/picodrive"
 LIBRETRO_COMMIT_SHA="ee6b7139175a3270e9be314218b22baa592610f2"

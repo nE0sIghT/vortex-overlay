@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_COMMIT_SHA="3f38dad0f839404a22adf55cfebd1137a01907e8"
 

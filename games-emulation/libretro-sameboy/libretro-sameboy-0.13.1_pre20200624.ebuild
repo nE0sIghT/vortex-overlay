@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/SameBoy"
 LIBRETRO_COMMIT_SHA="ef203cf0e5b6dd1e9ee5da47b0827b0ef132fa02"

@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/mgba"
 LIBRETRO_COMMIT_SHA="affc86e4c07b6e1e8363e0bc1c5ffb813a2e32c9"

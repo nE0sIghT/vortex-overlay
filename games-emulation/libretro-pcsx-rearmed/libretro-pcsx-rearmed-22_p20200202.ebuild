@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/pcsx_rearmed"
 LIBRETRO_COMMIT_SHA="ea884d3029c673e06a4084156ceb662598d8945a"

@@ -4,7 +4,7 @@
 EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/beetle-pcfx-libretro"
-LIBRETRO_COMMIT_SHA="dd04cef9355286488a1d78ff18c4c848a1575540"
+LIBRETRO_COMMIT_SHA="650c30ea2203636a1716675854d11c608ed6eacc"
 
 inherit libretro-core
 

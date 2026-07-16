@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/bsnes-libretro"
 LIBRETRO_COMMIT_SHA="28c358173a39d6311841c756ac0e82975d798048"

@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/mupen64plus-libretro-nx"
 LIBRETRO_COMMIT_SHA="29717c0b6e1be8c7b46dbd2801a275a72208ffea"

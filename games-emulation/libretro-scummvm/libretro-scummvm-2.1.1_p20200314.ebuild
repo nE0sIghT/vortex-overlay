@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LIBRETRO_REPO_NAME="libretro/scummvm"
 LIBRETRO_COMMIT_SHA="de91bf9bcbf4449f91e2f50fde173496a2b52ee0"
